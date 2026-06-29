@@ -2,7 +2,7 @@
 
 Custom WordPress theme for [Muuttohaukat](https://muuttohaukat.com), rebuilt from the legacy Haukka theme.
 
-**Version:** 1.0  
+**Version:** 1.0.1  
 **Repository:** [github.com/Tapiokansleri/Muuttohaukat-wordpress-theme](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme)
 
 ## Requirements

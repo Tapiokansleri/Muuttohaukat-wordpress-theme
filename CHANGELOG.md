@@ -4,6 +4,18 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.1] - 2026-06-29
+
+### Added
+
+- **Teeman asetukset** admin page under Appearance (floating CTA, hellobar, links to other theme settings)
+
+### Changed
+
+- Moved Floating CTA and Hellobar settings from Settings menu into the unified theme settings page
+
+[1.0.1]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.1
+
 ## [1.0] - 2026-06-29
 
 ### Added

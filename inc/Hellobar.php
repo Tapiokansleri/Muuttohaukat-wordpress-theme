@@ -3,7 +3,7 @@
  * Hello bar announcement banner.
  *
  * Injects a customisable notification bar right after the opening
- * <body> tag via output buffering. Configurable from Settings > Kansleri Hellobar.
+ * <body> tag via output buffering. Configurable from Appearance → Teeman asetukset → Ilmoituspalkki.
  *
  * @package Muuttohaukat
  */
@@ -74,69 +74,3 @@ CSS;
   return $buffer;
 }
 
-/** Register the settings page under Settings. */
-add_action('admin_menu', function () {
-  add_options_page(
-    esc_html__('Hellobar Settings', 'muuttohaukat'),
-    esc_html__('Hellobar', 'muuttohaukat'),
-    'manage_options',
-    'kansleri-hello-bar',
-    '\\Muuttohaukat\\Hellobar\\renderSettingsPage'
-  );
-});
-
-/**
- * Render the settings page form.
- */
-function renderSettingsPage() {
-  if (!current_user_can('manage_options')) {
-    return;
-  }
-
-  if (isset($_POST['kansleri_hello_bar_save'])) {
-    check_admin_referer('kansleri_hello_bar_options_verify');
-
-    $options = [
-      'text'       => sanitize_text_field(wp_unslash($_POST['kansleri_hello_bar_text'] ?? '')),
-      'bg_color'   => sanitize_hex_color(wp_unslash($_POST['kansleri_hello_bar_bg_color'] ?? '')),
-      'text_color' => sanitize_hex_color(wp_unslash($_POST['kansleri_hello_bar_text_color'] ?? '')),
-      'link'       => esc_url_raw(wp_unslash($_POST['kansleri_hello_bar_link'] ?? '')),
-      'custom_css' => wp_strip_all_tags(wp_unslash($_POST['kansleri_hello_bar_custom_css'] ?? '')),
-    ];
-    update_option('kansleri_hello_bar_options', $options);
-    echo '<div class="notice notice-success"><p>' . esc_html__('Settings saved.', 'muuttohaukat') . '</p></div>';
-  }
-
-  $options = get_option('kansleri_hello_bar_options', []);
-  ?>
-  <div class="wrap">
-    <h1><?= esc_html__('Hellobar Settings', 'muuttohaukat') ?></h1>
-    <form method="post">
-      <?php wp_nonce_field('kansleri_hello_bar_options_verify'); ?>
-      <table class="form-table">
-        <tr>
-          <th><label for="kansleri_hello_bar_text"><?= esc_html__('Text', 'muuttohaukat') ?></label></th>
-          <td><input type="text" id="kansleri_hello_bar_text" name="kansleri_hello_bar_text" value="<?= esc_attr($options['text'] ?? '') ?>" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="kansleri_hello_bar_bg_color"><?= esc_html__('Background Color', 'muuttohaukat') ?></label></th>
-          <td><input type="text" id="kansleri_hello_bar_bg_color" name="kansleri_hello_bar_bg_color" value="<?= esc_attr($options['bg_color'] ?? '#333') ?>" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="kansleri_hello_bar_text_color"><?= esc_html__('Text Color', 'muuttohaukat') ?></label></th>
-          <td><input type="text" id="kansleri_hello_bar_text_color" name="kansleri_hello_bar_text_color" value="<?= esc_attr($options['text_color'] ?? '#fff') ?>" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="kansleri_hello_bar_link"><?= esc_html__('Link', 'muuttohaukat') ?></label></th>
-          <td><input type="url" id="kansleri_hello_bar_link" name="kansleri_hello_bar_link" value="<?= esc_attr($options['link'] ?? '') ?>" class="regular-text"></td>
-        </tr>
-        <tr>
-          <th><label for="kansleri_hello_bar_custom_css"><?= esc_html__('Custom CSS', 'muuttohaukat') ?></label></th>
-          <td><textarea id="kansleri_hello_bar_custom_css" name="kansleri_hello_bar_custom_css" rows="5" class="large-text"><?= esc_textarea($options['custom_css'] ?? '') ?></textarea></td>
-        </tr>
-      </table>
-      <?php submit_button(); ?>
-    </form>
-  </div>
-  <?php
-}
