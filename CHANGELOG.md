@@ -4,6 +4,17 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.6] - 2026-06-29
+
+### Fixed
+
+- Montserrat fonts and theme images: `client.css` now uses relative `../fonts/` and `../img/` URLs instead of hardcoded `/wp-content/themes/muuttohaukat/` paths
+- GitHub theme updater flattens nested release folders (e.g. repo `-main` subfolders) and no longer falls back to GitHub zipballs
+- Release workflow verifies font files are included in `muuttohaukat.zip`
+- Reverted BB Heading module padding hack that misaligned titles (v1.0.5)
+
+[1.0.6]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.6
+
 ## [1.0.5] - 2026-06-29
 
 ### Fixed

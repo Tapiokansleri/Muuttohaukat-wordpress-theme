@@ -69,15 +69,15 @@ template {
 [hidden] {
     display:none}
 @font-face {
-    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(/wp-content/themes/muuttohaukat/assets/fonts/montserrat-cyrillic-variable-wghtOnly-normal.93a1679c.woff2) format("woff2");unicode-range:U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/montserrat-cyrillic-variable-wghtOnly-normal.93a1679c.woff2) format("woff2");unicode-range:U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face {
-    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(/wp-content/themes/muuttohaukat/assets/fonts/montserrat-cyrillic-ext-variable-wghtOnly-normal.530f0354.woff2) format("woff2");unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/montserrat-cyrillic-ext-variable-wghtOnly-normal.530f0354.woff2) format("woff2");unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
 @font-face {
-    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(/wp-content/themes/muuttohaukat/assets/fonts/montserrat-latin-variable-wghtOnly-normal.c8f7c04f.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/montserrat-latin-variable-wghtOnly-normal.c8f7c04f.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face {
-    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(/wp-content/themes/muuttohaukat/assets/fonts/montserrat-latin-ext-variable-wghtOnly-normal.672305a0.woff2) format("woff2");unicode-range:U+0100-024F,U+0259,U+1E00-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/montserrat-latin-ext-variable-wghtOnly-normal.672305a0.woff2) format("woff2");unicode-range:U+0100-024F,U+0259,U+1E00-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face {
-    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(/wp-content/themes/muuttohaukat/assets/fonts/montserrat-vietnamese-variable-wghtOnly-normal.de78c835.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+    font-family:MontserratVariable;font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/montserrat-vietnamese-variable-wghtOnly-normal.de78c835.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
 h1 {
     margin-top:3rem;margin-bottom:3rem;font-size:3rem;line-height:1}
 h2 {
@@ -94,7 +94,7 @@ h1.card-title,h2.card-title,h3.card-title,h4.card-title,h5.card-title,h6.card-ti
     margin-top:0;margin-bottom:0}
 .eagles {
     --tw-bg-opacity: 1;background-color:rgb(255 237 0 / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity));display:block;position:relative;height:300px;width:80%;background-image:url(/wp-content/themes/muuttohaukat/assets/img/muuttohaukka_01.b9243e77.svg),url(/wp-content/themes/muuttohaukat/assets/img/muuttohaukka_02.c3b3b03f.svg),url(/wp-content/themes/muuttohaukat/assets/img/muuttohaukka_03.538eb563.svg),url(/wp-content/themes/muuttohaukat/assets/img/muuttohaukka_04.a40463b8.svg),url(/wp-content/themes/muuttohaukat/assets/img/muuttohaukka_05.b0e94b25.svg);background-repeat:no-repeat;background-size:15%;background-position:left center,20% center,40% center,60% center,80% center}
+    --tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity));display:block;position:relative;height:300px;width:80%;background-image:url(../img/muuttohaukka_01.b9243e77.svg),url(../img/muuttohaukka_02.c3b3b03f.svg),url(../img/muuttohaukka_03.538eb563.svg),url(../img/muuttohaukka_04.a40463b8.svg),url(../img/muuttohaukka_05.b0e94b25.svg);background-repeat:no-repeat;background-size:15%;background-position:left center,20% center,40% center,60% center,80% center}
 .eagles.dive {
     margin-bottom:-150px}
 @media (min-width: 1536px) {
@@ -114,7 +114,7 @@ h1.card-title,h2.card-title,h3.card-title,h4.card-title,h5.card-title,h6.card-ti
     margin-bottom:-50px}
 }
 .eagles:after {
-    content:"";display:block;position:absolute;left:calc(100% - 1px);top:0;background:url(/wp-content/themes/muuttohaukat/assets/img/right-triangle.c75e95b3.svg);background-size:contain;background-repeat:no-repeat;background-position:left center;height:100%;width:20%;transform:skew(180deg)}
+    content:"";display:block;position:absolute;left:calc(100% - 1px);top:0;background:url(../img/right-triangle.c75e95b3.svg);background-size:contain;background-repeat:no-repeat;background-position:left center;height:100%;width:20%;transform:skew(180deg)}
 .btn {
     font-weight:500}
 .btn-primary {
@@ -377,7 +377,7 @@ p.buttons>a:nth-of-type(2):hover:before,p.buttons>a:nth-of-type(2):active:before
 .corner-triangle {
     position:relative}
 .corner-triangle:before {
-    content:"";display:block;position:absolute;bottom:-16px;right:-16px;background-image:url(/wp-content/themes/muuttohaukat/assets/img/right-triangle.c75e95b3.svg);background-repeat:no-repeat;background-size:contain;background-position:right bottom;width:100px;height:100px;z-index:0;transform:rotate(45deg)}
+    content:"";display:block;position:absolute;bottom:-16px;right:-16px;background-image:url(../img/right-triangle.c75e95b3.svg);background-repeat:no-repeat;background-size:contain;background-position:right bottom;width:100px;height:100px;z-index:0;transform:rotate(45deg)}
 @media (max-width: 1280px) {
     .corner-triangle:before {
     width:70px;height:70px}

@@ -233,6 +233,64 @@ class GitHubThemeUpdater {
   }
 
   /**
+   * Find the directory that contains style.css (handles GitHub zipballs and
+   * archives that wrap the theme in a repo-named subfolder).
+   *
+   * @param string $path Directory to search.
+   * @return string
+   */
+  private function locate_theme_root($path) {
+    global $wp_filesystem;
+
+    if ($wp_filesystem->exists($path . '/style.css')) {
+      return $path;
+    }
+
+    $list = $wp_filesystem->dirlist($path, false, false);
+    if (!is_array($list)) {
+      return $path;
+    }
+
+    foreach ($list as $name => $info) {
+      if (empty($info['type']) || $info['type'] !== 'd') {
+        continue;
+      }
+
+      $candidate = $path . '/' . $name;
+      if ($wp_filesystem->exists($candidate . '/style.css')) {
+        return $candidate;
+      }
+    }
+
+    return $path;
+  }
+
+  /**
+   * Move a nested theme folder's contents into the expected theme directory.
+   *
+   * @param string $nested_dir Directory containing style.css.
+   * @param string $theme_dir  Target theme directory slug path.
+   */
+  private function promote_nested_theme($nested_dir, $theme_dir) {
+    global $wp_filesystem;
+
+    if ($nested_dir === $theme_dir) {
+      return;
+    }
+
+    $list = $wp_filesystem->dirlist($nested_dir, false, false);
+    if (!is_array($list)) {
+      return;
+    }
+
+    foreach ($list as $name => $info) {
+      $wp_filesystem->move($nested_dir . '/' . $name, $theme_dir . '/' . $name, true);
+    }
+
+    $wp_filesystem->delete($nested_dir, true);
+  }
+
+  /**
    * After install, move extracted files into the expected theme directory.
    *
    * @param bool  $response
@@ -248,10 +306,19 @@ class GitHubThemeUpdater {
     global $wp_filesystem;
 
     $theme_dir = get_theme_root() . '/' . $this->theme_slug;
-    if ($result['destination'] !== $theme_dir) {
+    $source    = $this->locate_theme_root($result['destination']);
+
+    if ($source !== $theme_dir) {
       $wp_filesystem->delete($theme_dir, true);
-      $wp_filesystem->move($result['destination'], $theme_dir);
+      $wp_filesystem->move($source, $theme_dir);
       $result['destination'] = $theme_dir;
+    }
+
+    if (!$wp_filesystem->exists($theme_dir . '/style.css')) {
+      $nested = $this->locate_theme_root($theme_dir);
+      if ($nested !== $theme_dir) {
+        $this->promote_nested_theme($nested, $theme_dir);
+      }
     }
 
     delete_transient($this->cache_key);
@@ -279,10 +346,6 @@ class GitHubThemeUpdater {
           return $asset->browser_download_url;
         }
       }
-    }
-
-    if (!empty($release->zipball_url)) {
-      return $release->zipball_url;
     }
 
     return false;

@@ -23,6 +23,8 @@ jobs:
             --exclude '.github' \
             --exclude 'build' \
             --exclude '*.zip'
+          test -f build/muuttohaukat/style.css
+          test -f build/muuttohaukat/assets/fonts/montserrat-latin-variable-wghtOnly-normal.c8f7c04f.woff2
           cd build && zip -r ../muuttohaukat.zip muuttohaukat
 
       - name: Publish GitHub Release

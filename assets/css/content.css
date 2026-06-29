@@ -578,22 +578,6 @@ body.bb-page .mh-bb-content .fl-builder-content :is(h1, h2, h3, h4, h5, h6) {
     margin-bottom: 20px;
 }
 
-/* Match typical BB HTML module wrappers (e.g. px-4) so Heading modules line
-   up with rich text, buttons, and custom modules in the same column. */
-body.bb-page .fl-module-heading .fl-module-content {
-    padding-inline: var(--space-4);
-}
-
-/* Personnel / centered flex rows: section titles should align with the grid */
-body.bb-page .fl-col:has(.personnel) .fl-module-heading .fl-module-content {
-    padding-inline: 0;
-}
-
-body.bb-page .fl-col:has(.personnel) .fl-module-heading .fl-heading {
-    text-align: center;
-    width: 100%;
-}
-
 /* h3 spec override on BB pages — lighter weight and tighter scale than the
    global h3 in 02-base.css. Desktop only; mobile scales down to keep a
    sensible hierarchy against the smaller mobile body font (13px). BB
