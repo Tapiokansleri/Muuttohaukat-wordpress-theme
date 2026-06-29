@@ -126,8 +126,8 @@ add_filter('max_srcset_image_width', function () {
 
 /**
  * Add a `bb-page` body class when Beaver Builder is rendering the current
- * page. Used by CSS to opt out of default heading margins (BB modules
- * already control vertical rhythm via their own row/column padding).
+ * page. Used by CSS to trim default heading vertical margins without
+ * overriding BB column/module horizontal layout.
  */
 add_filter('body_class', function ($classes) {
   if (is_singular() && class_exists('FLBuilderModel') && \FLBuilderModel::is_builder_enabled(get_the_ID())) {

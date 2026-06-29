@@ -570,17 +570,28 @@ h4.fl-heading {
    Beaver Builder pages
    ========================================================================== */
 
-/* BB modules control their own vertical rhythm via row/column padding, so
-   we zero top + horizontal margins on headings and keep only a small bottom
-   gap. Covers headings rendered outside a BB Heading Module — e.g. Themer
-   page-title templates, Text/HTML module content, nested Gutenberg blocks. */
-body.bb-page h1,
-body.bb-page h2,
-body.bb-page h3,
-body.bb-page h4,
-body.bb-page h5,
-body.bb-page h6 {
-    margin: 0 0 20px;
+/* BB modules control vertical rhythm via row/column padding. Only trim the
+   large top/bottom margins from 02-base — do not zero horizontal margins
+   (margin: 0 0 20px broke alignment with padded HTML/rich-text modules). */
+body.bb-page .mh-bb-content .fl-builder-content :is(h1, h2, h3, h4, h5, h6) {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Match typical BB HTML module wrappers (e.g. px-4) so Heading modules line
+   up with rich text, buttons, and custom modules in the same column. */
+body.bb-page .fl-module-heading .fl-module-content {
+    padding-inline: var(--space-4);
+}
+
+/* Personnel / centered flex rows: section titles should align with the grid */
+body.bb-page .fl-col:has(.personnel) .fl-module-heading .fl-module-content {
+    padding-inline: 0;
+}
+
+body.bb-page .fl-col:has(.personnel) .fl-module-heading .fl-heading {
+    text-align: center;
+    width: 100%;
 }
 
 /* h3 spec override on BB pages — lighter weight and tighter scale than the
@@ -588,26 +599,18 @@ body.bb-page h6 {
    sensible hierarchy against the smaller mobile body font (13px). BB
    Heading Modules with user-customized typography still win (their
    per-node CSS has higher specificity). */
-body.bb-page h3 {
+body.bb-page .mh-bb-content .fl-heading:is(h3),
+body.bb-page .mh-bb-content h3 {
     font-size: 23px;
     font-weight: 400;
     line-height: 140%;
 }
 
 @media (max-width: 768px) {
-    body.bb-page h3 {
+    body.bb-page .mh-bb-content .fl-heading:is(h3),
+    body.bb-page .mh-bb-content h3 {
         font-size: 16px;
     }
-}
-
-/* BB's Heading Module ships .fl-module-heading .fl-heading { margin: 0
-   !important } in its own frontend.css to let module-level settings
-   drive spacing. Override with equal specificity + !important and a
-   body.bb-page prefix (to bump specificity past BB's rule) so our 20px
-   baseline applies here too. BB's Heading Module has no per-element
-   margin setting, so this doesn't conflict with anything user-set. */
-body.bb-page .fl-module-heading .fl-heading {
-    margin: 0 0 20px !important;
 }
 
 /* Default styling for the BB Button module (.fl-button). Module settings
@@ -625,8 +628,8 @@ body.bb-page .fl-module-heading .fl-heading {
 
 /* ==========================================================================
    BB content baseline — restores block-element typography stripped by
-   Tailwind preflight on .mh-bb-content (BB-built pages). Headings remain
-   driven by 02-base.css + the body.bb-page rule above.
+   Tailwind preflight on .mh-bb-content (BB-built pages). Headings use the
+   scoped vertical margins in the Beaver Builder section above.
    ========================================================================== */
 
 .mh-bb-content p {
