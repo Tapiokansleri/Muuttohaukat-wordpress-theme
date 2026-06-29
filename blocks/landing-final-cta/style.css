@@ -1,0 +1,71 @@
+/* Landing: Final CTA — solid black section. Block-scoped styles. */
+
+.mh-landing-section--final,
+.mh-landing > .mh-landing-section--final {
+    background: var(--color-black) !important;
+    color: var(--color-white);
+}
+
+.mh-landing-final {
+    text-align: center;
+    color: var(--color-white);
+}
+
+.mh-landing-final h2 {
+    color: var(--color-white);
+    max-width: 26ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mh-landing-final p {
+    max-width: 56ch;
+    margin: 0 auto var(--space-7);
+    color: var(--color-white);
+    opacity: 0.85;
+}
+
+.mh-landing-final__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: center;
+    margin-bottom: var(--space-7);
+}
+
+.mh-landing-final__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    justify-content: center;
+    align-items: center;
+}
+
+.mh-landing-final__contact a {
+    color: var(--color-white);
+    text-decoration: none;
+}
+
+.mh-landing-final__contact a:hover,
+.mh-landing-final__contact a:focus {
+    text-decoration: underline;
+}
+
+.mh-landing-final__contact i {
+    margin-right: 0.4em;
+}
+
+/* Button variants inside the black final section — keep .mh-painike-style
+   shape (padding/weight/radius/chevron) from landing.css; just override the
+   colors so they stay visible on the black background. Hover opacity from
+   the base rule handles the hover effect — no background swap needed. */
+.mh-landing-section--final .mh-landing__button--primary .wp-block-button__link {
+    background: var(--color-accent) !important;
+    color: var(--color-black) !important;
+}
+
+.mh-landing-section--final .mh-landing__button--ghost .wp-block-button__link {
+    background: transparent !important;
+    color: var(--color-white) !important;
+    box-shadow: inset 0 0 0 1px var(--color-white) !important;
+}

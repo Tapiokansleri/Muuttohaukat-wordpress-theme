@@ -1,0 +1,410 @@
+/* ==========================================================================
+   Landing Page Template — "Muuttopalvelu Paimio"
+   Shared / cross-block utilities only.
+
+   Per-block layout rules live in blocks/landing-<slug>/style.css and are
+   auto-enqueued by WordPress in BOTH the editor iframe and on the frontend
+   (declared via "style" in each block's block.json). Keep THIS file scoped
+   to:
+     - the .mh-landing page wrapper + alternation
+     - the section padding scale
+     - shared inner container + typography defaults
+     - shared eyebrow / kicker / section-head utilities
+     - the .mh-landing__button family and button-row layout (every block's
+       CTA_ROW template renders these)
+     - global helpers (.mh-landing-areas, .mh-landing-sticky-cta)
+     - core/button + core/buttons compatibility shims for the shared
+       button classes
+
+   Block-specific selectors (.mh-landing-hero__*, .mh-landing-why__*,
+   .mh-landing-cases, .mh-landing-case*, .mh-landing-split*, .mh-landing-features,
+   .mh-landing-feature*, .mh-landing-chips, .mh-landing-route*, .mh-landing-final*,
+   .mh-landing-section--final) all live in per-block files now.
+   ========================================================================== */
+
+.mh-landing {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-landing__inner {
+    width: min(100% - 2rem, 1120px);
+    margin-inline: auto;
+}
+
+/* WP wraps every core/group in an extra .wp-block-group__inner-container
+   (legacy behavior, active when the theme has no theme.json). That extra
+   wrapper turns our grids into a single-child layout and breaks the
+   hero/trust/features/why/cases/split layouts. Collapsing it with
+   display:contents keeps the children as direct grid/flex items.
+
+   Scoped to the per-block wrapper class (.wp-block-muuttohaukat-landing-*)
+   in ADDITION to .mh-landing so it works in the block editor — where the
+   .mh-landing page wrapper doesn't exist but the block wrapper class does. */
+.mh-landing .wp-block-group__inner-container,
+[class*="wp-block-muuttohaukat-landing-"] .wp-block-group__inner-container,
+.wp-block-muuttohaukat-route-calculator .wp-block-group__inner-container {
+    display: contents;
+}
+
+/* Shared typography defaults inside any landing block */
+.mh-landing h1,
+.mh-landing h2,
+.mh-landing h3,
+.mh-landing p {
+    margin-top: 0;
+}
+
+.mh-landing h1,
+.mh-landing h2 {
+    margin-bottom: var(--space-5);
+}
+
+.mh-landing h3 {
+    margin-bottom: var(--space-2);
+}
+
+.mh-landing h4 {
+    font-size: 18px;
+}
+
+.mh-landing p {
+    margin-bottom: var(--space-4);
+}
+
+.mh-landing p:last-child {
+    margin-bottom: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Section base + alternation (yellow/white)
+   ------------------------------------------------------------------------- */
+.mh-landing-hero,
+.mh-landing-section {
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+}
+
+.mh-landing > :nth-child(even) {
+    background: var(--color-accent);
+}
+
+.mh-landing > :nth-child(odd) {
+    background: var(--color-white);
+}
+
+/* -------------------------------------------------------------------------
+   Eyebrow / kicker — 12px uppercase
+   ------------------------------------------------------------------------- */
+.mh-landing-eyebrow,
+.mh-landing-kicker {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+}
+
+.mh-landing-sec-head {
+    max-width: 50%;
+    margin-bottom: 50px;
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-sec-head {
+        max-width: 100%;
+    }
+}
+
+.mh-landing-sec-head h2 {
+    margin-top: var(--space-2);
+}
+
+.mh-landing-sec-head p {
+    margin-top: var(--space-3);
+    margin-bottom: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Buttons — same visual identity as the BB "Muuttohaukat painike" module
+   (.mh-painike in fl-builder/modules/muuttohaukat-painike/css/frontend.css):
+   bold uppercase, 4px radius, 20px×50px padding, hover-chevron animation.
+   ------------------------------------------------------------------------- */
+.mh-landing__button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 50px;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    line-height: 1.2;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.mh-landing__button:hover,
+.mh-landing__button:focus-visible {
+    opacity: 0.9;
+}
+
+.mh-landing__button:active {
+    transform: scale(0.98);
+}
+
+.mh-landing__button--primary {
+    background: var(--color-accent);
+    color: var(--color-black) !important;
+}
+
+.mh-landing__button--ghost {
+    background: var(--color-black);
+    color: var(--color-white) !important;
+}
+
+.mh-landing__button-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+.mh-landing__button-row--cta {
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.mh-landing-reviews-widget {
+    margin-top: var(--space-8);
+}
+
+/* On yellow (even) sections — invert button colors so they stay visible */
+.mh-landing > :nth-child(even) .mh-landing__button--primary {
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+.mh-landing > :nth-child(even) .mh-landing__button--primary:hover,
+.mh-landing > :nth-child(even) .mh-landing__button--primary:focus {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-landing > :nth-child(even) .mh-landing__button--ghost {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-landing > :nth-child(even) .mh-landing__button--ghost:hover,
+.mh-landing > :nth-child(even) .mh-landing__button--ghost:focus {
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+/* -------------------------------------------------------------------------
+   Areas (label/list shared helper, used inline within blocks)
+   ------------------------------------------------------------------------- */
+.mh-landing-areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+}
+
+.mh-landing-areas--nearby {
+    margin-top: var(--space-5);
+}
+
+.mh-landing-area {
+    display: inline-block;
+    color: var(--color-black);
+    padding: 0;
+}
+
+.mh-landing-area--label {
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+}
+
+/* -------------------------------------------------------------------------
+   Sticky mobile CTA (overlay; not part of any single block)
+   ------------------------------------------------------------------------- */
+.mh-landing-sticky-cta {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mh-landing-sticky-cta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    .mh-landing-sticky-cta__btn {
+        padding: 1rem 0.75rem;
+        text-align: center;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .mh-landing-sticky-cta__btn--phone {
+        background: var(--color-black);
+        color: var(--color-white);
+    }
+
+    .mh-landing-sticky-cta__btn--quote {
+        background: var(--color-accent);
+        color: var(--color-black);
+    }
+
+    body {
+        padding-bottom: 3.5rem;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Small-mobile shared adjustments
+   ------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .mh-landing__inner {
+        width: min(100% - 1.25rem, 1120px);
+    }
+
+    .mh-landing__button-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mh-landing__button {
+        width: 100%;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Core/button compatibility: when the landing template uses a core/button
+   block (which renders <div class="wp-block-button"><a class="wp-block-button__link">),
+   the visible element is the inner <a>, not the wrapper <div>. Apply the
+   .mh-painike visual identity (padding, weight, radius, chevron-on-hover)
+   to that inner anchor.
+   ------------------------------------------------------------------------- */
+.wp-block-button.mh-landing__button,
+.wp-block-button.mh-landing__button--primary,
+.wp-block-button.mh-landing__button--ghost {
+    margin: 0;
+    background: transparent !important;
+    color: inherit !important;
+}
+
+.wp-block-button.mh-landing__button .wp-block-button__link,
+.wp-block-button.mh-landing__button .wp-block-button__link.wp-element-button {
+    position: relative;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 50px !important;
+    font-weight: 700 !important;
+    font-size: 0.9375rem !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    line-height: 1.2 !important;
+    border: 0 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.wp-block-button.mh-landing__button .wp-block-button__link:hover,
+.wp-block-button.mh-landing__button .wp-block-button__link:focus-visible {
+    opacity: 0.9;
+}
+
+.wp-block-button.mh-landing__button .wp-block-button__link:active {
+    transform: scale(0.98);
+}
+
+/* Hover chevron — FA6 solid chevron-right as an SVG mask, slides in
+   left-to-right. Width never changes (it's absolute-positioned). */
+.wp-block-button.mh-landing__button .wp-block-button__link::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: 0.6em;
+    height: 0.9em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E") no-repeat center / contain;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-50%) translateX(-0.4em);
+    transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.wp-block-button.mh-landing__button .wp-block-button__link:hover::after,
+.wp-block-button.mh-landing__button .wp-block-button__link:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.wp-block-button.mh-landing__button--primary .wp-block-button__link,
+.wp-block-button.mh-landing__button--primary .wp-block-button__link.wp-element-button {
+    background: var(--color-accent) !important;
+    color: var(--color-black) !important;
+}
+
+.wp-block-button.mh-landing__button--ghost .wp-block-button__link,
+.wp-block-button.mh-landing__button--ghost .wp-block-button__link.wp-element-button {
+    background: var(--color-black) !important;
+    color: var(--color-white) !important;
+}
+
+/* Invert variants on yellow (even) sections so they stay visible */
+.mh-landing > :nth-child(even) .mh-landing__button--primary .wp-block-button__link {
+    background: var(--color-black) !important;
+    color: var(--color-white) !important;
+}
+
+.mh-landing > :nth-child(even) .mh-landing__button--ghost .wp-block-button__link {
+    background: var(--color-white) !important;
+    color: var(--color-black) !important;
+}
+
+/* Buttons container (core/buttons → div.wp-block-buttons).
+   nowrap so PYYDÄ TARJOUS + TILAA HETI stay side by side even when the
+   parent column is narrow (the hero puts them in a 50/50 grid column).
+   The mobile @media rule below switches to vertical stacking ≤640px. */
+.wp-block-buttons.mh-landing__button-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-start;
+    margin-inline: 0;
+    padding-inline: 0;
+}
+
+.wp-block-buttons.mh-landing__button-row > .wp-block-button {
+    margin-inline: 0;
+}
+
+.wp-block-buttons.mh-landing__button-row--cta {
+    margin-top: 50px;
+}

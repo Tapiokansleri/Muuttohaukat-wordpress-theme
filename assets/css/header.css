@@ -1,0 +1,669 @@
+/* ==========================================================================
+   Header Styles — Muuttohaukat
+   All values use CSS custom properties set by the Customizer.
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------
+   Site Header
+   ------------------------------------------------------------------------- */
+.site-header {
+    position: relative;
+    z-index: 1000;
+    background-color: var(--header-bg, #ffffff);
+    color: var(--header-color, #1a1a1a);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+body.header-sticky .site-header {
+    position: sticky;
+    top: 0;
+}
+
+/* When logged in, offset for WP admin bar */
+body.admin-bar.header-sticky .site-header {
+    top: 32px;
+}
+@media (max-width: 768px) {
+    body.admin-bar.header-sticky .site-header {
+        top: 46px;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Header Inner — CSS Grid Layout
+   ------------------------------------------------------------------------- */
+.header-inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    max-width: var(--header-max-width, 1400px);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    min-height: var(--header-height, 80px);
+}
+
+/* Full-width mode */
+body.header-full-width .header-inner {
+    max-width: none;
+}
+
+/* -------------------------------------------------------------------------
+   Site Branding (Logo)
+   ------------------------------------------------------------------------- */
+.site-branding {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    max-height: var(--header-height, 80px);
+    overflow: hidden;
+}
+
+.site-logo,
+.site-branding .custom-logo-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    max-width: var(--logo-max-width, 200px);
+    max-height: 100%;
+}
+
+.site-logo svg,
+.site-branding .custom-logo {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(var(--header-height, 80px) - 16px);
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.site-title {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: inherit;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile Menu Toggle (Hamburger)
+   ------------------------------------------------------------------------- */
+.mobile-menu-toggle {
+    display: none;
+    grid-column: 3;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--header-color, #1a1a1a);
+    z-index: 1001;
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 24px;
+    height: 24px;
+}
+
+.hamburger-icon__line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Hamburger → X animation */
+.mobile-menu-toggle[aria-expanded="true"] .hamburger-icon__line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.mobile-menu-toggle[aria-expanded="true"] .hamburger-icon__line:nth-child(2) {
+    opacity: 0;
+}
+.mobile-menu-toggle[aria-expanded="true"] .hamburger-icon__line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* -------------------------------------------------------------------------
+   Desktop Navigation
+   ------------------------------------------------------------------------- */
+.main-navigation {
+    grid-column: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+}
+
+.nav-menu li {
+    position: relative;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1.1rem;
+    color: var(--nav-color, #1a1a1a);
+    text-decoration: none;
+    font-size: var(--nav-font-size, var(--nav-font-size-default));
+    font-weight: var(--font-normal);
+    text-transform: var(--nav-transform, uppercase);
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.nav-menu a:hover,
+.nav-menu a:focus {
+    color: var(--nav-hover, var(--color-accent));
+}
+
+.nav-menu .current-menu-item > a,
+.nav-menu .current-menu-ancestor > a {
+    color: var(--nav-active, var(--color-accent));
+}
+
+/* Dropdown indicator arrow (desktop: inline ::after; mobile: dedicated button) */
+.nav-menu .menu-item-has-children > a::after {
+    content: "";
+    display: inline-block;
+    width: 0.4em;
+    height: 0.4em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    margin-left: 0.25rem;
+    margin-bottom: 0.15em;
+    transition: transform 0.2s ease;
+}
+
+/* Injected via JS for every .menu-item-has-children. Hidden on desktop —
+   hover handles open/close there. Shown on mobile (see overlay block). */
+.submenu-toggle {
+    display: none;
+}
+
+/* -------------------------------------------------------------------------
+   Submenus (Dropdowns)
+   ------------------------------------------------------------------------- */
+.nav-menu .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    min-width: 220px;
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+    background-color: var(--submenu-bg, #ffffff);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.nav-menu li:hover > .sub-menu,
+.nav-menu li.menu-item--open > .sub-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.nav-menu .sub-menu a {
+    padding: 0.5rem 1rem;
+    font-size: var(--nav-submenu-font-size);
+    color: var(--submenu-color, #1a1a1a);
+    text-transform: none;
+    font-weight: var(--font-normal);
+}
+
+.nav-menu .sub-menu a:hover {
+    color: var(--nav-hover, var(--color-accent));
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* -------------------------------------------------------------------------
+   Header Extras (Desktop CTA)
+   ------------------------------------------------------------------------- */
+.header-extras {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+}
+
+.header-cta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.header-cta__btn {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    font-size: var(--button-font-size);
+    line-height: var(--button-line-height);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    height: var(--button-height);
+    min-height: var(--button-height);
+    padding-left: var(--button-padding-x);
+    padding-right: var(--button-padding-x);
+    border-width: 1px;
+    border-color: transparent;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+                opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    animation: button-pop 0.25s ease-out;
+}
+
+@keyframes button-pop {
+    0%   { transform: scale(0.98); }
+    40%  { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.header-cta__btn:hover {
+    opacity: 0.9;
+}
+
+/* FA6 chevron-right that slides in left-to-right on hover. Shared visual
+   identity with the .mh-painike BB module — see fl-builder/modules/
+   muuttohaukat-painike/css/frontend.css. */
+.header-cta__btn::after {
+    content: "";
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    width: 0.6em;
+    height: 0.9em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E") no-repeat center / contain;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-50%) translateX(-0.4em);
+    transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.header-cta__btn:hover::after,
+.header-cta__btn:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.header-cta__btn--primary {
+    background-color: var(--cta-primary-bg, #f3e200);
+    color: var(--cta-primary-color, #000000);
+}
+
+.header-cta__btn--secondary {
+    background-color: var(--cta-secondary-bg, #000000);
+    color: var(--cta-secondary-color, #ffffff);
+}
+
+/* Mobile-only elements — hidden on desktop */
+.mobile-menu-header {
+    display: none;
+}
+.mobile-menu-branding {
+    display: none;
+}
+
+.mobile-header-extras {
+    display: none;
+}
+
+.mobile-header-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 0;
+}
+
+.mobile-header-cta .header-cta__btn {
+    justify-content: center;
+    width: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Desktop nav progressive scaling
+
+   Nav links, header padding, and CTA buttons step up through three stages
+   so there is no abrupt size jump at any single breakpoint:
+     lg  (1024–xl)  tightest desktop layout
+     xl  (1280–2xl) intermediate spacing
+     2xl (≥1536)   default values from base rules above (largest)
+
+   Bands use the -0.02 max-width convention to avoid the boundary pixel
+   applying two bands at once.
+   ------------------------------------------------------------------------- */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+    .header-inner {
+        gap: 0.5rem;
+        padding: 0 1rem;
+    }
+
+    .nav-menu a {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8125rem;
+        letter-spacing: 0;
+    }
+
+    .header-cta__btn {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1535.98px) {
+    .header-inner {
+        gap: 0.75rem;
+        padding: 0 1.25rem;
+    }
+
+    .nav-menu a {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.875rem;
+        letter-spacing: 0;
+    }
+
+    .header-cta__btn {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        font-size: 0.8125rem;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Mobile Responsive
+   1023.98 (not 1024) to avoid overlap with the tablet-range tightening above,
+   which now starts at min-width:1024.
+   ------------------------------------------------------------------------- */
+@media (max-width: 1023.98px) {
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+    }
+
+    .header-extras {
+        display: none;
+    }
+
+    .header-inner {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    /* Shrink header logo on mobile */
+    .site-branding .site-logo svg,
+    .site-branding .custom-logo {
+        max-height: 32px;
+    }
+
+    .site-logo,
+    .site-branding .custom-logo-link {
+        max-width: 100px;
+    }
+
+    /* Navigation becomes overlay */
+    .main-navigation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999;
+        background-color: var(--mobile-menu-bg, var(--header-bg, #ffffff));
+        color: var(--mobile-menu-color, var(--header-color, #1a1a1a));
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 1.5rem;
+        padding-top: 1.5rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .main-navigation.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Mobile menu header (logo + close button) */
+    .mobile-menu-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .mobile-menu-branding {
+        display: flex;
+        align-items: center;
+        flex: 0 0 auto;
+    }
+
+    .mobile-menu-branding .site-logo,
+    .mobile-menu-branding .custom-logo-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        max-width: 160px;
+    }
+
+    .mobile-menu-branding .site-logo svg,
+    .mobile-menu-branding .custom-logo {
+        display: block;
+        width: auto;
+        height: auto;
+        max-height: 32px;
+        max-width: 100%;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .mobile-menu-close {
+        background: none;
+        border: none;
+        font-size: var(--mobile-menu-close-font-size);
+        line-height: var(--mobile-menu-close-line-height);
+        cursor: pointer;
+        color: inherit;
+        padding: 0.25rem 0.5rem;
+        flex: 0 0 auto;
+    }
+
+    /* When mobile menu is open, hide header-bar duplicates so only the
+       overlay's own logo + close button are visible. */
+    body.mobile-menu-open .site-branding,
+    body.mobile-menu-open .mobile-menu-toggle {
+        display: none;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+    }
+
+    .nav-menu a {
+        padding: 0.75rem 0;
+        font-size: var(--nav-mobile-font-size);
+        color: var(--mobile-menu-link-color, var(--mobile-menu-color, var(--nav-color, #1a1a1a)));
+        border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    }
+
+    .nav-menu a:hover,
+    .nav-menu a:focus {
+        color: var(--mobile-menu-link-hover, var(--nav-hover, var(--color-accent)));
+    }
+
+    .nav-menu .current-menu-item > a,
+    .nav-menu .current-menu-ancestor > a {
+        color: var(--mobile-menu-link-color, var(--mobile-menu-color, var(--nav-color, #1a1a1a)));
+        font-weight: var(--font-bold);
+    }
+
+    .nav-menu .sub-menu .current-menu-item > a {
+        color: var(--mobile-menu-link-color, var(--mobile-menu-color, var(--nav-color, #1a1a1a)));
+        font-weight: var(--font-bold);
+    }
+
+    /* Items with children: split into "link on left / toggle button on right",
+       sub-menu wraps to the next row. Item separator moves from the link to
+       the li so it spans the full width under both the link and the button. */
+    .nav-menu > .menu-item-has-children {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    }
+
+    .nav-menu > .menu-item-has-children > a {
+        flex: 1 1 auto;
+        border-bottom: none;
+    }
+
+    /* Suppress the inline ::after chevron on mobile — the .submenu-toggle
+       button below takes over as the visible indicator. */
+    .nav-menu > .menu-item-has-children > a::after {
+        display: none;
+    }
+
+    .nav-menu > .menu-item-has-children > .sub-menu {
+        flex: 1 0 100%;
+    }
+
+    /* Borderless finger-friendly submenu toggle (44x44 hit area preserved) */
+    .submenu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 44px;
+        height: 44px;
+        margin: auto 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .submenu-toggle:hover,
+    .submenu-toggle:focus-visible {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Chevron — same construction as the desktop ::after, rotates when open */
+    .submenu-toggle::before {
+        content: "";
+        display: block;
+        width: 0.5em;
+        height: 0.5em;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: translateY(-2px) rotate(45deg);
+        transition: transform 0.2s ease;
+    }
+
+    .menu-item--open > .submenu-toggle::before {
+        transform: translateY(2px) rotate(-135deg);
+    }
+
+    /* Mobile submenus — accordion style */
+    .nav-menu .sub-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        border-radius: 0;
+        background: transparent;
+        padding: 0 0 0 1rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .nav-menu li.menu-item--open > .sub-menu {
+        max-height: 500px;
+    }
+
+    .nav-menu .sub-menu a {
+        font-size: var(--nav-mobile-submenu-font-size);
+        padding: 0.5rem 0;
+    }
+
+    /* Show mobile CTA */
+    .mobile-header-extras {
+        display: block;
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Skip Link
+   ------------------------------------------------------------------------- */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    z-index: 9999;
+    padding: 0.75rem 1.5rem;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-weight: var(--font-semibold);
+}
+
+.skip-link:focus {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------
+   Screen Reader Text
+   ------------------------------------------------------------------------- */
+.screen-reader-text {
+    clip: rect(1px, 1px, 1px, 1px);
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    word-wrap: normal !important;
+}

@@ -1,0 +1,336 @@
+/* ==========================================================================
+   Base Styles - Muuttohaukat
+
+   Global element defaults. Keep content-specific rules in content.css and
+   component-specific rules in their own files.
+   ========================================================================== */
+
+html {
+    font-size: var(--root-font-size);
+    /* Sticky header (.site-header on body.header-sticky) sits at top: 0, so
+       anchor jumps and browser scroll-restoration would land content
+       behind it. Reserving the header height as scroll padding pushes
+       targets down so they're never hidden behind the header. */
+    scroll-padding-top: var(--header-height, 80px);
+}
+
+/* When the WP admin bar is visible the sticky header itself shifts down
+   (see header.css), so the scroll offset has to grow to match. */
+body.admin-bar {
+    scroll-padding-top: calc(var(--header-height, 80px) + 32px);
+}
+@media (max-width: 768px) {
+    body.admin-bar {
+        scroll-padding-top: calc(var(--header-height, 80px) + 46px);
+    }
+}
+
+body {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--body-font-size);
+    line-height: var(--body-line-height);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: var(--font-bold);
+    color: inherit;
+}
+
+h1 {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-12);
+    font-size: var(--text-4xl);
+    line-height: var(--leading-tight);
+}
+
+h2 {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-12);
+    font-size: var(--heading-1-size);
+    line-height: var(--heading-1-leading);
+}
+
+h3 {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-6);
+    font-size: var(--heading-2-size);
+    line-height: var(--heading-2-leading);
+}
+
+h4 {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
+    font-size: 18px;
+    line-height: var(--heading-3-leading);
+}
+
+h5 {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
+    font-size: var(--heading-3-size);
+    line-height: var(--heading-3-leading);
+}
+
+h6 {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
+    font-size: var(--heading-4-size);
+    line-height: var(--heading-4-leading);
+}
+
+p {
+    font-size: var(--body-font-size);
+    line-height: var(--body-line-height);
+}
+
+h1.card-title,
+h2.card-title,
+h3.card-title,
+h4.card-title,
+h5.card-title,
+h6.card-title {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+p.buttons > a {
+    min-height: var(--button-height);
+    height: var(--button-height);
+    padding-left: var(--button-padding-x);
+    padding-right: var(--button-padding-x);
+    font-size: var(--button-font-size);
+    line-height: var(--button-line-height);
+}
+
+.fl-button-group .fl-button,
+.fl-button-group .fl-button:visited,
+.fl-button-group .fl-button:hover,
+.fl-button-group .fl-button:focus,
+.fl-button-group .fl-button:active {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-weight: var(--font-bold) !important;
+}
+
+.fl-post-grid {
+    color: var(--color-text);
+}
+
+.fl-post-grid > ul,
+.mh-gutenberg .fl-post-grid > ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    gap: var(--post-grid-gap);
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.fl-post-grid .fl-post-column,
+.mh-gutenberg .fl-post-grid .fl-post-column {
+    display: block;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+.fl-post-grid .fl-post-column::marker {
+    content: "" !important;
+}
+
+.fl-post-grid .fl-post-grid-post {
+    height: 100%;
+    overflow: hidden;
+    background: var(--post-grid-card-bg);
+    border: 1px solid var(--post-grid-card-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.fl-post-grid .fl-post-grid-image,
+.fl-post-grid .fl-post-grid-image a,
+.fl-post-grid .fl-post-grid-image picture {
+    display: block;
+    margin: 0 !important;
+}
+
+.fl-post-grid .fl-post-grid-image img,
+.mh-gutenberg.prose .fl-post-grid :where(img):not(:where([class~="not-prose"] *)) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 !important;
+    border-radius: 0;
+}
+
+.fl-post-grid .fl-post-grid-text {
+    padding: var(--post-grid-card-padding);
+}
+
+.fl-post-grid .fl-post-grid-title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--post-grid-title-size);
+    font-weight: var(--font-normal);
+    line-height: var(--leading-snug);
+}
+
+.fl-post-grid .fl-post-grid-title a {
+    color: var(--post-grid-title-color);
+    text-decoration: none;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.fl-post-grid .fl-post-grid-title a:hover,
+.fl-post-grid .fl-post-grid-title a:focus {
+    color: var(--post-grid-title-hover-color);
+    background: var(--post-grid-title-hover-bg);
+}
+
+.fl-post-grid .fl-post-grid-meta {
+    color: var(--post-grid-meta-color);
+    font-size: var(--post-grid-meta-size);
+    line-height: var(--leading-normal);
+}
+
+.wp-block-image figcaption,
+.wrapper > .wp-block-image figcaption {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+}
+
+@media (max-width: 768px) {
+    h1 {
+        margin-top: var(--space-8);
+        margin-bottom: var(--space-6);
+    }
+
+    h2,
+    h3 {
+        margin-top: var(--space-6);
+        margin-bottom: var(--space-4);
+    }
+
+    h4,
+    h5,
+    h6 {
+        margin-top: var(--space-4);
+        margin-bottom: var(--space-3);
+    }
+
+    p {
+        margin-top: 0;
+        margin-bottom: var(--space-4);
+    }
+}
+
+/* ==========================================================================
+   Buttons — yellow + black only (overrides DaisyUI palette in tailwind.css)
+   ========================================================================== */
+:root {
+    --p: 56 100% 50%;
+    --pf: 52 100% 45%;
+    --pc: 0 0% 0%;
+
+    --s: 0 0% 0%;
+    --sf: 0 0% 20%;
+    --sc: 0 0% 100%;
+
+    --a: 0 0% 0%;
+    --af: 0 0% 20%;
+    --ac: 0 0% 100%;
+
+    --n: 0 0% 0%;
+    --nf: 0 0% 20%;
+    --nc: 0 0% 100%;
+}
+
+.btn-primary,
+.btn-info,
+.btn-success,
+.btn-warning {
+    background-color: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.btn-active,
+.btn-info:hover,
+.btn-success:hover,
+.btn-warning:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: var(--color-black);
+}
+
+.btn-secondary,
+.btn-accent,
+.btn-error {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border-color: var(--color-black);
+}
+
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-secondary.btn-active,
+.btn-accent:hover,
+.btn-accent:active,
+.btn-accent.btn-active,
+.btn-error:hover {
+    background-color: #333333;
+    border-color: #333333;
+    color: var(--color-white);
+}
+
+/* Legacy content button rows — first yellow, second black */
+p.buttons > a:first-of-type,
+p.buttons > a:first-of-type:hover,
+p.buttons > a:first-of-type.btn-active {
+    background-color: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+}
+
+p.buttons > a:first-of-type:hover,
+p.buttons > a:first-of-type.btn-active {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+}
+
+p.buttons > a:nth-of-type(2),
+p.buttons > a:nth-of-type(2):hover,
+p.buttons > a:nth-of-type(2).btn-active {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border-color: var(--color-black);
+}
+
+p.buttons > a:nth-of-type(2):hover,
+p.buttons > a:nth-of-type(2).btn-active {
+    background-color: #333333;
+    border-color: #333333;
+}
+
+.kansleri-floating-cta-banner .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-black);
+    border-color: var(--color-accent);
+}
+
+.kansleri-floating-cta-banner .btn-secondary {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border-color: var(--color-black);
+}

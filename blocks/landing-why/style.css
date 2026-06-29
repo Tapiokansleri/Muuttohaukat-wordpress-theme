@@ -1,0 +1,54 @@
+/* Landing: Why — block-scoped styles. */
+
+.mh-landing-why {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8);
+}
+
+.mh-landing-why__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.mh-landing-why__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: 0;
+}
+
+/* FA icon as ::before pseudo on the title — modifier class on the parent
+   picks the codepoint. Works identically in editor and frontend because
+   FA's CSS bundle is enqueued in both contexts. */
+.mh-landing-why__title::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-style: normal;
+    color: var(--color-black);
+    flex-shrink: 0;
+    width: 1.1em;
+    line-height: 1;
+    text-align: center;
+}
+
+.mh-landing-why__item--award         .mh-landing-why__title::before { content: "\f559"; }
+.mh-landing-why__item--shield-halved .mh-landing-why__title::before { content: "\f3ed"; }
+.mh-landing-why__item--clock         .mh-landing-why__title::before { content: "\f017"; }
+.mh-landing-why__item--receipt       .mh-landing-why__title::before { content: "\f543"; }
+.mh-landing-why__item--location-dot  .mh-landing-why__title::before { content: "\f3c5"; }
+.mh-landing-why__item--thumbs-up     .mh-landing-why__title::before { content: "\f164"; }
+
+@media (max-width: 1024px) {
+    .mh-landing-why {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-7);
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing-why {
+        grid-template-columns: 1fr;
+    }
+}

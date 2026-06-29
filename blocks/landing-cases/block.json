@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-cases",
+  "title": "Landing: Esimerkkimuutot",
+  "category": "landing-page",
+  "icon": "format-quote",
+  "description": "Muuttopalvelu Paimio – example cases section.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": { "anchor": { "type": "string", "default": "esimerkit" } },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

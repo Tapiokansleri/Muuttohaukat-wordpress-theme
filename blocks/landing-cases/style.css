@@ -1,0 +1,57 @@
+/* Landing: Cases — block-scoped styles. */
+
+.mh-landing-cases {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.mh-landing-case {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+article.mh-landing-case {
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.mh-landing-case__tag {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mh-landing-case__stars {
+    color: var(--color-black);
+    letter-spacing: 0.15em;
+}
+
+/* On white (odd) sections the stars need to be visible — flip to brand
+   accent so they don't fade into the background. */
+.mh-landing > :nth-child(odd) .mh-landing-case__stars {
+    color: var(--color-accent);
+}
+
+.mh-landing-case__quote {
+    margin: 0;
+    padding: 0;
+    font-style: italic;
+    background: transparent;
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-cases {
+        display: block;
+    }
+
+    .mh-landing-case {
+        margin-bottom: var(--space-8);
+    }
+
+    .mh-landing-case:last-child {
+        margin-bottom: 0;
+    }
+}

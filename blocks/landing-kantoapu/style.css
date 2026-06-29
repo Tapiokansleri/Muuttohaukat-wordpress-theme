@@ -1,0 +1,33 @@
+/* Landing: Kantoapu (split layout) — block-scoped styles. */
+
+.mh-landing-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 100px;
+    align-items: center;
+}
+
+.mh-landing-split .mh-landing-sec-head {
+    max-width: 100%;
+    margin: 0;
+}
+
+.mh-landing-split__media {
+    margin: 0;
+}
+
+.mh-landing-split__img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-split {
+        display: block;
+    }
+
+    .mh-landing-split__media {
+        margin-top: var(--space-7);
+    }
+}

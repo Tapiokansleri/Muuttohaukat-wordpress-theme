@@ -1,0 +1,176 @@
+/* ==========================================================================
+   Design Tokens - Muuttohaukat
+
+   Start here when changing the visual system. Component files should consume
+   these custom properties instead of hardcoding typography, spacing, or color.
+   ========================================================================== */
+
+/* ==========================================================================
+   Responsive breakpoints (Tailwind-aligned, mobile-first)
+
+   Use ONLY these values in @media queries across the theme.
+   CSS @media does not accept var() — values are duplicated by design.
+
+     sm    640px   small tablets / large phones
+     md    768px   tablets, header collapse point
+     lg   1024px   small desktops, nav transitions
+     xl   1280px   standard desktops
+     2xl  1536px   wide desktops / ultrawide
+
+   For paired min/max bands, use the corresponding -0.02 value on the max side
+   (e.g. max-width: 1023.98px) to avoid overlap at the boundary pixel.
+   ========================================================================== */
+
+:root {
+    --root-font-size: 16px;
+
+    /* Typography */
+    --font-body: MontserratVariable, sans-serif;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-md: 1.0625rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.375rem;
+    --text-2xl: 1.75rem;
+    --text-3xl: 2.25rem;
+    --text-4xl: 3rem;
+
+    --leading-tight: 1.15;
+    --leading-snug: 1.3;
+    --leading-normal: 1.55;
+    --leading-relaxed: 1.75;
+
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    --body-font-size: var(--text-lg);
+    --body-line-height: var(--leading-relaxed);
+    --content-font-size: var(--text-md);
+    --content-line-height: var(--leading-relaxed);
+
+    --heading-1-size: var(--text-3xl);
+    --heading-2-size: var(--text-2xl);
+    --heading-3-size: var(--text-xl);
+    --heading-4-size: var(--text-lg);
+    --heading-5-size: var(--text-lg);
+    --heading-6-size: var(--text-md);
+
+    --heading-1-leading: 1.2;
+    --heading-2-leading: var(--leading-snug);
+    --heading-3-leading: 1.4;
+    --heading-4-leading: 1.4;
+
+    /* Color */
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-accent: #ffed00;
+    --color-accent-hover: #e6d500;
+
+    --color-text: var(--color-black);
+    --color-content-text: var(--color-black);
+    --color-muted: #6b7280;
+    --color-border: #e5e7eb;
+    --color-surface-subtle: #f9fafb;
+    --color-code-bg: #f3f4f6;
+    --color-pre-bg: #1f2937;
+    --color-pre-text: var(--color-white);
+    --color-link: var(--color-black);
+    --color-link-hover: var(--color-black);
+
+    --post-grid-card-bg: var(--color-white);
+    --post-grid-card-border: var(--color-border);
+    --post-grid-title-color: var(--color-black);
+    --post-grid-title-hover-color: var(--color-black);
+    --post-grid-title-hover-bg: var(--color-accent);
+    --post-grid-meta-color: var(--color-black);
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 1.75rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    /* Radius */
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+
+    /* Components */
+    --button-font-size: var(--text-sm);
+    --button-line-height: 1em;
+    --button-font-weight: var(--font-semibold);
+    --button-height: 3rem;
+    --button-padding-x: var(--space-4);
+
+    --content-button-font-size: var(--text-sm);
+    --content-button-padding-y: 0.65rem;
+    --content-button-padding-x: var(--space-6);
+
+    --inline-code-font-size: 0.875em;
+    --nav-font-size-default: 0.9375rem;
+    --nav-mobile-font-size: 1rem;
+    --nav-mobile-submenu-font-size: 0.875rem;
+    --nav-submenu-font-size: 0.9em;
+    --mobile-menu-close-font-size: 2rem;
+    --mobile-menu-close-line-height: 1;
+
+    --post-grid-gap: var(--space-6);
+    --post-grid-card-padding: var(--space-5);
+    --post-grid-title-size: var(--text-2xl);
+    --post-grid-meta-size: var(--text-sm);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --text-xs: 0.625rem;
+        --text-sm: 0.6875rem;
+        --text-base: 0.75rem;
+        --text-md: 0.8125rem;
+        --text-lg: 0.875rem;
+        --text-xl: 1rem;
+        --text-2xl: 1.125rem;
+        --text-3xl: 1.3125rem;
+        --text-4xl: 1.3125rem;
+
+        --leading-normal: 1.45;
+        --leading-relaxed: 1.58;
+
+        --body-font-size: var(--text-md);
+        --body-line-height: var(--leading-relaxed);
+        --content-font-size: var(--text-md);
+
+        --heading-1-size: var(--text-3xl);
+        --heading-2-size: var(--text-2xl);
+        --heading-3-size: var(--text-xl);
+        --heading-4-size: var(--text-lg);
+        --heading-5-size: var(--text-md);
+        --heading-6-size: var(--text-md);
+
+        --button-font-size: var(--text-sm);
+        --button-height: 2.5rem;
+        --button-padding-x: var(--space-3);
+
+        --content-button-font-size: var(--text-sm);
+        --content-button-padding-y: 0.55rem;
+        --content-button-padding-x: var(--space-4);
+
+        --nav-mobile-font-size: 0.8125rem;
+        --nav-mobile-submenu-font-size: 0.75rem;
+        --mobile-menu-close-font-size: 1.5rem;
+
+        --post-grid-gap: var(--space-4);
+        --post-grid-card-padding: var(--space-4);
+        --post-grid-title-size: var(--text-xl);
+        --post-grid-meta-size: var(--text-sm);
+    }
+}

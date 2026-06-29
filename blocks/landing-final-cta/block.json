@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-final-cta",
+  "title": "Landing: Loppu-CTA",
+  "category": "landing-page",
+  "icon": "megaphone",
+  "description": "Muuttopalvelu Paimio – final call-to-action section.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": { "anchor": { "type": "string", "default": "tarjous" } },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

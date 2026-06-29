@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/buttons",
+  "title": "Muuttohaukat buttons",
+  "category": "landing-page",
+  "icon": "button",
+  "description": "Yksi tai kaksi vierekkäistä Muuttohaukat-painiketta (musta / keltainen) ja chevron-hover.",
+  "supports": {
+    "html": false,
+    "multiple": true,
+    "reusable": true,
+    "align": false,
+    "anchor": false
+  },
+  "attributes": {
+    "button1Text":   { "type": "string", "default": "Pyydä tarjous" },
+    "button1Url":    { "type": "string", "default": "#tarjous" },
+    "button1Target": { "type": "string", "default": "_self" },
+    "button1Color":  { "type": "string", "default": "yellow" },
+    "button2Text":   { "type": "string", "default": "Tilaa heti" },
+    "button2Url":    { "type": "string", "default": "https://tilaamuutto.fi" },
+    "button2Target": { "type": "string", "default": "_blank" },
+    "button2Color":  { "type": "string", "default": "black" }
+  },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css"
+}

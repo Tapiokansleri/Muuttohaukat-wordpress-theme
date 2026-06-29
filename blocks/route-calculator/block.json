@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/route-calculator",
+  "title": "Reittilaskuri (Paimio)",
+  "category": "design",
+  "description": "Interactive route calculator + preset Paimio distances grid.",
+  "supports": {
+    "html": false,
+    "align": false,
+    "multiple": false
+  },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

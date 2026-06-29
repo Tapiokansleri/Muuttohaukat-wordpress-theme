@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build theme ZIP
+        run: |
+          mkdir -p build/muuttohaukat
+          rsync -a ./ build/muuttohaukat/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'build' \
+            --exclude '*.zip'
+          cd build && zip -r ../muuttohaukat.zip muuttohaukat
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: muuttohaukat.zip
+          generate_release_notes: true
