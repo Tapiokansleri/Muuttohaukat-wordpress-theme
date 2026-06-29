@@ -36,32 +36,7 @@
 	transform: scale(0.98);
 }
 
-/* Chevron appears after the text on hover. Absolutely positioned so the
-   button's outer width never changes — only opacity + translateX animate. */
-.mh-painike::after {
-	/* Font Awesome 6 solid chevron-right, inlined as an SVG mask so it
-	   inherits currentColor (black on yellow, white on black) and doesn't
-	   require the FA bundle, which only loads on landing pages. */
-	content: "";
-	position: absolute;
-	right: 1rem;
-	top: 50%;
-	width: 0.6em;
-	height: 0.9em;
-	background-color: currentColor;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E") no-repeat center / contain;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E") no-repeat center / contain;
-	pointer-events: none;
-	opacity: 0;
-	transform: translateY(-50%) translateX(-0.4em);
-	transition: opacity 0.2s ease, transform 0.25s ease;
-}
-
-.mh-painike:hover::after,
-.mh-painike:focus-visible::after {
-	opacity: 1;
-	transform: translateY(-50%) translateX(0);
-}
+/* Hover chevron — assets/css/03-button-chevron.css */
 
 .mh-painike--yellow {
 	background-color: #f3e200;

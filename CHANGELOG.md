@@ -4,6 +4,15 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.4] - 2026-06-29
+
+### Fixed
+
+- Button hover chevron: label stays centered at rest; on hover it shifts left and the chevron appears on the right without changing button width
+- Shared chevron styles in `assets/css/03-button-chevron.css` (header CTAs, Gutenberg buttons, landing, Beaver Builder painike)
+
+[1.0.4]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.4
+
 ## [1.0.3] - 2026-06-29
 
 ### Fixed

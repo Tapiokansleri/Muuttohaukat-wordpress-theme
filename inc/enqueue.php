@@ -59,6 +59,13 @@ add_action('wp_enqueue_scripts', function () use ($localizeData) {
     wp_enqueue_style('muuttohaukat-landing', $themeUri . '/assets/css/landing.css', ['muuttohaukat-base'], $version);
   }
 
+  // 8. Shared button hover chevron — load last so hover padding wins over landing/BB rules
+  $chevron_deps = ['muuttohaukat-content'];
+  if ($should_load_landing) {
+    $chevron_deps[] = 'muuttohaukat-landing';
+  }
+  wp_enqueue_style('muuttohaukat-button-chevron', $themeUri . '/assets/css/03-button-chevron.css', $chevron_deps, $version);
+
   wp_enqueue_script('muuttohaukat-client', $themeUri . '/assets/js/client.js', [], $version, true);
   wp_localize_script('muuttohaukat-client', 'wptheme', $localizeData);
 
