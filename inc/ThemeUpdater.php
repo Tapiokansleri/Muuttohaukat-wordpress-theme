@@ -14,11 +14,8 @@ class GitHubThemeUpdater {
   /** @var string GitHub owner/repo. */
   private $repo = 'Tapiokansleri/Muuttohaukat-wordpress-theme';
 
-  /** @var string Theme directory slug. */
+  /** @var string Theme directory slug (parent template folder). */
   private $theme_slug;
-
-  /** @var string Current theme version. */
-  private $version;
 
   /** @var string Transient key for caching release data. */
   private $cache_key = 'muuttohaukat_github_release';
@@ -28,44 +25,88 @@ class GitHubThemeUpdater {
 
   /**
    * @param string $theme_slug Theme directory name.
-   * @param string $version    Current version from style.css.
    */
-  public function __construct($theme_slug, $version) {
+  public function __construct($theme_slug) {
     $this->theme_slug = $theme_slug;
-    $this->version    = $version;
 
-    add_filter('pre_set_site_transient_update_themes', [$this, 'check_update']);
+    add_filter('pre_set_site_transient_update_themes', [$this, 'inject_update']);
+    add_filter('site_transient_update_themes', [$this, 'inject_update']);
     add_filter('themes_api', [$this, 'theme_info'], 10, 3);
     add_filter('upgrader_post_install', [$this, 'post_install'], 10, 3);
+
+    add_action('load-update-core.php', [$this, 'refresh_release_cache']);
+    add_action('load-themes.php', [$this, 'refresh_release_cache']);
+    add_action('load-update.php', [$this, 'refresh_release_cache']);
+  }
+
+  /**
+   * Clear cached GitHub release data on update admin screens.
+   */
+  public function refresh_release_cache() {
+    if (!current_user_can('update_themes')) {
+      return;
+    }
+
+    delete_transient($this->cache_key);
+  }
+
+  /**
+   * Whether this theme directory is installed.
+   */
+  private function theme_is_installed() {
+    return wp_get_theme($this->theme_slug)->exists();
+  }
+
+  /**
+   * Installed version from style.css.
+   *
+   * @return string|null
+   */
+  private function get_installed_version() {
+    if (!$this->theme_is_installed()) {
+      return null;
+    }
+
+    return wp_get_theme($this->theme_slug)->get('Version');
   }
 
   /**
    * Fetch latest release data from GitHub (cached).
    *
+   * @param bool $force Skip cache.
    * @return object|false
    */
-  private function get_release() {
-    $cached = get_transient($this->cache_key);
-    if ($cached !== false) {
-      return $cached ?: false;
+  private function get_release($force = false) {
+    if (!$force) {
+      $cached = get_transient($this->cache_key);
+      if ($cached !== false) {
+        return $cached ?: false;
+      }
     }
 
     $url = sprintf('https://api.github.com/repos/%s/releases/latest', $this->repo);
     $response = wp_remote_get($url, [
+      'timeout' => 15,
       'headers' => [
-        'Accept' => 'application/vnd.github+json',
+        'Accept'     => 'application/vnd.github+json',
+        'User-Agent' => sprintf('Muuttohaukat-Theme-Updater/%s; %s', $this->get_installed_version() ?: 'unknown', home_url('/')),
       ],
-      'timeout' => 10,
     ]);
 
-    if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
-      set_transient($this->cache_key, 0, 300);
+    if (is_wp_error($response)) {
+      set_transient($this->cache_key, 0, MINUTE_IN_SECONDS * 5);
+      return false;
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    if ($code !== 200) {
+      set_transient($this->cache_key, 0, MINUTE_IN_SECONDS * 5);
       return false;
     }
 
     $body = json_decode(wp_remote_retrieve_body($response));
     if (empty($body->tag_name)) {
-      set_transient($this->cache_key, 0, 300);
+      set_transient($this->cache_key, 0, MINUTE_IN_SECONDS * 5);
       return false;
     }
 
@@ -74,37 +115,80 @@ class GitHubThemeUpdater {
   }
 
   /**
-   * Inject update info into WordPress theme update transient.
+   * Build update payload when a newer GitHub release exists.
    *
-   * @param object $transient Update transient.
-   * @return object
+   * @return array<string, string>|false
    */
-  public function check_update($transient) {
-    if (empty($transient->checked) || !isset($transient->checked[$this->theme_slug])) {
-      return $transient;
+  private function get_update_payload() {
+    $installed_version = $this->get_installed_version();
+    if ($installed_version === null) {
+      return false;
     }
 
     $release = $this->get_release();
     if (!$release || empty($release->tag_name)) {
-      return $transient;
+      return false;
     }
 
     $remote_version = ltrim($release->tag_name, 'vV');
-    if (!version_compare($remote_version, $this->version, '>')) {
-      return $transient;
+    if (!version_compare($remote_version, $installed_version, '>')) {
+      return false;
     }
 
     $zip_url = $this->get_zip_url($release);
     if (!$zip_url) {
-      return $transient;
+      return false;
     }
 
-    $transient->response[$this->theme_slug] = [
+    return [
       'theme'       => $this->theme_slug,
       'new_version' => $remote_version,
       'url'         => sprintf('https://github.com/%s', $this->repo),
       'package'     => $zip_url,
     ];
+  }
+
+  /**
+   * Inject GitHub update info into the theme update transient.
+   *
+   * Hooked both when WP saves the transient and when it is read, because
+   * wp_update_themes() often returns early (cache timeout / WP.org failure)
+   * without ever running pre_set_site_transient_update_themes.
+   *
+   * @param false|object $transient Update transient.
+   * @return object
+   */
+  public function inject_update($transient) {
+    if (!is_object($transient)) {
+      $transient = new \stdClass();
+    }
+
+    if (!isset($transient->response) || !is_array($transient->response)) {
+      $transient->response = [];
+    }
+
+    if (!isset($transient->checked) || !is_array($transient->checked)) {
+      $transient->checked = [];
+    }
+
+    if (!isset($transient->no_update) || !is_array($transient->no_update)) {
+      $transient->no_update = [];
+    }
+
+    $installed_version = $this->get_installed_version();
+    if ($installed_version === null) {
+      return $transient;
+    }
+
+    $transient->checked[$this->theme_slug] = $installed_version;
+
+    $update = $this->get_update_payload();
+    if ($update) {
+      $transient->response[$this->theme_slug] = $update;
+      unset($transient->no_update[$this->theme_slug]);
+    } else {
+      unset($transient->response[$this->theme_slug]);
+    }
 
     return $transient;
   }
@@ -151,9 +235,6 @@ class GitHubThemeUpdater {
   /**
    * After install, move extracted files into the expected theme directory.
    *
-   * GitHub ZIPs may extract as Muuttohaukat-wordpress-theme-*; WordPress
-   * expects wp-content/themes/muuttohaukat/.
-   *
    * @param bool  $response
    * @param array $hook_extra
    * @param array $result
@@ -174,15 +255,13 @@ class GitHubThemeUpdater {
     }
 
     delete_transient($this->cache_key);
+    delete_site_transient('update_themes');
 
     return $result;
   }
 
   /**
    * Get the ZIP download URL from a release.
-   *
-   * Prefers a release asset named muuttohaukat.zip, then any .zip asset,
-   * then GitHub's auto-generated zipball.
    *
    * @param object $release GitHub release object.
    * @return string|false
@@ -211,6 +290,5 @@ class GitHubThemeUpdater {
 }
 
 add_action('after_setup_theme', function () {
-  $theme = wp_get_theme(get_template());
-  new GitHubThemeUpdater(get_template(), $theme->get('Version'));
+  new GitHubThemeUpdater(get_template());
 }, 20);

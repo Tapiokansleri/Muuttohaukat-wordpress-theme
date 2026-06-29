@@ -70,6 +70,33 @@ add_action('admin_menu', function () {
   );
 });
 
+add_action('admin_init', function () {
+  if (!current_user_can('update_themes')) {
+    return;
+  }
+
+  if (empty($_GET['page']) || sanitize_key(wp_unslash($_GET['page'])) !== PAGE_SLUG) {
+    return;
+  }
+
+  if (empty($_GET['muuttohaukat_check_updates'])) {
+    return;
+  }
+
+  check_admin_referer('muuttohaukat_check_updates');
+
+  delete_transient('muuttohaukat_github_release');
+  delete_site_transient('update_themes');
+  wp_update_themes();
+
+  wp_safe_redirect(add_query_arg([
+    'page'                      => PAGE_SLUG,
+    'tab'                       => 'links',
+    'muuttohaukat_updates_checked' => '1',
+  ], admin_url('themes.php')));
+  exit;
+});
+
 /**
  * Current settings tab from query string.
  */
@@ -94,6 +121,50 @@ function renderTabs($active) {
   echo '</nav>';
 }
 
+/**
+ * Render GitHub updater status on the links tab.
+ */
+function renderUpdateStatus() {
+  if (!current_user_can('update_themes')) {
+    return;
+  }
+
+  $theme     = wp_get_theme(get_template());
+  $installed = $theme->get('Version');
+  $updates   = get_site_transient('update_themes');
+  $pending   = is_object($updates) && !empty($updates->response[get_template()]['new_version'])
+    ? $updates->response[get_template()]['new_version']
+    : null;
+
+  if (!empty($_GET['muuttohaukat_updates_checked'])) {
+    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Päivitystarkistus suoritettu.', 'muuttohaukat') . '</p></div>';
+  }
+
+  $check_url = wp_nonce_url(add_query_arg([
+    'page'                       => PAGE_SLUG,
+    'tab'                        => 'links',
+    'muuttohaukat_check_updates' => '1',
+  ], admin_url('themes.php')), 'muuttohaukat_check_updates');
+  ?>
+  <div class="card" style="max-width: 640px; margin-top: 1.5em; padding: 1em 1.25em;">
+    <h2 class="title" style="margin-top: 0;"><?= esc_html__('Teeman päivitykset', 'muuttohaukat') ?></h2>
+    <p>
+      <?= esc_html(sprintf(__('Asennettu versio: %s', 'muuttohaukat'), $installed)) ?>
+      <?php if ($pending) : ?>
+        <br><strong><?= esc_html(sprintf(__('Saatavilla: %s', 'muuttohaukat'), $pending)) ?></strong>
+        — <a href="<?= esc_url(admin_url('update-core.php')) ?>"><?= esc_html__('Asenna päivitys', 'muuttohaukat') ?></a>
+      <?php else : ?>
+        <br><?= esc_html__('Ei uusia päivityksiä tai tarkistus vaatii verkkoyhteyden GitHubiin.', 'muuttohaukat') ?>
+      <?php endif; ?>
+    </p>
+    <p>
+      <a href="<?= esc_url($check_url) ?>" class="button button-secondary"><?= esc_html__('Tarkista päivitykset nyt', 'muuttohaukat') ?></a>
+      <a href="<?= esc_url(admin_url('update-core.php')) ?>" class="button"><?= esc_html__('Avaa päivityssivu', 'muuttohaukat') ?></a>
+    </p>
+  </div>
+  <?php
+}
+
 /** Render the theme settings page. */
 function renderPage() {
   if (!current_user_can('manage_options')) {
@@ -107,6 +178,7 @@ function renderPage() {
     <?php renderTabs($tab); ?>
 
     <?php if ($tab === 'links') : ?>
+      <?php renderUpdateStatus(); ?>
       <div class="muuttohaukat-theme-settings-links" style="margin-top: 1.5em; max-width: 640px;">
         <p><?= esc_html__('Nämä asetukset hallitaan muualla WordPress-hallinnassa:', 'muuttohaukat') ?></p>
         <ul style="list-style: disc; padding-left: 1.5em;">

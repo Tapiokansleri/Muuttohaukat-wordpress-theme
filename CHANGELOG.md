@@ -4,6 +4,17 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.3] - 2026-06-29
+
+### Fixed
+
+- GitHub theme updater now injects update info when WordPress reads the update transient (not only when saving it), so custom themes show updates even when `wp_update_themes()` skips the check
+- Updater no longer requires the theme to already appear in WordPress.org's checked list
+- GitHub API requests include a proper `User-Agent`; release cache clears on update admin screens
+- **Teeman asetukset → Muut asetukset**: manual "Tarkista päivitykset nyt" button to force a check
+
+[1.0.3]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.3
+
 ## [1.0.1] - 2026-06-29
 
 ### Added
