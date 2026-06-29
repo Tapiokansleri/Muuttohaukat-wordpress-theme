@@ -4,6 +4,15 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.7] - 2026-06-29
+
+### Fixed
+
+- Theme updater no longer deletes the live `muuttohaukat` folder when the release ZIP extracts into a nested subfolder (fixes “Teeman hakemistoa muuttohaukat ei ole olemassa” on update)
+- Safer staged replace when installing from a temp upgrade directory
+
+[1.0.7]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.7
+
 ## [1.0.6] - 2026-06-29
 
 ### Fixed

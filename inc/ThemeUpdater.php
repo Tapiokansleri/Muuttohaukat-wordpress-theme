@@ -233,6 +233,20 @@ class GitHubThemeUpdater {
   }
 
   /**
+   * Whether $path is a strict subdirectory of $parent.
+   *
+   * @param string $path
+   * @param string $parent
+   * @return bool
+   */
+  private function path_is_within($path, $parent) {
+    $path   = trailingslashit(wp_normalize_path($path));
+    $parent = trailingslashit(wp_normalize_path($parent));
+
+    return $path !== $parent && strpos($path, $parent) === 0;
+  }
+
+  /**
    * Find the directory that contains style.css (handles GitHub zipballs and
    * archives that wrap the theme in a repo-named subfolder).
    *
@@ -293,38 +307,93 @@ class GitHubThemeUpdater {
   /**
    * After install, move extracted files into the expected theme directory.
    *
-   * @param bool  $response
-   * @param array $hook_extra
-   * @param array $result
-   * @return array
+   * @param bool|WP_Error $response
+   * @param array         $hook_extra
+   * @param array         $result
+   * @return bool|WP_Error
    */
   public function post_install($response, $hook_extra, $result) {
     if (!isset($hook_extra['theme']) || $hook_extra['theme'] !== $this->theme_slug) {
-      return $result;
+      return $response;
+    }
+
+    if (is_wp_error($response)) {
+      return $response;
+    }
+
+    if (empty($result['destination'])) {
+      return $response;
     }
 
     global $wp_filesystem;
 
-    $theme_dir = get_theme_root() . '/' . $this->theme_slug;
-    $source    = $this->locate_theme_root($result['destination']);
+    $theme_dir   = wp_normalize_path(get_theme_root() . '/' . $this->theme_slug);
+    $destination = wp_normalize_path($result['destination']);
+    $theme_root  = wp_normalize_path($this->locate_theme_root($destination));
 
-    if ($source !== $theme_dir) {
-      $wp_filesystem->delete($theme_dir, true);
-      $wp_filesystem->move($source, $theme_dir);
-      $result['destination'] = $theme_dir;
+    // Zip extracted into a subfolder of the upgrade/temp destination.
+    if ($theme_root !== $destination && $this->path_is_within($theme_root, $destination)) {
+      $this->promote_nested_theme($theme_root, $destination);
+      $theme_root = $destination;
+    }
+
+    // Zip extracted into a subfolder of the live theme directory — flatten
+    // only; never delete the parent folder in this case.
+    if ($theme_root !== $theme_dir && $this->path_is_within($theme_root, $theme_dir)) {
+      $this->promote_nested_theme($theme_root, $theme_dir);
+      $theme_root = $theme_dir;
+    }
+
+    // Zip extracted outside wp-content/themes/muuttohaukat (upgrade temp dir).
+    if ($theme_root !== $theme_dir && !$this->path_is_within($theme_root, $theme_dir)) {
+      if (!$wp_filesystem->exists($theme_root . '/style.css')) {
+        return new \WP_Error(
+          'muuttohaukat_theme_missing',
+          __('Theme update package is missing style.css.', 'muuttohaukat')
+        );
+      }
+
+      $staged = $theme_dir . '.github-stage-' . wp_unique_id();
+      if (!$wp_filesystem->move($theme_root, $staged, true)) {
+        return new \WP_Error(
+          'muuttohaukat_theme_stage',
+          __('Could not stage the theme update.', 'muuttohaukat')
+        );
+      }
+
+      if ($wp_filesystem->exists($theme_dir)) {
+        $wp_filesystem->delete($theme_dir, true);
+      }
+
+      if (!$wp_filesystem->move($staged, $theme_dir)) {
+        if ($wp_filesystem->exists($staged)) {
+          $wp_filesystem->move($staged, $theme_dir);
+        }
+
+        return new \WP_Error(
+          'muuttohaukat_theme_install',
+          __('Could not install the theme update.', 'muuttohaukat')
+        );
+      }
+
+      $theme_root = $theme_dir;
     }
 
     if (!$wp_filesystem->exists($theme_dir . '/style.css')) {
-      $nested = $this->locate_theme_root($theme_dir);
-      if ($nested !== $theme_dir) {
-        $this->promote_nested_theme($nested, $theme_dir);
-      }
+      return new \WP_Error(
+        'muuttohaukat_theme_missing_dir',
+        sprintf(
+          /* translators: %s: theme directory slug */
+          __('The theme directory %s does not exist.', 'muuttohaukat'),
+          $this->theme_slug
+        )
+      );
     }
 
     delete_transient($this->cache_key);
     delete_site_transient('update_themes');
 
-    return $result;
+    return $response;
   }
 
   /**
