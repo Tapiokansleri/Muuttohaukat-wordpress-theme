@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Paikkakunnat — location directory (shortcode output)
+   ========================================================================== */
+
+.paikkakunnat-container {
+    max-width: var(--header-max-width, 1400px);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-6);
+}
+
+.paikkakunnat h2 {
+    margin: 0 0 var(--space-8);
+    padding-bottom: var(--space-4);
+    font-size: var(--heading-2-size);
+    font-weight: var(--font-bold);
+    line-height: var(--heading-2-leading);
+    border-bottom: 3px solid var(--color-accent);
+}
+
+.paikkakunnat ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    column-gap: var(--space-8);
+    columns: 2;
+}
+
+.paikkakunnat li {
+    margin: 0 0 var(--space-3);
+    break-inside: avoid;
+    font-size: var(--text-sm);
+    font-weight: var(--font-normal);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+}
+
+.paikkakunnat li a {
+    color: var(--color-link);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.paikkakunnat li a:hover,
+.paikkakunnat li a:focus-visible {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    outline: none;
+}
+
+@media (min-width: 768px) {
+    .paikkakunnat ul {
+        columns: 3;
+    }
+}
+
+@media (min-width: 1024px) {
+    .paikkakunnat ul {
+        columns: 4;
+    }
+}
+
+@media (min-width: 1536px) {
+    .paikkakunnat ul {
+        columns: 5;
+    }
+}
+
+@media (max-width: 640px) {
+    .paikkakunnat-container {
+        padding: var(--space-8) var(--space-4);
+    }
+
+    .paikkakunnat h2 {
+        margin-bottom: var(--space-6);
+    }
+
+    .paikkakunnat ul {
+        column-gap: var(--space-4);
+    }
+}

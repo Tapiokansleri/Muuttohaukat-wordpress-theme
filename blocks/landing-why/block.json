@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-why",
+  "title": "Landing: Miksi Muuttohaukat",
+  "category": "landing-page",
+  "icon": "awards",
+  "description": "Muuttopalvelu Paimio – why-us reasons section.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": { "anchor": { "type": "string", "default": "miksi" } },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

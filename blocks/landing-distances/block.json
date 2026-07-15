@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-distances",
+  "title": "Landing: Välimatkat",
+  "category": "landing-page",
+  "icon": "location-alt",
+  "description": "Muuttopalvelu Paimio – distances + route calculator section.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": { "anchor": { "type": "string", "default": "valimatkat" } },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

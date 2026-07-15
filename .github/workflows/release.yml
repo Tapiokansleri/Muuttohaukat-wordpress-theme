@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install production dependencies
+        run: |
+          composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+          test -f vendor/autoload.php
+          php -r "require 'vendor/autoload.php'; exit(class_exists('enshrined\\svgSanitize\\Sanitizer') ? 0 : 1);"
+
+      - name: Build theme ZIP
+        run: |
+          mkdir -p build/Muuttohaukat
+          rsync -a ./ build/Muuttohaukat/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'build' \
+            --exclude '*.zip'
+          test -f build/Muuttohaukat/style.css
+          test -f build/Muuttohaukat/assets/fonts/montserrat-latin-variable-wghtOnly-normal.c8f7c04f.woff2
+          test -f build/Muuttohaukat/vendor/autoload.php
+          cd build && zip -r ../Muuttohaukat.zip Muuttohaukat
+          unzip -l ../Muuttohaukat.zip | grep -q 'Muuttohaukat/style.css'
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Muuttohaukat.zip
+          generate_release_notes: true

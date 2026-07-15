@@ -1,0 +1,346 @@
+{
+    "key": "group_6177f737a64b3",
+    "title": "[BLOCK] PostListing",
+    "fields": [
+        {
+            "key": "field_6177fa3360bb3",
+            "label": "Template",
+            "name": "template",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "choices": {
+                "Card": "Card",
+                "CardBackgroundImage": "CardBackgroundImage"
+            },
+            "default_value": false,
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_6177f8428abbe",
+            "label": "Mode",
+            "name": "mode",
+            "aria-label": "",
+            "type": "button_group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "choices": {
+                "automatic": "Automatic",
+                "idList": "Choose manually"
+            },
+            "allow_null": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_6177f8818abbf",
+            "label": "Automatic listing",
+            "name": "automatic",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_6177f8428abbe",
+                        "operator": "==",
+                        "value": "automatic"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_6177f8ab8abc0",
+                    "label": "Amount",
+                    "name": "amount",
+                    "aria-label": "",
+                    "type": "number",
+                    "instructions": "This value should depend on the template you select. Some templates only work with a specific number of posts.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 3,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                },
+                {
+                    "key": "field_6177f92a8abc1",
+                    "label": "Post types",
+                    "name": "postTypes",
+                    "aria-label": "",
+                    "type": "checkbox",
+                    "instructions": "This list could be populated dynamically with filters.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "acfe_save_meta": 0,
+                    "choices": {
+                        "post": "Post",
+                        "page": "Page",
+                        "accessory": "Accessory"
+                    },
+                    "default_value": [],
+                    "return_format": "value",
+                    "allow_custom": 0,
+                    "layout": "vertical",
+                    "toggle": 1,
+                    "save_custom": 0,
+                    "custom_choice_button_text": "Add new choice"
+                },
+                {
+                    "key": "field_6177f9828abc2",
+                    "label": "Category",
+                    "name": "category",
+                    "aria-label": "",
+                    "type": "taxonomy",
+                    "instructions": "Leave empty to allow all categories.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "category",
+                    "field_type": "multi_select",
+                    "allow_null": 1,
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "bidirectional_target": []
+                },
+                {
+                    "key": "field_6177f9b18abc3",
+                    "label": "Tag",
+                    "name": "tag",
+                    "aria-label": "",
+                    "type": "taxonomy",
+                    "instructions": "Leave empty to allow all tags.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "post_tag",
+                    "field_type": "multi_select",
+                    "allow_null": 1,
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "multiple": 0,
+                    "bidirectional_target": []
+                }
+            ]
+        },
+        {
+            "key": "field_6177fc5660bb4",
+            "label": "Choose manually",
+            "name": "idList",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "Note that this display does not update automatically, newer content does not replace older content.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_6177f8428abbe",
+                        "operator": "==",
+                        "value": "idList"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "layout": "block",
+            "acfe_seamless_style": 0,
+            "acfe_group_modal": 0,
+            "sub_fields": [
+                {
+                    "key": "field_6177fc8960bb5",
+                    "label": "List",
+                    "name": "list",
+                    "aria-label": "",
+                    "type": "relationship",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "post_type": "",
+                    "taxonomy": "",
+                    "filters": [
+                        "search",
+                        "post_type",
+                        "taxonomy"
+                    ],
+                    "elements": [
+                        "featured_image"
+                    ],
+                    "min": "",
+                    "max": "",
+                    "return_format": "id",
+                    "bidirectional_target": []
+                }
+            ]
+        },
+        {
+            "key": "field_618e517be8cbd",
+            "label": "Paginated",
+            "name": "paginated",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_618e549b440e1",
+            "label": "Term filters",
+            "name": "taxTermFilters",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "Enable filtering of the list with terms from the selected taxonomies",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "choices": {
+                "post_tag": "Tags",
+                "category": "Categories"
+            },
+            "allow_custom": 0,
+            "default_value": [],
+            "layout": "vertical",
+            "toggle": 0,
+            "return_format": "value",
+            "save_custom": 0,
+            "custom_choice_button_text": "Lisää uusi valinta"
+        },
+        {
+            "key": "field_6197aca9a9276",
+            "label": "Track state in URL",
+            "name": "trackStateInUrl",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Disable to prevent appending \/page\/123 to the URL when user changes the block page. Appending the page number to the URL results in EVERY PostListing block on the actual page to start paging from that number when the page is reloaded. \r\n\r\nThat is bad if you have multiple PostListing blocks on the same page. Same applies to the filters.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_618e517be8cbd",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "acfe_save_meta": 0,
+            "message": "",
+            "default_value": 1,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/postlisting"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": false,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "acfe_display_title": "",
+    "acfe_autosync": [
+        "json"
+    ],
+    "acfe_form": 0,
+    "acfe_meta": "",
+    "acfe_note": "",
+    "modified": 1778755051
+}

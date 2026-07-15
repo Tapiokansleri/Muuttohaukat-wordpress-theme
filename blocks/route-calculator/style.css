@@ -1,0 +1,131 @@
+/* Route calculator — block-scoped styles (form + routes display). */
+
+/* Routes display grid (preset distances) */
+.mh-landing-routes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+}
+
+.mh-landing-route {
+    background: var(--color-white);
+    padding: var(--space-5) var(--space-6);
+}
+
+.mh-landing > :nth-child(odd) .mh-landing-route {
+    background: var(--color-accent);
+}
+
+.mh-landing-route__name {
+    text-transform: uppercase;
+}
+
+.mh-landing-route__meta {
+    margin-top: var(--space-1);
+    font-size: 0.875rem;
+}
+
+/* Calculator form */
+.mh-landing-route-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 40px;
+    padding: 24px;
+    background: var(--color-white);
+}
+
+.mh-landing > :nth-child(odd) .mh-landing-route-form {
+    background: var(--color-accent);
+}
+
+.mh-landing-route-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mh-landing-route-form__label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mh-landing-route-form input {
+    padding: 12px 14px;
+    background: var(--color-white);
+    color: var(--color-black);
+    border: 0;
+    outline: 0;
+    font: inherit;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.mh-landing > :nth-child(odd) .mh-landing-route-form input {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.mh-landing-route-form input:focus {
+    box-shadow: inset 0 0 0 2px var(--color-black);
+}
+
+.mh-landing-route-form__result {
+    grid-column: 1 / -1;
+}
+
+.mh-landing-route-form__result:empty {
+    display: none;
+}
+
+.mh-landing-route-form__loading,
+.mh-landing-route-form__error {
+    margin: 0;
+}
+
+.mh-landing-route-form__error {
+    color: #b00020;
+}
+
+.mh-landing-route-form .mh-landing__button,
+.mh-landing-route-form .mh-landing__button--primary {
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+.mh-landing-route-form .mh-landing__button:hover,
+.mh-landing-route-form .mh-landing__button:focus,
+.mh-landing-route-form .mh-landing__button--primary:hover,
+.mh-landing-route-form .mh-landing__button--primary:focus {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+/* Custom (computed) route card — dark, calls attention */
+.mh-landing .mh-landing-route--custom {
+    background: var(--color-black) !important;
+    color: var(--color-white);
+    padding: 16px 20px;
+}
+
+.mh-landing .mh-landing-route--custom .mh-landing-route__name,
+.mh-landing .mh-landing-route--custom .mh-landing-route__meta,
+.mh-landing .mh-landing-route--custom b {
+    color: var(--color-white) !important;
+}
+
+@media (max-width: 768px) {
+    .mh-landing-routes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing-routes {
+        grid-template-columns: 1fr;
+    }
+
+    .mh-landing-route-form {
+        grid-template-columns: 1fr;
+    }
+}

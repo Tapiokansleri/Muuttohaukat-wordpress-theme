@@ -1,0 +1,19 @@
+{
+  "name": "muuttohaukat/theme",
+  "description": "Runtime dependencies for the Muuttohaukat WordPress theme.",
+  "type": "wordpress-theme",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=7.4",
+    "ext-dom": "*",
+    "ext-libxml": "*",
+    "enshrined/svg-sanitize": "^0.22.0"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "7.4.0"
+    },
+    "sort-packages": true
+  }
+}

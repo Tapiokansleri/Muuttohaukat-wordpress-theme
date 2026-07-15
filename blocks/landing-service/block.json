@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-service",
+  "title": "Landing: Muutot ja kuljetukset",
+  "category": "landing-page",
+  "icon": "list-view",
+  "description": "Muuttopalvelu Paimio – features grid section.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": { "anchor": { "type": "string", "default": "palvelu" } },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

@@ -1,0 +1,83 @@
+/* Landing: Service (features grid + chips) — block-scoped styles. */
+
+/* Chips — plain text, middot-separated inline list */
+.mh-landing-chips {
+    display: block;
+    margin-bottom: var(--space-7);
+}
+
+.mh-landing-chip {
+    display: inline;
+    background: transparent;
+    color: var(--color-black);
+    padding: 0;
+}
+
+.mh-landing-chip + .mh-landing-chip::before {
+    content: " · ";
+    margin: 0 0.25rem;
+    opacity: 0.5;
+}
+
+/* Features grid: 4 cols desktop, 2 cols tablet/mobile */
+.mh-landing-features {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-7) var(--space-6);
+}
+
+.mh-landing-feature {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+}
+
+.mh-landing-feature__media {
+    margin: 0;
+    height: 220px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mh-landing-feature__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    object-fit: contain;
+    box-sizing: border-box;
+}
+
+.mh-landing-feature__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+}
+
+.mh-landing-feature__num {
+    display: inline-block;
+    color: var(--color-black);
+    margin-bottom: var(--space-1);
+    font-size: 0.875rem;
+    opacity: 0.6;
+}
+
+.mh-landing-feature h3 {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.mh-landing-feature p {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-features {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

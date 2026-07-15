@@ -1,0 +1,21 @@
+/* WPCodeBox 2: "Home" (snippet 6), active CSS. */
+.home-hero {
+}
+
+.home-hero__inner-wrapper {
+}
+
+.home-hero__content-wrapper {
+    gap: 1.5em;
+}
+
+.home-hero__heading {
+    font-weight: var(--font-semibold);
+}
+
+.home-hero__subheading {
+    font-weight: var(--font-medium);
+}
+
+.home-hero__media-wrapper {
+}

@@ -1,0 +1,17 @@
+/*
+Theme Name: Muuttohaukat
+Theme URI: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme
+Description: Custom theme for Muuttohaukat — rebuilt from the legacy Haukka theme.
+Version: 1.1.0
+Author: Kansleri
+Author URI: https://kansleri.fi
+Text Domain: muuttohaukat
+Domain Path: /languages
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+/* Styles are enqueued from assets/css/. */

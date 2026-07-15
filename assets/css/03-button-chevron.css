@@ -1,0 +1,154 @@
+/**
+ * Shared hover chevron for branded buttons.
+ *
+ * Default: label centered (symmetric horizontal padding).
+ * Hover: padding shifts left→right so the label moves left and the chevron
+ * appears on the right — total button width stays the same.
+ */
+
+:root {
+    --mh-btn-chevron-shift: 0.45em;
+    --mh-btn-chevron-width: 0.45em;
+    --mh-btn-chevron-height: 0.7em;
+    --mh-btn-chevron-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3Cpath d='M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z'/%3E%3C/svg%3E");
+}
+
+.header-cta__btn,
+.mh-gutenberg .wp-block-button__link,
+.mh-painike,
+.mh-buttons__btn,
+.mh-landing__button,
+.wp-block-button.mh-landing__button .wp-block-button__link {
+    --mh-btn-pad-x: var(--button-padding-x);
+}
+
+.mh-painike,
+.mh-buttons__btn,
+.mh-landing__button,
+.wp-block-button.mh-landing__button .wp-block-button__link {
+    --mh-btn-pad-x: 50px;
+}
+
+.mh-gutenberg .wp-block-button__link:hover,
+.mh-gutenberg .wp-block-button__link:focus-visible,
+.mh-painike:hover,
+.mh-painike:focus-visible,
+.mh-buttons__btn:hover,
+.mh-buttons__btn:focus-visible,
+.mh-landing__button:hover,
+.mh-landing__button:focus-visible,
+.wp-block-button.mh-landing__button .wp-block-button__link:hover,
+.wp-block-button.mh-landing__button .wp-block-button__link:focus-visible {
+    padding-left: calc(var(--mh-btn-pad-x) - var(--mh-btn-chevron-shift));
+    padding-right: calc(var(--mh-btn-pad-x) + var(--mh-btn-chevron-shift));
+}
+
+.header-cta__btn {
+    --mh-btn-chevron-width: 0.65em;
+    --mh-btn-chevron-height: 1em;
+}
+
+.header-cta__btn:hover,
+.header-cta__btn:focus-visible {
+    padding-left: var(--mh-btn-pad-x);
+    padding-right: var(--mh-btn-pad-x);
+}
+
+.header-cta__label {
+    display: inline-block;
+    transition: transform 0.25s ease;
+}
+
+.header-cta__btn:hover .header-cta__label,
+.header-cta__btn:focus-visible .header-cta__label {
+    transform: translateX(calc(var(--mh-btn-chevron-shift) * -0.7));
+}
+
+.mh-painike:hover,
+.mh-painike:focus-visible,
+.mh-buttons__btn:hover,
+.mh-buttons__btn:focus-visible,
+.mh-landing__button:hover,
+.mh-landing__button:focus-visible {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.wp-block-button.mh-landing__button .wp-block-button__link:hover,
+.wp-block-button.mh-landing__button .wp-block-button__link:focus-visible {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    padding-left: calc(var(--mh-btn-pad-x) - var(--mh-btn-chevron-shift)) !important;
+    padding-right: calc(var(--mh-btn-pad-x) + var(--mh-btn-chevron-shift)) !important;
+}
+
+.header-cta__btn,
+.mh-gutenberg .wp-block-button__link {
+    flex-wrap: nowrap;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+                opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease,
+                padding-left 0.25s ease, padding-right 0.25s ease;
+}
+
+.mh-painike,
+.mh-buttons__btn,
+.mh-landing__button {
+    transition: opacity 0.2s ease, transform 0.15s ease,
+                padding-left 0.25s ease, padding-right 0.25s ease;
+}
+
+.header-cta__btn::after,
+.mh-gutenberg .wp-block-button__link::after,
+.mh-painike::after,
+.mh-buttons__btn::after,
+.mh-landing__button::after,
+.wp-block-button.mh-landing__button .wp-block-button__link::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: calc(var(--mh-btn-pad-x) + var(--mh-btn-chevron-shift) * 0.25 - var(--mh-btn-chevron-width));
+    top: 50%;
+    width: var(--mh-btn-chevron-width);
+    height: var(--mh-btn-chevron-height);
+    background-color: currentColor;
+    -webkit-mask-image: var(--mh-btn-chevron-mask);
+    mask-image: var(--mh-btn-chevron-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(0.25em, -50%, 0);
+    transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.header-cta__btn:hover::after,
+.header-cta__btn:focus-visible::after,
+.mh-gutenberg .wp-block-button__link:hover::after,
+.mh-gutenberg .wp-block-button__link:focus-visible::after,
+.mh-painike:hover::after,
+.mh-painike:focus-visible::after,
+.mh-buttons__btn:hover::after,
+.mh-buttons__btn:focus-visible::after,
+.mh-landing__button:hover::after,
+.mh-landing__button:focus-visible::after,
+.wp-block-button.mh-landing__button .wp-block-button__link:hover::after,
+.wp-block-button.mh-landing__button .wp-block-button__link:focus-visible::after {
+    opacity: 1;
+    transform: translate3d(0, -50%, 0);
+}
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+    .header-cta__btn {
+        --mh-btn-pad-x: 0.75rem;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1535.98px) {
+    .header-cta__btn {
+        --mh-btn-pad-x: 1rem;
+    }
+}

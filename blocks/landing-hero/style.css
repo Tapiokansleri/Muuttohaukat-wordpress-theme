@@ -1,0 +1,102 @@
+/* Landing: Hero — block-scoped styles. Auto-enqueued by WP in BOTH the
+   editor iframe and on the frontend whenever the block is on the page
+   (declared via "style" in block.json). */
+
+.mh-landing-hero__inner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 100px !important;
+    align-items: center;
+}
+
+.mh-landing-hero__title {
+    max-width: 14ch;
+}
+
+.mh-landing-hero__title em {
+    font-style: normal;
+    color: inherit;
+}
+
+.mh-landing-hero__lead {
+    max-width: 50ch;
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-7);
+}
+
+.mh-landing-hero__media {
+    margin: 0;
+}
+
+.mh-landing-hero__media img {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+}
+
+/* Trust badges: 3-column grid with FA icon (via ::before) + caption */
+.mh-landing-hero__trust {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin-top: 60px;
+}
+
+.mh-landing-hero__trust-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.mh-landing-hero__trust-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+    font-weight: 700;
+}
+
+.mh-landing-hero__trust-label::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-style: normal;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1em;
+    line-height: 1;
+    text-align: center;
+}
+
+.mh-landing-hero__trust-item--medal        .mh-landing-hero__trust-label::before { content: "\f5a2"; }
+.mh-landing-hero__trust-item--location-dot .mh-landing-hero__trust-label::before { content: "\f3c5"; }
+.mh-landing-hero__trust-item--truck        .mh-landing-hero__trust-label::before { content: "\f0d1"; }
+
+.mh-landing-hero__trust-caption {
+    display: block;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.25;
+    opacity: 0.75;
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-hero__inner {
+        display: block !important;
+    }
+
+    .mh-landing-hero__media {
+        margin-top: var(--space-7);
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing-hero__trust {
+        margin-top: 24px;
+        gap: var(--space-3);
+    }
+
+    .mh-landing-hero__title {
+        max-width: none;
+    }
+}
