@@ -4,14 +4,17 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [1.0.7] - 2026-06-29
+## [1.0.8] - 2026-07-15
 
 ### Fixed
 
-- Theme updater no longer deletes the live `muuttohaukat` folder when the release ZIP extracts into a nested subfolder (fixes “Teeman hakemistoa muuttohaukat ei ole olemassa” on update)
-- Safer staged replace when installing from a temp upgrade directory
+- LibreForm → Dynamics 365 forwarding: `inc/forms.php` reads `MUUTTOHAUKAT_D365_ENDPOINT` from `wp-config.php` (GitHub push protection blocks storing the Azure key in theme source)
+- GitHub theme updater now uses canonical folder slug `Muuttohaukat` instead of binding to `get_template()` (fixes `Muuttohaukat-wordpress-theme-main` installs)
+- One-time migration renames legacy theme folders (`Muuttohaukat-wordpress-theme-main`, `muuttohaukat`) to `Muuttohaukat` on theme load
+- Release ZIP renamed to `Muuttohaukat.zip` with inner folder `Muuttohaukat/`
+- Landing block default images use `/wp-content/themes/Muuttohaukat/img/` paths
 
-[1.0.7]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.7
+[1.0.8]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.8
 
 ## [1.0.6] - 2026-06-29
 

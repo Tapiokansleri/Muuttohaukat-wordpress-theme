@@ -129,11 +129,11 @@ function renderUpdateStatus() {
     return;
   }
 
-  $theme     = wp_get_theme(get_template());
+  $theme     = wp_get_theme(\Muuttohaukat\THEME_SLUG);
   $installed = $theme->get('Version');
   $updates   = get_site_transient('update_themes');
-  $pending   = is_object($updates) && !empty($updates->response[get_template()]['new_version'])
-    ? $updates->response[get_template()]['new_version']
+  $pending   = is_object($updates) && !empty($updates->response[\Muuttohaukat\THEME_SLUG]['new_version'])
+    ? $updates->response[\Muuttohaukat\THEME_SLUG]['new_version']
     : null;
 
   if (!empty($_GET['muuttohaukat_updates_checked'])) {

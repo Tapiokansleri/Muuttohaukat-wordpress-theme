@@ -2,7 +2,7 @@
 
 Custom WordPress theme for [Muuttohaukat](https://muuttohaukat.com), rebuilt from the legacy Haukka theme.
 
-**Version:** 1.0.1  
+**Version:** 1.0.8  
 **Repository:** [github.com/Tapiokansleri/Muuttohaukat-wordpress-theme](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme)
 
 ## Requirements
@@ -14,14 +14,14 @@ Custom WordPress theme for [Muuttohaukat](https://muuttohaukat.com), rebuilt fro
 
 ## Installation
 
-1. Download `muuttohaukat.zip` from the [latest release](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/latest).
+1. Download `Muuttohaukat.zip` from the [latest release](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/latest).
 2. In WordPress admin go to **Appearance → Themes → Add New → Upload Theme**.
 3. Upload the ZIP and activate **Muuttohaukat**.
 
 Or clone into your themes directory:
 
 ```bash
-git clone https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme.git wp-content/themes/muuttohaukat
+git clone https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme.git wp-content/themes/Muuttohaukat
 ```
 
 ## Updates
@@ -29,6 +29,16 @@ git clone https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme.git wp-c
 The theme includes a built-in GitHub updater. When a new [GitHub release](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases) is published with a version tag higher than the installed theme, WordPress will show an update under **Dashboard → Updates** and **Appearance → Themes**.
 
 Updates are fetched from this repository automatically — no separate update plugin is required.
+
+### Dynamics 365 (quote forms)
+
+Add this to `wp-config.php` on each site (same URL the legacy Haukka theme used):
+
+```php
+define('MUUTTOHAUKAT_D365_ENDPOINT', 'https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?id=...&code=...');
+```
+
+Without it, LibreForm submissions save but are not forwarded to Dynamics 365.
 
 ## Theme features
 
@@ -65,7 +75,9 @@ git tag v1.1.0
 git push origin v1.1.0
 ```
 
-The GitHub Actions workflow builds `muuttohaukat.zip` and attaches it to the release. Sites running an older version will pick up the update automatically.
+The GitHub Actions workflow builds `Muuttohaukat.zip` and attaches it to the release. Sites running an older version will pick up the update automatically.
+
+**Important:** Install from **Releases → Muuttohaukat.zip**, not the green "Code → Download ZIP" button on the repo page (that produces a `Muuttohaukat-wordpress-theme-main` folder).
 
 ## License
 

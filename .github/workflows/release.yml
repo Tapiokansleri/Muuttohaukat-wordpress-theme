@@ -17,18 +17,19 @@ jobs:
 
       - name: Build theme ZIP
         run: |
-          mkdir -p build/muuttohaukat
-          rsync -a ./ build/muuttohaukat/ \
+          mkdir -p build/Muuttohaukat
+          rsync -a ./ build/Muuttohaukat/ \
             --exclude '.git' \
             --exclude '.github' \
             --exclude 'build' \
             --exclude '*.zip'
-          test -f build/muuttohaukat/style.css
-          test -f build/muuttohaukat/assets/fonts/montserrat-latin-variable-wghtOnly-normal.c8f7c04f.woff2
-          cd build && zip -r ../muuttohaukat.zip muuttohaukat
+          test -f build/Muuttohaukat/style.css
+          test -f build/Muuttohaukat/assets/fonts/montserrat-latin-variable-wghtOnly-normal.c8f7c04f.woff2
+          cd build && zip -r ../Muuttohaukat.zip Muuttohaukat
+          unzip -l ../Muuttohaukat.zip | grep -q 'Muuttohaukat/style.css'
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: muuttohaukat.zip
+          files: Muuttohaukat.zip
           generate_release_notes: true

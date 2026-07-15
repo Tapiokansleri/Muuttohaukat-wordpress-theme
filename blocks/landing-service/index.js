@@ -26,9 +26,9 @@
 				[ 'core/paragraph', { content: 'Jätä tarjouspyyntö sitoumuksetta, niin saat selkeän tarjouksen ja paimiolaiset ammattilaiset hoitamaan muuttosi. Muuttopalvelu Paimio toimii Paimion sisällä, Varsinais-Suomessa ja koko Suomen alueella — pitkäkään muuttomatka ei ole ongelma.' } ]
 			] ],
 			[ 'core/group', { className: 'mh-landing-features' }, [
-				FEATURE( '01', 'Auto ja ammattilaiset ajallaan', 'Muuttoauto ja osaavat muuttajat Paimion osoitteessasi sovittuna aikana — ei myöhästelyä, ei arvailua.', '/wp-content/themes/muuttohaukat/img/1.png' ),
-				FEATURE( '02', 'Tavarat suojataan huolella', 'Suojaamme kalusteet ammattilaisten ottein ja kannamme tavarat sisään asti, halutuille paikoille Paimion alueella.', '/wp-content/themes/muuttohaukat/img/2.png' ),
-				FEATURE( '03', 'Pakkaus ja purku halutessasi', 'Hoidamme tarvittaessa myös pakkaamisen, purkamisen sekä kalusteiden purun ja kasauksen Paimion muutossasi.', '/wp-content/themes/muuttohaukat/img/3.png' ),
+				FEATURE( '01', 'Auto ja ammattilaiset ajallaan', 'Muuttoauto ja osaavat muuttajat Paimion osoitteessasi sovittuna aikana — ei myöhästelyä, ei arvailua.', '/wp-content/themes/Muuttohaukat/img/1.png' ),
+				FEATURE( '02', 'Tavarat suojataan huolella', 'Suojaamme kalusteet ammattilaisten ottein ja kannamme tavarat sisään asti, halutuille paikoille Paimion alueella.', '/wp-content/themes/Muuttohaukat/img/2.png' ),
+				FEATURE( '03', 'Pakkaus ja purku halutessasi', 'Hoidamme tarvittaessa myös pakkaamisen, purkamisen sekä kalusteiden purun ja kasauksen Paimion muutossasi.', '/wp-content/themes/Muuttohaukat/img/3.png' ),
 				FEATURE( '04', 'Selkeä hinta, kaikki vakuutettu', 'Ei piilokuluja eikä epäselviä sopimuksia. Viemme roskat mennessämme ja vakuutamme jokaisen muuttokuljetuksen.', '' )
 			] ],
 			CTA_ROW

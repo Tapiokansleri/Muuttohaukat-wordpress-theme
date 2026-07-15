@@ -9,6 +9,26 @@
  */
 namespace Muuttohaukat;
 
+if (!function_exists('libreform')) {
+  return;
+}
+
+/**
+ * Resolve the Dynamics 365 Azure Function endpoint.
+ *
+ * Define MUUTTOHAUKAT_D365_ENDPOINT in wp-config.php (recommended).
+ * A filter is available for tests or custom overrides.
+ *
+ * @return string
+ */
+function d365_endpoint() {
+  if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
+    return MUUTTOHAUKAT_D365_ENDPOINT;
+  }
+
+  return (string) apply_filters('muuttohaukat_d365_endpoint', '');
+}
+
 /**
  * Form submission handler: send confirmations and forward to D365.
  */
@@ -37,12 +57,13 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
 
     $json = wp_json_encode($data);
 
-    if (!defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
-      error_log('[D365]: MUUTTOHAUKAT_D365_ENDPOINT constant is not defined');
+    $endpoint = d365_endpoint();
+    if ($endpoint === '') {
+      error_log('[D365]: MUUTTOHAUKAT_D365_ENDPOINT is not defined in wp-config.php');
       return;
     }
 
-    $status = wp_remote_post(MUUTTOHAUKAT_D365_ENDPOINT, [
+    $status = wp_remote_post($endpoint, [
       'blocking' => false,
       'body' => $json,
     ]);

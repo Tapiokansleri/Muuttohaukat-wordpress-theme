@@ -9,6 +9,12 @@
  */
 namespace Muuttohaukat;
 
+/** Canonical theme directory name (must match release ZIP root folder). */
+const THEME_SLUG = 'Muuttohaukat';
+
+/** Legacy folder names from branch-ZIP or lowercase installs. */
+const LEGACY_THEME_SLUGS = ['Muuttohaukat-wordpress-theme-main', 'muuttohaukat'];
+
 class GitHubThemeUpdater {
 
   /** @var string GitHub owner/repo. */
@@ -51,23 +57,43 @@ class GitHubThemeUpdater {
   }
 
   /**
-   * Whether this theme directory is installed.
+   * Slugs that may currently hold this theme on disk.
+   *
+   * @return string[]
+   */
+  private function installed_slugs() {
+    $slugs = [THEME_SLUG];
+
+    foreach (LEGACY_THEME_SLUGS as $legacy) {
+      if (wp_get_theme($legacy)->exists()) {
+        $slugs[] = $legacy;
+      }
+    }
+
+    return array_values(array_unique($slugs));
+  }
+
+  /**
+   * Whether the canonical theme directory is installed.
    */
   private function theme_is_installed() {
     return wp_get_theme($this->theme_slug)->exists();
   }
 
   /**
-   * Installed version from style.css.
+   * Installed version from style.css (canonical or legacy folder).
    *
    * @return string|null
    */
   private function get_installed_version() {
-    if (!$this->theme_is_installed()) {
-      return null;
+    foreach ($this->installed_slugs() as $slug) {
+      $theme = wp_get_theme($slug);
+      if ($theme->exists()) {
+        return $theme->get('Version');
+      }
     }
 
-    return wp_get_theme($this->theme_slug)->get('Version');
+    return null;
   }
 
   /**
@@ -180,14 +206,19 @@ class GitHubThemeUpdater {
       return $transient;
     }
 
-    $transient->checked[$this->theme_slug] = $installed_version;
-
     $update = $this->get_update_payload();
-    if ($update) {
-      $transient->response[$this->theme_slug] = $update;
-      unset($transient->no_update[$this->theme_slug]);
-    } else {
-      unset($transient->response[$this->theme_slug]);
+
+    foreach ($this->installed_slugs() as $slug) {
+      $transient->checked[$slug] = $installed_version;
+
+      if ($update) {
+        $payload = $update;
+        $payload['theme'] = $slug;
+        $transient->response[$slug] = $payload;
+        unset($transient->no_update[$slug]);
+      } else {
+        unset($transient->response[$slug]);
+      }
     }
 
     return $transient;
@@ -206,7 +237,12 @@ class GitHubThemeUpdater {
       return $result;
     }
 
-    if (!isset($args->slug) || $args->slug !== $this->theme_slug) {
+    if (!isset($args->slug)) {
+      return $result;
+    }
+
+    $known = array_merge([$this->theme_slug], LEGACY_THEME_SLUGS);
+    if (!in_array($args->slug, $known, true)) {
       return $result;
     }
 
@@ -216,11 +252,14 @@ class GitHubThemeUpdater {
     }
 
     $remote_version = ltrim($release->tag_name, 'vV');
-    $theme          = wp_get_theme($this->theme_slug);
+    $theme          = wp_get_theme($args->slug);
+    if (!$theme->exists()) {
+      $theme = wp_get_theme($this->theme_slug);
+    }
 
     return (object) [
       'name'          => $theme->get('Name'),
-      'slug'          => $this->theme_slug,
+      'slug'          => $args->slug,
       'version'       => $remote_version,
       'author'        => $theme->get('Author'),
       'homepage'      => sprintf('https://github.com/%s', $this->repo),
@@ -230,20 +269,6 @@ class GitHubThemeUpdater {
         'changelog'   => nl2br(esc_html($release->body ?? '')),
       ],
     ];
-  }
-
-  /**
-   * Whether $path is a strict subdirectory of $parent.
-   *
-   * @param string $path
-   * @param string $parent
-   * @return bool
-   */
-  private function path_is_within($path, $parent) {
-    $path   = trailingslashit(wp_normalize_path($path));
-    $parent = trailingslashit(wp_normalize_path($parent));
-
-    return $path !== $parent && strpos($path, $parent) === 0;
   }
 
   /**
@@ -307,93 +332,57 @@ class GitHubThemeUpdater {
   /**
    * After install, move extracted files into the expected theme directory.
    *
-   * @param bool|WP_Error $response
-   * @param array         $hook_extra
-   * @param array         $result
-   * @return bool|WP_Error
+   * @param bool  $response
+   * @param array $hook_extra
+   * @param array $result
+   * @return array
    */
   public function post_install($response, $hook_extra, $result) {
-    if (!isset($hook_extra['theme']) || $hook_extra['theme'] !== $this->theme_slug) {
-      return $response;
+    if (!isset($hook_extra['theme'])) {
+      return $result;
     }
 
-    if (is_wp_error($response)) {
-      return $response;
-    }
-
-    if (empty($result['destination'])) {
-      return $response;
+    $known = array_merge([$this->theme_slug], LEGACY_THEME_SLUGS);
+    if (!in_array($hook_extra['theme'], $known, true)) {
+      return $result;
     }
 
     global $wp_filesystem;
 
-    $theme_dir   = wp_normalize_path(get_theme_root() . '/' . $this->theme_slug);
-    $destination = wp_normalize_path($result['destination']);
-    $theme_root  = wp_normalize_path($this->locate_theme_root($destination));
+    $theme_dir = get_theme_root() . '/' . $this->theme_slug;
+    $source    = $this->locate_theme_root($result['destination']);
 
-    // Zip extracted into a subfolder of the upgrade/temp destination.
-    if ($theme_root !== $destination && $this->path_is_within($theme_root, $destination)) {
-      $this->promote_nested_theme($theme_root, $destination);
-      $theme_root = $destination;
-    }
-
-    // Zip extracted into a subfolder of the live theme directory — flatten
-    // only; never delete the parent folder in this case.
-    if ($theme_root !== $theme_dir && $this->path_is_within($theme_root, $theme_dir)) {
-      $this->promote_nested_theme($theme_root, $theme_dir);
-      $theme_root = $theme_dir;
-    }
-
-    // Zip extracted outside wp-content/themes/muuttohaukat (upgrade temp dir).
-    if ($theme_root !== $theme_dir && !$this->path_is_within($theme_root, $theme_dir)) {
-      if (!$wp_filesystem->exists($theme_root . '/style.css')) {
-        return new \WP_Error(
-          'muuttohaukat_theme_missing',
-          __('Theme update package is missing style.css.', 'muuttohaukat')
-        );
-      }
-
-      $staged = $theme_dir . '.github-stage-' . wp_unique_id();
-      if (!$wp_filesystem->move($theme_root, $staged, true)) {
-        return new \WP_Error(
-          'muuttohaukat_theme_stage',
-          __('Could not stage the theme update.', 'muuttohaukat')
-        );
-      }
-
+    if ($source !== $theme_dir) {
       if ($wp_filesystem->exists($theme_dir)) {
         $wp_filesystem->delete($theme_dir, true);
       }
-
-      if (!$wp_filesystem->move($staged, $theme_dir)) {
-        if ($wp_filesystem->exists($staged)) {
-          $wp_filesystem->move($staged, $theme_dir);
-        }
-
-        return new \WP_Error(
-          'muuttohaukat_theme_install',
-          __('Could not install the theme update.', 'muuttohaukat')
-        );
-      }
-
-      $theme_root = $theme_dir;
+      $wp_filesystem->move($source, $theme_dir);
+      $result['destination'] = $theme_dir;
     }
 
     if (!$wp_filesystem->exists($theme_dir . '/style.css')) {
-      return new \WP_Error(
-        'muuttohaukat_theme_missing_dir',
-        sprintf(
-          /* translators: %s: theme directory slug */
-          __('The theme directory %s does not exist.', 'muuttohaukat'),
-          $this->theme_slug
-        )
-      );
+      $nested = $this->locate_theme_root($theme_dir);
+      if ($nested !== $theme_dir) {
+        $this->promote_nested_theme($nested, $theme_dir);
+      }
+    }
+
+    foreach (LEGACY_THEME_SLUGS as $legacy) {
+      $legacy_dir = get_theme_root() . '/' . $legacy;
+      if ($legacy_dir !== $theme_dir && $wp_filesystem->exists($legacy_dir)) {
+        $wp_filesystem->delete($legacy_dir, true);
+      }
+    }
+
+    $active = get_stylesheet();
+    if (in_array($active, LEGACY_THEME_SLUGS, true) || $active !== $this->theme_slug) {
+      switch_theme($this->theme_slug);
     }
 
     delete_transient($this->cache_key);
     delete_site_transient('update_themes');
 
-    return $response;
+    return $result;
   }
 
   /**
@@ -403,15 +392,15 @@ class GitHubThemeUpdater {
    * @return string|false
    */
   private function get_zip_url($release) {
-    if (!empty($release->assets) && is_array($release->assets)) {
-      foreach ($release->assets as $asset) {
-        if (!empty($asset->browser_download_url) && $asset->name === 'muuttohaukat.zip') {
-          return $asset->browser_download_url;
-        }
-      }
+    if (empty($release->assets) || !is_array($release->assets)) {
+      return false;
+    }
 
+    $preferred = ['Muuttohaukat.zip', 'muuttohaukat.zip'];
+
+    foreach ($preferred as $name) {
       foreach ($release->assets as $asset) {
-        if (!empty($asset->browser_download_url) && strpos($asset->name, '.zip') !== false) {
+        if (!empty($asset->browser_download_url) && $asset->name === $name) {
           return $asset->browser_download_url;
         }
       }
@@ -421,6 +410,70 @@ class GitHubThemeUpdater {
   }
 }
 
+/**
+ * One-time migration: rename legacy theme folders to the canonical slug.
+ */
+function maybe_migrate_theme_folder() {
+  if (get_option('muuttohaukat_theme_folder_migrated')) {
+    return;
+  }
+
+  $root     = get_theme_root();
+  $active   = get_template();
+  $target   = $root . '/' . THEME_SLUG;
+  $known    = array_merge([THEME_SLUG], LEGACY_THEME_SLUGS);
+  $source   = null;
+
+  if (in_array($active, LEGACY_THEME_SLUGS, true) && is_dir($root . '/' . $active)) {
+    $source = $root . '/' . $active;
+  } else {
+    foreach (LEGACY_THEME_SLUGS as $legacy) {
+      $legacy_path = $root . '/' . $legacy;
+      if (is_dir($legacy_path)) {
+        $source = $legacy_path;
+        break;
+      }
+    }
+  }
+
+  if ($source === null || $source === $target) {
+    update_option('muuttohaukat_theme_folder_migrated', 1, true);
+    return;
+  }
+
+  require_once ABSPATH . 'wp-admin/includes/file.php';
+
+  global $wp_filesystem;
+  if (!WP_Filesystem()) {
+    return;
+  }
+
+  if ($wp_filesystem->exists($target)) {
+    $existing = wp_get_theme(THEME_SLUG);
+    $incoming = wp_get_theme(basename($source));
+    $existing_ver = $existing->exists() ? $existing->get('Version') : '0';
+    $incoming_ver = $incoming->exists() ? $incoming->get('Version') : '0';
+
+    if (version_compare($incoming_ver, $existing_ver, '>')) {
+      $wp_filesystem->delete($target, true);
+    } else {
+      update_option('muuttohaukat_theme_folder_migrated', 1, true);
+      return;
+    }
+  }
+
+  if (!$wp_filesystem->move($source, $target)) {
+    return;
+  }
+
+  if (in_array($active, $known, true)) {
+    switch_theme(THEME_SLUG);
+  }
+
+  update_option('muuttohaukat_theme_folder_migrated', 1, true);
+}
+
+add_action('after_setup_theme', __NAMESPACE__ . '\\maybe_migrate_theme_folder', 10);
 add_action('after_setup_theme', function () {
-  new GitHubThemeUpdater(get_template());
+  new GitHubThemeUpdater(THEME_SLUG);
 }, 20);
