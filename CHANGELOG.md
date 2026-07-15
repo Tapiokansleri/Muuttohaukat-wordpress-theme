@@ -4,6 +4,15 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.12] - 2026-07-15
+
+### Security
+
+- Removed `id` and `code` query parameters from the default D365 endpoint in theme source
+- Documented secret-handling rules in README (public repo)
+
+[1.0.12]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.12
+
 ## [1.0.11] - 2026-07-15
 
 ### Changed

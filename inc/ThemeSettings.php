@@ -169,14 +169,16 @@ function renderD365Fields() {
     $source = 'wp-config.php';
   } elseif ($stored !== '') {
     $source = __('Teeman asetukset', 'muuttohaukat');
-  } elseif (strpos($display, 'code=') !== false && substr($display, -1) !== '=') {
-    $source = defined('MUUTTOHAUKAT_D365_ENDPOINT') ? 'wp-config.php' : __('Oletus', 'muuttohaukat');
+  } elseif (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
+    $source = 'wp-config.php';
+  } elseif ($display !== \Muuttohaukat\d365_endpoint_default()) {
+    $source = __('Oletus', 'muuttohaukat');
   } else {
-    $source = __('Oletus (täydennä code-parametri)', 'muuttohaukat');
+    $source = __('Oletus (lisää id ja code -parametrit)', 'muuttohaukat');
   }
 
   $effective = \Muuttohaukat\d365_endpoint();
-  $configured = $effective !== '' && strpos($effective, 'code=') !== false && substr($effective, -5) !== 'code=';
+  $configured = $effective !== '' && $effective !== \Muuttohaukat\d365_endpoint_default();
   ?>
   <form method="post" action="options.php" style="margin-top: 1.5em;">
     <?php settings_fields(OPTION_GROUP); ?>

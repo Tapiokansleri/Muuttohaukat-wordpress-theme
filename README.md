@@ -2,7 +2,7 @@
 
 Custom WordPress theme for [Muuttohaukat](https://muuttohaukat.com), rebuilt from the legacy Haukka theme.
 
-**Version:** 1.0.9  
+**Version:** 1.0.12  
 **Repository:** [github.com/Tapiokansleri/Muuttohaukat-wordpress-theme](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme)
 
 ## Requirements
@@ -41,6 +41,18 @@ define('MUUTTOHAUKAT_D365_ENDPOINT', 'https://func-muuttohaukat-xrm-prod.azurewe
 ```
 
 Without either, LibreForm submissions save but are not forwarded to Dynamics 365.
+
+## Security
+
+This is a **public** repository. Do **not** commit:
+
+- Azure Function `code` keys or full D365 endpoint URLs with query parameters
+- `wp-config.php`, `.env`, or database dumps
+- API keys, passwords, or private tokens
+
+Store the full D365 endpoint in **WordPress admin** (Teeman asetukset) or in `wp-config.php` on the server only. GitHub push protection blocks known Azure keys from entering this repo.
+
+The theme source only contains the public Azure hostname and API path — never authentication secrets.
 
 ## Theme features
 

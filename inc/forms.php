@@ -14,12 +14,12 @@ if (!function_exists('libreform')) {
 }
 
 /**
- * Default Dynamics 365 endpoint base URL (code param added via admin or wp-config).
+ * Default Dynamics 365 endpoint base URL (no auth params — set full URL in admin).
  *
  * @return string
  */
 function d365_endpoint_default() {
-  return 'https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?id=10473&code=';
+  return 'https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics';
 }
 
 /**
@@ -31,7 +31,7 @@ function d365_endpoint_default() {
  */
 function d365_endpoint() {
   $stored = get_option('muuttohaukat_d365_endpoint', '');
-  if (is_string($stored) && $stored !== '' && strpos($stored, 'code=') !== false) {
+  if (is_string($stored) && $stored !== '') {
     return $stored;
   }
 
