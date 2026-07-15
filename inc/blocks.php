@@ -65,15 +65,28 @@ add_action('rest_api_init', function () {
 
 /**
  * Rotate through flying eagle images for posts without thumbnails.
+ *
+ * Uses bundled theme SVGs so cards do not depend on broken attachment srcset metadata.
+ *
+ * @return string
  */
 function getFlyingEagle() {
   static $runningCount = 0;
 
-  $eagles = [87, 88, 89, 90, 91];
+  $eagles = [
+    'muuttohaukka_01.b9243e77.svg',
+    'muuttohaukka_02.c3b3b03f.svg',
+    'muuttohaukka_03.538eb563.svg',
+    'muuttohaukka_04.a40463b8.svg',
+    'muuttohaukka_05.b0e94b25.svg',
+  ];
 
   if ($runningCount > (count($eagles) - 1)) {
     $runningCount = 0;
   }
 
-  return \Muuttohaukat\Media\image($eagles[$runningCount++], ['className' => ['eagle-img']]);
+  $src = get_stylesheet_directory_uri() . '/assets/img/' . $eagles[$runningCount++];
+  $class = \Muuttohaukat\className('eagle-img');
+
+  return "<img src='" . esc_url($src) . "' {$class} alt='' width='1366' height='768' loading='lazy'>";
 }

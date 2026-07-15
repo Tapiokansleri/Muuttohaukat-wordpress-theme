@@ -1,0 +1,9 @@
+/* Cookiebot privacy trigger — hide on mobile where it overlaps the header menu. */
+
+@media (max-width: 1023.98px) {
+    #CookiebotWidget {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}

@@ -132,11 +132,23 @@ function getImageData($image = null, string $size = 'medium') {
     return false;
   }
 
+  $mime = get_post_mime_type($id);
+  $url = wp_get_attachment_url($id);
+  $srcset = wp_get_attachment_image_srcset($id, $size) ?: '';
+
+  // SVG attachments often have corrupt size metadata (missing upload subdir in srcset).
+  if ($mime === 'image/svg+xml') {
+    $srcset = '';
+    if (is_string($url) && $url !== '') {
+      $src[0] = $url;
+    }
+  }
+
   return [
     'src'         => $src[0],
     'width'       => $src[1],
     'height'      => $src[2],
-    'srcset'      => wp_get_attachment_image_srcset($id, $size) ?: '',
+    'srcset'      => $srcset,
     'description' => $attachment->post_content,
     'title'       => $attachment->post_title,
     'alt'         => get_post_meta($id, '_wp_attachment_image_alt', true) ?: '',

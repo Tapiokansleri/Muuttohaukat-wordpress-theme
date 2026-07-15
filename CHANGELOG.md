@@ -4,6 +4,16 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.2] - 2026-07-15
+
+### Fixed
+
+- Restore PostListing card eagle images by using bundled theme SVGs instead of broken media-library srcset paths
+- Skip responsive srcset output for SVG attachments with corrupt WordPress metadata
+- Hide Cookiebot floating privacy trigger on mobile so it no longer covers the menu hamburger
+
+[1.1.2]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.2
+
 ## [1.1.1] - 2026-07-15
 
 ### Added

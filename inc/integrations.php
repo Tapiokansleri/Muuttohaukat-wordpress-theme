@@ -91,3 +91,17 @@ function make_leadoo_async( $tag, $handle ) {
     return str_replace( '<script ', '<script async ', $tag );
 }
 add_filter( 'script_loader_tag', __NAMESPACE__ . '\make_leadoo_async', 10, 2 );
+
+/**
+ * Cookiebot is injected via GTM (consent.cookiebot.com/uc.js), not theme PHP.
+ * Hide its floating privacy trigger on mobile so it does not cover the menu.
+ */
+function enqueue_consent_overrides() {
+    wp_enqueue_style(
+        'muuttohaukat-consent-overrides',
+        get_stylesheet_directory_uri() . '/assets/css/consent-overrides.css',
+        array( 'muuttohaukat-header' ),
+        wp_get_theme()->get( 'Version' )
+    );
+}
+add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_consent_overrides', 30 );
