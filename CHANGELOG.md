@@ -4,6 +4,14 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.11] - 2026-07-15
+
+### Changed
+
+- D365 endpoint input is pre-filled with the default Haukka/Azure Function URL when no saved value exists
+
+[1.0.11]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.11
+
 ## [1.0.10] - 2026-07-15
 
 ### Changed

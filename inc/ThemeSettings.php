@@ -153,12 +153,30 @@ function renderTabs($active) {
  * Render D365 endpoint settings on the links tab.
  */
 function renderD365Fields() {
-  $endpoint = get_option('muuttohaukat_d365_endpoint', '');
+  $stored = get_option('muuttohaukat_d365_endpoint', '');
+  $display = $stored;
+
+  if ($display === '' && defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
+    $display = MUUTTOHAUKAT_D365_ENDPOINT;
+  }
+
+  if ($display === '') {
+    $display = \Muuttohaukat\d365_endpoint_default();
+  }
+
+  // Copy wp-config value into the field when DB is empty (local dev / migration).
+  if ($stored === '' && defined('MUUTTOHAUKAT_D365_ENDPOINT') && $display === MUUTTOHAUKAT_D365_ENDPOINT) {
+    $source = 'wp-config.php';
+  } elseif ($stored !== '') {
+    $source = __('Teeman asetukset', 'muuttohaukat');
+  } elseif (strpos($display, 'code=') !== false && substr($display, -1) !== '=') {
+    $source = defined('MUUTTOHAUKAT_D365_ENDPOINT') ? 'wp-config.php' : __('Oletus', 'muuttohaukat');
+  } else {
+    $source = __('Oletus (täydennä code-parametri)', 'muuttohaukat');
+  }
+
   $effective = \Muuttohaukat\d365_endpoint();
-  $configured = $effective !== '';
-  $source = $endpoint !== ''
-    ? __('Teeman asetukset', 'muuttohaukat')
-    : (defined('MUUTTOHAUKAT_D365_ENDPOINT') ? 'wp-config.php' : '');
+  $configured = $effective !== '' && strpos($effective, 'code=') !== false && substr($effective, -5) !== 'code=';
   ?>
   <form method="post" action="options.php" style="margin-top: 1.5em;">
     <?php settings_fields(OPTION_GROUP); ?>
@@ -173,15 +191,15 @@ function renderD365Fields() {
           <th scope="row"><label for="muuttohaukat_d365_endpoint"><?= esc_html__('D365 endpoint URL', 'muuttohaukat') ?></label></th>
           <td>
             <input
-              type="url"
+              type="text"
               id="muuttohaukat_d365_endpoint"
               name="muuttohaukat_d365_endpoint"
-              value="<?= esc_attr($endpoint) ?>"
+              value="<?= esc_attr($display) ?>"
               class="large-text code"
-              placeholder="https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?..."
+              style="width: 100%;"
             >
             <p class="description">
-              <?= esc_html__('Tallennetaan tietokantaan. Kun kenttä on täytetty, se ohittaa wp-config.php-asetuksen.', 'muuttohaukat') ?>
+              <?= esc_html__('Oletusosoite täytetään automaattisesti. Tallenna muutokset, jos haluat tallentaa sen tietokantaan.', 'muuttohaukat') ?>
             </p>
           </td>
         </tr>

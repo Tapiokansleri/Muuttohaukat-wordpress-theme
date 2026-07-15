@@ -14,6 +14,15 @@ if (!function_exists('libreform')) {
 }
 
 /**
+ * Default Dynamics 365 endpoint base URL (code param added via admin or wp-config).
+ *
+ * @return string
+ */
+function d365_endpoint_default() {
+  return 'https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?id=10473&code=';
+}
+
+/**
  * Resolve the Dynamics 365 Azure Function endpoint.
  *
  * Priority: Teeman asetukset option → wp-config constant → filter.
@@ -22,7 +31,7 @@ if (!function_exists('libreform')) {
  */
 function d365_endpoint() {
   $stored = get_option('muuttohaukat_d365_endpoint', '');
-  if (is_string($stored) && $stored !== '') {
+  if (is_string($stored) && $stored !== '' && strpos($stored, 'code=') !== false) {
     return $stored;
   }
 
