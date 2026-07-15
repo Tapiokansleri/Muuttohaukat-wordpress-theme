@@ -58,6 +58,10 @@ add_action('admin_init', function () {
     'sanitize_callback' => __NAMESPACE__ . '\\sanitizeHelloBarOptions',
     'default'           => [],
   ]);
+  register_setting(OPTION_GROUP, 'muuttohaukat_d365_endpoint', [
+    'sanitize_callback' => 'esc_url_raw',
+    'default'           => '',
+  ]);
 });
 
 add_action('admin_menu', function () {
@@ -124,6 +128,59 @@ function renderTabs($active) {
 /**
  * Render GitHub updater status on the links tab.
  */
+function renderD365Fields() {
+  $endpoint = get_option('muuttohaukat_d365_endpoint', '');
+  $configured = $endpoint !== '' || defined('MUUTTOHAUKAT_D365_ENDPOINT');
+  ?>
+  <form method="post" action="options.php" style="margin-top: 1.5em;">
+    <?php settings_fields(OPTION_GROUP); ?>
+    <input type="hidden" name="_wp_http_referer" value="<?= esc_attr(add_query_arg(['page' => PAGE_SLUG, 'tab' => 'links'], admin_url('themes.php'))) ?>">
+    <div class="card" style="max-width: 640px; padding: 1em 1.25em;">
+      <h2 class="title" style="margin-top: 0;"><?= esc_html__('Dynamics 365 / lomakelähetykset', 'muuttohaukat') ?></h2>
+      <p class="description">
+        <?= esc_html__('Azure Function -osoite, johon tarjouspyyntölomakkeet lähetetään. Tarvitaan LibreForm-lomakkeille (kotimuutto, yritysmuutto, muuttotarvikkeet).', 'muuttohaukat') ?>
+      </p>
+      <?php if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) : ?>
+        <p><em><?= esc_html__('wp-config.php määrittää osoitteen — alla oleva kenttä ohitetaan.', 'muuttohaukat') ?></em></p>
+      <?php endif; ?>
+      <table class="form-table" role="presentation">
+        <tr>
+          <th scope="row"><label for="muuttohaukat_d365_endpoint"><?= esc_html__('D365 endpoint URL', 'muuttohaukat') ?></label></th>
+          <td>
+            <input
+              type="url"
+              id="muuttohaukat_d365_endpoint"
+              name="muuttohaukat_d365_endpoint"
+              value="<?= esc_attr($endpoint) ?>"
+              class="large-text code"
+              placeholder="https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?..."
+              <?php disabled(defined('MUUTTOHAUKAT_D365_ENDPOINT')); ?>
+            >
+            <p class="description">
+              <?= esc_html__('Sama URL kuin vanhassa Haukka-teemassa. Tallennetaan tietokantaan — ei vaadi FTP- tai wp-config.php-pääsyä.', 'muuttohaukat') ?>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row"><?= esc_html__('Tila', 'muuttohaukat') ?></th>
+          <td>
+            <?php if ($configured) : ?>
+              <span style="color: #00a32a;"><?= esc_html__('Konfiguroitu', 'muuttohaukat') ?></span>
+            <?php else : ?>
+              <span style="color: #d63638;"><?= esc_html__('Puuttuu — lomakkeet eivät välity Dynamics 365:een', 'muuttohaukat') ?></span>
+            <?php endif; ?>
+          </td>
+        </tr>
+      </table>
+      <?php submit_button(__('Tallenna muutokset', 'muuttohaukat')); ?>
+    </div>
+  </form>
+  <?php
+}
+
+/**
+ * Render GitHub updater status on the links tab.
+ */
 function renderUpdateStatus() {
   if (!current_user_can('update_themes')) {
     return;
@@ -178,6 +235,7 @@ function renderPage() {
     <?php renderTabs($tab); ?>
 
     <?php if ($tab === 'links') : ?>
+      <?php renderD365Fields(); ?>
       <?php renderUpdateStatus(); ?>
       <div class="muuttohaukat-theme-settings-links" style="margin-top: 1.5em; max-width: 640px;">
         <p><?= esc_html__('Nämä asetukset hallitaan muualla WordPress-hallinnassa:', 'muuttohaukat') ?></p>

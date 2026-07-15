@@ -2,7 +2,7 @@
 
 Custom WordPress theme for [Muuttohaukat](https://muuttohaukat.com), rebuilt from the legacy Haukka theme.
 
-**Version:** 1.0.8  
+**Version:** 1.0.9  
 **Repository:** [github.com/Tapiokansleri/Muuttohaukat-wordpress-theme](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme)
 
 ## Requirements
@@ -32,13 +32,15 @@ Updates are fetched from this repository automatically — no separate update pl
 
 ### Dynamics 365 (quote forms)
 
-Add this to `wp-config.php` on each site (same URL the legacy Haukka theme used):
+Without FTP access, set the Azure Function URL in **Appearance → Teeman asetukset → Muut asetukset → D365 endpoint URL**.
+
+Alternatively, add to `wp-config.php` (overrides the admin setting):
 
 ```php
 define('MUUTTOHAUKAT_D365_ENDPOINT', 'https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?id=...&code=...');
 ```
 
-Without it, LibreForm submissions save but are not forwarded to Dynamics 365.
+Without either, LibreForm submissions save but are not forwarded to Dynamics 365.
 
 ## Theme features
 

@@ -16,14 +16,18 @@ if (!function_exists('libreform')) {
 /**
  * Resolve the Dynamics 365 Azure Function endpoint.
  *
- * Define MUUTTOHAUKAT_D365_ENDPOINT in wp-config.php (recommended).
- * A filter is available for tests or custom overrides.
+ * Priority: wp-config constant → Teeman asetukset option → filter.
  *
  * @return string
  */
 function d365_endpoint() {
   if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
     return MUUTTOHAUKAT_D365_ENDPOINT;
+  }
+
+  $stored = get_option('muuttohaukat_d365_endpoint', '');
+  if (is_string($stored) && $stored !== '') {
+    return $stored;
   }
 
   return (string) apply_filters('muuttohaukat_d365_endpoint', '');
@@ -59,7 +63,7 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
 
     $endpoint = d365_endpoint();
     if ($endpoint === '') {
-      error_log('[D365]: MUUTTOHAUKAT_D365_ENDPOINT is not defined in wp-config.php');
+      error_log('[D365]: Endpoint not configured — set it under Appearance → Teeman asetukset → Muut asetukset, or define MUUTTOHAUKAT_D365_ENDPOINT in wp-config.php');
       return;
     }
 
