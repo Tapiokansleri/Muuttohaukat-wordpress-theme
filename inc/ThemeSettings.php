@@ -9,9 +9,11 @@
  */
 namespace Muuttohaukat\ThemeSettings;
 
-const PAGE_SLUG    = 'muuttohaukat-theme-settings';
-const OPTION_GROUP = 'muuttohaukat_theme_settings';
-const D365_CODE_MASK = '********';
+const PAGE_SLUG          = 'muuttohaukat-theme-settings';
+const GROUP_FLOATING_CTA = 'muuttohaukat_floating_cta_settings';
+const GROUP_HELLOBAR     = 'muuttohaukat_hellobar_settings';
+const GROUP_D365         = 'muuttohaukat_d365_settings';
+const D365_CODE_MASK     = '********';
 
 /**
  * Return the non-secret identity of a D365 endpoint.
@@ -45,6 +47,11 @@ function d365EndpointIdentity($endpoint) {
  * @return string
  */
 function sanitizeD365Endpoint($input) {
+  if ($input === null) {
+    $stored = get_option(\Muuttohaukat\D365_ENDPOINT_OPTION, '');
+    return is_string($stored) ? $stored : '';
+  }
+
   $endpoint = esc_url_raw(is_string($input) ? trim($input) : '');
   if ($endpoint === '') {
     return '';
@@ -53,11 +60,14 @@ function sanitizeD365Endpoint($input) {
   $query = [];
   parse_str((string) wp_parse_url($endpoint, PHP_URL_QUERY), $query);
   if (($query['code'] ?? '') !== D365_CODE_MASK) {
+    if (\Muuttohaukat\d365_endpoint_is_valid($endpoint)) {
+      \Muuttohaukat\d365_backup_endpoint($endpoint);
+    }
     return $endpoint;
   }
 
   $current = \Muuttohaukat\d365_endpoint();
-  $stored = get_option('muuttohaukat_d365_endpoint', '');
+  $stored = get_option(\Muuttohaukat\D365_ENDPOINT_OPTION, '');
 
   if (
     d365EndpointIdentity($endpoint) === ''
@@ -79,7 +89,12 @@ function sanitizeD365Endpoint($input) {
     return remove_query_arg('code', $endpoint);
   }
 
-  return esc_url_raw(add_query_arg('code', (string) $current_query['code'], $endpoint));
+  $restored = esc_url_raw(add_query_arg('code', (string) $current_query['code'], $endpoint));
+  if (\Muuttohaukat\d365_endpoint_is_valid($restored)) {
+    \Muuttohaukat\d365_backup_endpoint($restored);
+  }
+
+  return $restored;
 }
 
 /**
@@ -114,6 +129,11 @@ function tabs() {
  * @return array<string, string>
  */
 function sanitizeHelloBarOptions($input) {
+  if ($input === null) {
+    $stored = get_option('kansleri_hello_bar_options', []);
+    return is_array($stored) ? $stored : [];
+  }
+
   if (!is_array($input)) {
     return [];
   }
@@ -127,28 +147,56 @@ function sanitizeHelloBarOptions($input) {
   ];
 }
 
+/**
+ * Block accidental wipes of a working D365 endpoint.
+ *
+ * @param mixed $value     New option value.
+ * @param mixed $old_value Previous option value.
+ * @return mixed
+ */
+function preserveD365Endpoint($value, $old_value) {
+  if (is_string($value) && \Muuttohaukat\d365_endpoint_is_valid($value)) {
+    \Muuttohaukat\d365_backup_endpoint($value);
+    return $value;
+  }
+
+  if (
+    ($value === null || $value === '' || !\Muuttohaukat\d365_endpoint_is_valid($value))
+    && is_string($old_value)
+    && \Muuttohaukat\d365_endpoint_is_valid($old_value)
+  ) {
+    return $old_value;
+  }
+
+  return $value;
+}
+
 /** Register settings and admin page. */
 add_action('admin_init', function () {
-  register_setting(OPTION_GROUP, 'kansleri_floating_cta_link', ['sanitize_callback' => 'esc_url_raw']);
-  register_setting(OPTION_GROUP, 'kansleri_floating_cta_text', ['sanitize_callback' => 'sanitize_text_field']);
-  register_setting(OPTION_GROUP, 'kansleri_floating_cta_second_link', ['sanitize_callback' => 'esc_url_raw']);
-  register_setting(OPTION_GROUP, 'kansleri_floating_cta_second_text', ['sanitize_callback' => 'sanitize_text_field']);
-  register_setting(OPTION_GROUP, 'kansleri_floating_cta_location', ['sanitize_callback' => 'sanitize_text_field']);
-  register_setting(OPTION_GROUP, 'kansleri_floating_cta_only_on_mobile', [
+  register_setting(GROUP_FLOATING_CTA, 'kansleri_floating_cta_link', ['sanitize_callback' => 'esc_url_raw']);
+  register_setting(GROUP_FLOATING_CTA, 'kansleri_floating_cta_text', ['sanitize_callback' => 'sanitize_text_field']);
+  register_setting(GROUP_FLOATING_CTA, 'kansleri_floating_cta_second_link', ['sanitize_callback' => 'esc_url_raw']);
+  register_setting(GROUP_FLOATING_CTA, 'kansleri_floating_cta_second_text', ['sanitize_callback' => 'sanitize_text_field']);
+  register_setting(GROUP_FLOATING_CTA, 'kansleri_floating_cta_location', ['sanitize_callback' => 'sanitize_text_field']);
+  register_setting(GROUP_FLOATING_CTA, 'kansleri_floating_cta_only_on_mobile', [
     'sanitize_callback' => function ($value) {
       return absint($value);
     },
     'default' => 0,
   ]);
-  register_setting(OPTION_GROUP, 'kansleri_hello_bar_options', [
+  register_setting(GROUP_HELLOBAR, 'kansleri_hello_bar_options', [
     'sanitize_callback' => __NAMESPACE__ . '\\sanitizeHelloBarOptions',
     'default'           => [],
   ]);
-  register_setting(OPTION_GROUP, 'muuttohaukat_d365_endpoint', [
+  register_setting(GROUP_D365, 'muuttohaukat_d365_endpoint', [
     'sanitize_callback' => __NAMESPACE__ . '\\sanitizeD365Endpoint',
     'default'           => '',
   ]);
 });
+
+add_action('init', function () {
+  add_filter('pre_update_option_' . \Muuttohaukat\D365_ENDPOINT_OPTION, __NAMESPACE__ . '\\preserveD365Endpoint', 10, 2);
+}, 20);
 
 add_action('admin_menu', function () {
   add_theme_page(
@@ -253,7 +301,7 @@ function renderTabs($active) {
  * Render D365 endpoint settings on the links tab.
  */
 function renderD365Fields() {
-  $stored = get_option('muuttohaukat_d365_endpoint', '');
+  $stored = get_option(\Muuttohaukat\D365_ENDPOINT_OPTION, '');
   $display = $stored;
 
   if ($display === '' && defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
@@ -282,7 +330,7 @@ function renderD365Fields() {
   $configured = \Muuttohaukat\d365_endpoint_is_valid($effective);
   ?>
   <form method="post" action="options.php" style="margin-top: 1.5em;">
-    <?php settings_fields(OPTION_GROUP); ?>
+    <?php settings_fields(GROUP_D365); ?>
     <input type="hidden" name="_wp_http_referer" value="<?= esc_attr(add_query_arg(['page' => PAGE_SLUG, 'tab' => 'links'], admin_url('themes.php'))) ?>">
     <div class="card" style="max-width: 640px; padding: 1em 1.25em;">
       <h2 class="title" style="margin-top: 0;"><?= esc_html__('Dynamics 365 / lomakelähetykset', 'muuttohaukat') ?></h2>
@@ -576,7 +624,10 @@ function renderPage() {
       </div>
     <?php else : ?>
       <form method="post" action="options.php" style="margin-top: 1.5em;">
-        <?php settings_fields(OPTION_GROUP); ?>
+        <?php
+        $settings_group = $tab === 'hellobar' ? GROUP_HELLOBAR : GROUP_FLOATING_CTA;
+        settings_fields($settings_group);
+        ?>
         <input type="hidden" name="_wp_http_referer" value="<?= esc_attr(add_query_arg(['page' => PAGE_SLUG, 'tab' => $tab], admin_url('themes.php'))) ?>">
 
         <?php if ($tab === 'floating-cta') : ?>

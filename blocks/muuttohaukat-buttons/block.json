@@ -2,8 +2,8 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "muuttohaukat/buttons",
-  "title": "Muuttohaukat buttons",
-  "category": "landing-page",
+  "title": "Painikkeet",
+  "category": "muuttohaukat",
   "icon": "button",
   "description": "Yksi tai kaksi vierekkäistä Muuttohaukat-painiketta (musta / keltainen) ja chevron-hover.",
   "supports": {

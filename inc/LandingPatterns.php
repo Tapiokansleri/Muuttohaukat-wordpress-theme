@@ -42,7 +42,7 @@ add_action('init', function () {
   if ($full === '') return;
 
   register_block_pattern('mh/landing-full', [
-    'title'       => __('Landing: Koko Muuttopalvelu Paimio -sivu', 'muuttohaukat'),
+    'title'       => __('Koko Muuttopalvelu Paimio -sivu', 'muuttohaukat'),
     'categories'  => ['mh-landing'],
     'content'     => $full,
     'description' => __('Koko muuttopalvelu Paimio -laskeutumissivu valmiina.', 'muuttohaukat'),
@@ -50,15 +50,14 @@ add_action('init', function () {
 });
 
 /**
- * Register the "Landing page" block category so all landing-* blocks group
- * together in the inserter instead of mixing into core "Design".
- * Each block.json under blocks/landing-<slug>/ must reference "landing-page"
+ * Register the Muuttohaukat block category so theme blocks group together
+ * in the inserter. Each block.json under blocks/ must reference "muuttohaukat"
  * as its `category` for this grouping to take effect.
  */
 add_filter('block_categories_all', function ($categories) {
   array_unshift($categories, [
-    'slug'  => 'landing-page',
-    'title' => __('Landing page', 'muuttohaukat'),
+    'slug'  => 'muuttohaukat',
+    'title' => __('Muuttohaukat', 'muuttohaukat'),
     'icon'  => null,
   ]);
   return $categories;

@@ -42,6 +42,8 @@ add_action('allowed_block_types_all', function () {
 
   $native = [
     'muuttohaukat/route-calculator',
+    'muuttohaukat/icon-item',
+    'muuttohaukat/buttons',
     'muuttohaukat/landing-hero',
     'muuttohaukat/landing-service',
     'muuttohaukat/landing-cases',

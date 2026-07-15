@@ -20,14 +20,14 @@
 	];
 
 	function buttonClass( color ) {
-		return 'mh-buttons__btn mh-buttons__btn--' + ( color === 'black' ? 'black' : 'yellow' );
+		return 'mh-painike mh-painike--' + ( color === 'black' ? 'black' : 'yellow' );
 	}
 
 	registerBlockType( 'muuttohaukat/buttons', {
 		edit: function ( props ) {
 			var attrs = props.attributes;
 			var set = props.setAttributes;
-			var blockProps = useBlockProps( { className: 'mh-buttons-wrap' } );
+			var blockProps = useBlockProps( { className: 'mh-painike-wrap' } );
 
 			function controlsFor( num ) {
 				var prefix = 'button' + num;
@@ -64,9 +64,11 @@
 			function previewBtn( num ) {
 				var text = attrs[ 'button' + num + 'Text' ];
 				if ( ! text ) return null;
-				return el( 'span', {
+				return el( 'a', {
 					key: num,
-					className: buttonClass( attrs[ 'button' + num + 'Color' ] )
+					className: buttonClass( attrs[ 'button' + num + 'Color' ] ),
+					href: attrs[ 'button' + num + 'Url' ] || '#',
+					onClick: function ( e ) { e.preventDefault(); }
 				}, text );
 			}
 
@@ -84,7 +86,7 @@
 
 		save: function ( props ) {
 			var attrs = props.attributes;
-			var blockProps = useBlockProps.save( { className: 'mh-buttons-wrap' } );
+			var blockProps = useBlockProps.save( { className: 'mh-painike-wrap' } );
 
 			function btn( num ) {
 				var text = attrs[ 'button' + num + 'Text' ];

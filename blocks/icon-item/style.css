@@ -1,0 +1,50 @@
+/* Shared Font Awesome icon markup for landing blocks. */
+
+.mh-landing-icon {
+    flex-shrink: 0;
+    width: 1.1em;
+    line-height: 1;
+    text-align: center;
+}
+
+.mh-icon-item--trust {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.mh-icon-item__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+    font-weight: 700;
+}
+
+.mh-icon-item__caption {
+    display: block;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.25;
+    opacity: 0.75;
+}
+
+.mh-icon-item--why {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.mh-icon-item__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-3);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.mh-icon-item--why > p {
+    margin: 0;
+}

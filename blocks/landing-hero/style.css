@@ -35,7 +35,7 @@
     height: auto;
 }
 
-/* Trust badges: 3-column grid with FA icon (via ::before) + caption */
+/* Trust badges: 3-column grid with icon-item blocks */
 .mh-landing-hero__trust {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -43,6 +43,7 @@
     margin-top: 60px;
 }
 
+/* Legacy CSS-icon trust items (pre icon-item block). */
 .mh-landing-hero__trust-item {
     display: flex;
     flex-direction: column;

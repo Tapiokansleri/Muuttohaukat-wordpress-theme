@@ -2,6 +2,10 @@
     "$schema": "https://schemas.wp.org/wp/6.0/theme.json",
     "version": 2,
     "settings": {
+        "layout": {
+            "contentSize": "1366px",
+            "wideSize": "1366px"
+        },
         "color": {
             "palette": [
                 {
@@ -50,6 +54,13 @@
                     "name": "Preformatted background"
                 }
             ]
+        }
+    },
+    "styles": {
+        "typography": {
+            "fontFamily": "MontserratVariable, sans-serif",
+            "fontSize": "1.0625rem",
+            "lineHeight": "1.75"
         }
     }
 }

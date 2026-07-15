@@ -6,6 +6,7 @@
     gap: var(--space-8);
 }
 
+/* Legacy CSS-icon why items (pre icon-item block). */
 .mh-landing-why__item {
     display: flex;
     flex-direction: column;

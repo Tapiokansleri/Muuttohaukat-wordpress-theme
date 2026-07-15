@@ -1,0 +1,147 @@
+/**
+ * Gutenberg editor canvas — mirrors frontend .mh-gutenberg.prose basics.
+ * Loaded inside the editor iframe via add_editor_style().
+ */
+
+.editor-styles-wrapper {
+    font-family: var(--font-body);
+    font-size: var(--content-font-size);
+    line-height: var(--content-line-height);
+    color: var(--color-content-text);
+    padding: var(--space-8) clamp(var(--space-4), 4vw, var(--space-12));
+    max-width: 1366px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.editor-styles-wrapper .is-root-container {
+    max-width: none;
+}
+
+.editor-styles-wrapper .editor-post-title,
+.editor-styles-wrapper .wp-block-post-title,
+.editor-styles-wrapper .wp-block-post-title textarea,
+.editor-styles-wrapper .wp-block-post-title input {
+    font-family: var(--font-body);
+    font-size: var(--heading-1-size);
+    font-weight: var(--font-bold);
+    line-height: var(--heading-1-leading);
+    color: var(--color-content-text);
+}
+
+.editor-styles-wrapper h1 {
+    font-size: var(--heading-1-size);
+    font-weight: var(--font-bold);
+    line-height: var(--heading-1-leading);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+}
+
+.editor-styles-wrapper h2 {
+    font-size: var(--heading-2-size);
+    font-weight: var(--font-bold);
+    line-height: var(--heading-2-leading);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
+}
+
+.editor-styles-wrapper h3 {
+    font-size: var(--heading-3-size);
+    font-weight: var(--font-semibold);
+    line-height: var(--heading-3-leading);
+    margin-top: var(--space-7);
+    margin-bottom: var(--space-2);
+}
+
+.editor-styles-wrapper h4 {
+    font-size: var(--heading-4-size);
+    font-weight: var(--font-semibold);
+    line-height: var(--heading-4-leading);
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-2);
+}
+
+.editor-styles-wrapper p {
+    margin-top: 0;
+    margin-bottom: 1.25em;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.editor-styles-wrapper a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.editor-styles-wrapper ul,
+.editor-styles-wrapper ol {
+    margin-top: 0;
+    margin-bottom: 1.25em;
+    padding-left: 1.5em;
+}
+
+.editor-styles-wrapper li {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.editor-styles-wrapper blockquote {
+    margin: 1.5em 0;
+    padding-left: 1em;
+    border-left: 4px solid var(--color-border);
+    font-style: italic;
+}
+
+.editor-styles-wrapper code {
+    font-size: var(--inline-code-font-size);
+    background: var(--color-code-bg);
+    padding: 0.15em 0.35em;
+    border-radius: var(--radius-xs);
+}
+
+.editor-styles-wrapper pre {
+    background: var(--color-pre-bg);
+    color: var(--color-pre-text);
+    padding: var(--space-4);
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+}
+
+.editor-styles-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.25em;
+}
+
+.editor-styles-wrapper th,
+.editor-styles-wrapper td {
+    border: 1px solid var(--color-border);
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+}
+
+.editor-styles-wrapper th {
+    font-weight: var(--font-semibold);
+    background: var(--color-surface-subtle);
+}
+
+/* Landing blocks: full-width canvas + yellow/white section alternation */
+.editor-styles-wrapper .wp-block,
+.editor-styles-wrapper .is-root-container > .wp-block {
+    max-width: none !important;
+}
+
+.editor-styles-wrapper .wp-block[data-align="full"],
+.editor-styles-wrapper .wp-block[data-align="wide"] {
+    max-width: none !important;
+}
+
+.editor-styles-wrapper .is-root-container > .wp-block:nth-of-type(even) > [class*="wp-block-muuttohaukat-landing-"] {
+    background-color: var(--color-accent);
+}
+
+.editor-styles-wrapper .is-root-container > .wp-block:nth-of-type(odd) > [class*="wp-block-muuttohaukat-landing-"] {
+    background-color: var(--color-white);
+}

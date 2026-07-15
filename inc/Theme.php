@@ -35,6 +35,21 @@ add_action('after_setup_theme', function () {
   // Gutenberg support.
   add_theme_support('align-wide');
   add_theme_support('responsive-embeds');
+  add_theme_support('editor-styles');
+  add_theme_support('wp-block-styles');
+
+  add_editor_style([
+    'assets/css/00-tokens.css',
+    'assets/css/editor-fonts.css',
+    'assets/css/editor.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+    'assets/css/icon-picker.css',
+    'fl-builder/modules/muuttohaukat-painike/css/frontend.css',
+    'assets/css/03-button-chevron.css',
+    'assets/css/landing.css',
+  ]);
+
+  // Font Awesome + icon picker: inc/FontAwesome.php
 
   // Disable colour options in the editor.
   add_theme_support('editor-color-palette', []);

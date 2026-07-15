@@ -9,6 +9,9 @@
  */
 namespace Muuttohaukat;
 
+const D365_ENDPOINT_OPTION = 'muuttohaukat_d365_endpoint';
+const D365_BACKUP_OPTION   = 'muuttohaukat_d365_endpoint_backup';
+
 /**
  * Default Dynamics 365 endpoint base URL (no auth params — set full URL in admin).
  *
@@ -19,24 +22,89 @@ function d365_endpoint_default() {
 }
 
 /**
+ * Candidate D365 endpoints in priority order (primary is tried first).
+ *
+ * @return string[]
+ */
+function d365_endpoint_candidates() {
+  $candidates = [];
+
+  $stored = get_option(D365_ENDPOINT_OPTION, '');
+  if (is_string($stored) && $stored !== '') {
+    $candidates[] = $stored;
+  }
+
+  $backup = get_option(D365_BACKUP_OPTION, '');
+  if (is_string($backup) && $backup !== '') {
+    $candidates[] = $backup;
+  }
+
+  if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
+    $candidates[] = (string) MUUTTOHAUKAT_D365_ENDPOINT;
+  }
+
+  $filtered = apply_filters('muuttohaukat_d365_endpoint_candidates', $candidates);
+  if (!is_array($filtered)) {
+    return $candidates;
+  }
+
+  return array_values(array_filter($filtered, function ($candidate) {
+    return is_string($candidate) && $candidate !== '';
+  }));
+}
+
+/**
  * Resolve the Dynamics 365 Azure Function endpoint.
  *
- * Priority: Teeman asetukset option → wp-config constant → filter.
+ * Uses the first valid candidate from admin, backup, wp-config, or filters.
  *
  * @return string
  */
 function d365_endpoint() {
-  $stored = get_option('muuttohaukat_d365_endpoint', '');
-  if (is_string($stored) && $stored !== '') {
-    return $stored;
+  foreach (d365_endpoint_candidates() as $candidate) {
+    if (d365_endpoint_is_valid($candidate)) {
+      return $candidate;
+    }
   }
 
-  if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
-    return (string) MUUTTOHAUKAT_D365_ENDPOINT;
-  }
-
-  return (string) apply_filters('muuttohaukat_d365_endpoint', '');
+  $fallback = apply_filters('muuttohaukat_d365_endpoint', '');
+  return is_string($fallback) ? $fallback : '';
 }
+
+/**
+ * Persist a known-good endpoint to the backup option.
+ *
+ * @param string $endpoint Endpoint URL.
+ */
+function d365_backup_endpoint($endpoint) {
+  if (!d365_endpoint_is_valid($endpoint)) {
+    return;
+  }
+
+  update_option(D365_BACKUP_OPTION, $endpoint, false);
+}
+
+/**
+ * Restore a wiped primary endpoint from backup or wp-config.
+ */
+function d365_self_heal_endpoint() {
+  $stored = get_option(D365_ENDPOINT_OPTION, '');
+  if (d365_endpoint_is_valid($stored)) {
+    d365_backup_endpoint($stored);
+    return;
+  }
+
+  $resolved = d365_endpoint();
+  if (!d365_endpoint_is_valid($resolved)) {
+    return;
+  }
+
+  update_option(D365_ENDPOINT_OPTION, $resolved, false);
+  d365_backup_endpoint($resolved);
+  d365_log('[D365]: Restored endpoint from backup/wp-config');
+}
+
+add_action('init', __NAMESPACE__ . '\\d365_self_heal_endpoint', 1);
 
 /**
  * Check that an endpoint is the complete Azure AddOfferToDynamics URL.

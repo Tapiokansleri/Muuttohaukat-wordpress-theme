@@ -275,9 +275,9 @@ body.header-full-width .header-inner {
     border-color: transparent;
     border-radius: 4px;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
-                opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+                opacity 0.2s ease, box-shadow 0.2s ease;
     animation: button-pop 0.25s ease-out;
 }
 
@@ -379,6 +379,10 @@ body.header-full-width .header-inner {
    which now starts at min-width:1024.
    ------------------------------------------------------------------------- */
 @media (max-width: 1023.98px) {
+    :root {
+        --header-height: 56px;
+    }
+
     .mobile-menu-toggle {
         display: flex;
         align-items: center;
@@ -390,17 +394,23 @@ body.header-full-width .header-inner {
 
     .header-inner {
         grid-template-columns: auto 1fr auto;
+        min-height: 56px;
+        padding: 0 1rem;
     }
 
-    /* Shrink header logo on mobile */
+    .site-branding {
+        max-height: 56px;
+    }
+
+    /* Larger logo in a shorter mobile header bar */
     .site-branding .site-logo svg,
     .site-branding .custom-logo {
-        max-height: 32px;
+        max-height: 44px;
     }
 
     .site-logo,
     .site-branding .custom-logo-link {
-        max-width: 100px;
+        max-width: 150px;
     }
 
     /* Navigation becomes overlay */

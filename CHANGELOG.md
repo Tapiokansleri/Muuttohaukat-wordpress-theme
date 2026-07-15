@@ -4,6 +4,34 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.1] - 2026-07-15
+
+### Added
+
+- Font Awesome icon picker block (`muuttohaukat/icon-item`) with visual picker in the Gutenberg editor
+- Editor-only fonts and padding for Muuttohaukat blocks
+- D365 endpoint backup storage and automatic self-heal from backup or `wp-config.php`
+
+### Changed
+
+- Rename Gutenberg block category from `Landing:` to `Muuttohaukat`
+- Align hero, floating CTA, and button blocks with the Beaver Builder `mh-painike` button styles
+- Compact floating CTA sizing on mobile while keeping buttons side by side
+- Shorter mobile header bar with a larger logo
+
+### Fixed
+
+- Stop D365 endpoint from being wiped when saving other Teeman asetukset tabs (split settings groups per tab)
+- Restore full-width frontend layouts by removing global `body` padding from `theme.json`
+- Fix unsupported `muuttohaukat/icon-item` block registration in the editor
+- Fix header CTA hover shrinking and Font Awesome loading conflicts with Beaver Builder
+
+### Security
+
+- Block accidental clearing of a working D365 endpoint during unrelated settings saves
+
+[1.1.1]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.1
+
 ## [1.1.0] - 2026-07-15
 
 ### Added

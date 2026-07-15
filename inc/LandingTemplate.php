@@ -17,7 +17,7 @@ add_action('init', function () {
   foreach (glob(get_template_directory() . '/blocks/*/block.json') as $manifest) {
     register_block_type(dirname($manifest));
   }
-});
+}, 20);
 
 /**
  * Auto-populate the page content with the default landing block layout

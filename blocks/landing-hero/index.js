@@ -5,15 +5,13 @@
 	var InnerBlocks = blockEditor.InnerBlocks;
 	var el = element.createElement;
 
-	// Trust item: icon comes from a CSS ::before rule keyed off the
-	// modifier class — no core/html block, no inline FA markup. Lets the
-	// editor preview show the same icon + label + caption as the frontend
-	// because both contexts run the same landing.css.
-	var TRUST_ITEM = function ( iconModifier, label, caption ) {
-		return [ 'core/group', { className: 'mh-landing-hero__trust-item mh-landing-hero__trust-item--' + iconModifier }, [
-			[ 'core/paragraph', { className: 'mh-landing-hero__trust-label', content: label } ],
-			[ 'core/paragraph', { className: 'mh-landing-hero__trust-caption', content: caption } ]
-		] ];
+	var TRUST_ITEM = function ( icon, label, caption ) {
+		return [ 'muuttohaukat/icon-item', {
+			variant: 'trust',
+			icon: icon,
+			title: label,
+			description: caption
+		} ];
 	};
 
 	var TEMPLATE = [
@@ -24,9 +22,9 @@
 				[ 'core/paragraph', { className: 'mh-landing-hero__lead', content: 'Muutto edessä Paimiossa? Muuttopalvelu Paimio hoitaa raskaan työn puolestasi — ammattitaidolla, sovitussa aikataulussa ja selkeällä hinnalla, koko Paimion alueella ja Varsinais-Suomessa.' } ],
 				[ 'muuttohaukat/buttons', {} ],
 				[ 'core/group', { className: 'mh-landing-hero__trust' }, [
-					TRUST_ITEM( 'medal', '30+ v', 'kokemusta muuttopalveluista' ),
-					TRUST_ITEM( 'location-dot', 'Paimio', 'paikallinen muuttopalvelu' ),
-					TRUST_ITEM( 'truck', 'Koko Suomi', 'palvelualue muuttopalvelulle' )
+					TRUST_ITEM( 'fa-solid fa-medal', '30+ v', 'kokemusta muuttopalveluista' ),
+					TRUST_ITEM( 'fa-solid fa-location-dot', 'Paimio', 'paikallinen muuttopalvelu' ),
+					TRUST_ITEM( 'fa-solid fa-truck', 'Koko Suomi', 'palvelualue muuttopalvelulle' )
 				] ]
 			] ],
 			[ 'core/image', { className: 'mh-landing-hero__media' } ]

@@ -323,14 +323,6 @@ p.buttons > a:nth-of-type(2).btn-active {
     border-color: #333333;
 }
 
-.kansleri-floating-cta-banner .btn-primary {
-    background-color: var(--color-accent);
-    color: var(--color-black);
-    border-color: var(--color-accent);
-}
-
-.kansleri-floating-cta-banner .btn-secondary {
-    background-color: var(--color-black);
-    color: var(--color-white);
-    border-color: var(--color-black);
+.kansleri-floating-cta-banner .mh-painike-wrap {
+    margin: 0;
 }
