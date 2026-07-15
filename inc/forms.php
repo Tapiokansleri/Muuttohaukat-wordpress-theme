@@ -16,21 +16,42 @@ if (!function_exists('libreform')) {
 /**
  * Resolve the Dynamics 365 Azure Function endpoint.
  *
- * Priority: wp-config constant → Teeman asetukset option → filter.
+ * Priority: Teeman asetukset option → wp-config constant → filter.
  *
  * @return string
  */
 function d365_endpoint() {
-  if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
-    return MUUTTOHAUKAT_D365_ENDPOINT;
-  }
-
   $stored = get_option('muuttohaukat_d365_endpoint', '');
   if (is_string($stored) && $stored !== '') {
     return $stored;
   }
 
+  if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) {
+    return MUUTTOHAUKAT_D365_ENDPOINT;
+  }
+
   return (string) apply_filters('muuttohaukat_d365_endpoint', '');
+}
+
+/**
+ * Log a D365-related message to PHP error log and theme log storage.
+ *
+ * @param string $message
+ */
+function d365_log($message) {
+  error_log($message);
+
+  $entries = get_option('muuttohaukat_d365_log', []);
+  if (!is_array($entries)) {
+    $entries = [];
+  }
+
+  array_unshift($entries, [
+    'time'    => current_time('mysql'),
+    'message' => $message,
+  ]);
+
+  update_option('muuttohaukat_d365_log', array_slice($entries, 0, 50), false);
 }
 
 /**
@@ -63,7 +84,7 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
 
     $endpoint = d365_endpoint();
     if ($endpoint === '') {
-      error_log('[D365]: Endpoint not configured — set it under Appearance → Teeman asetukset → Muut asetukset, or define MUUTTOHAUKAT_D365_ENDPOINT in wp-config.php');
+      d365_log('[D365]: Endpoint not configured — set it under Appearance → Teeman asetukset → Muut asetukset');
       return;
     }
 
@@ -73,9 +94,9 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
     ]);
 
     if (\is_wp_error($status)) {
-      error_log("[D365]: Failed to process {$submission->uuid}, backend down?");
+      d365_log("[D365]: Failed to process {$submission->uuid}, backend down?");
     } else {
-      error_log("[D365]: Processing {$submission->uuid}");
+      d365_log("[D365]: Processing {$submission->uuid}");
     }
   }
 }, 10, 2);

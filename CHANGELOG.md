@@ -4,6 +4,18 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.10] - 2026-07-15
+
+### Changed
+
+- D365 endpoint URL is always editable in admin; saved value overrides `wp-config.php`
+
+### Added
+
+- **Muut asetukset → Error log**: D365 form submission log (stored in DB) and PHP error log tail for troubleshooting
+
+[1.0.10]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.0.10
+
 ## [1.0.9] - 2026-07-15
 
 ### Added

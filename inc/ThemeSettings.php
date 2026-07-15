@@ -101,6 +101,30 @@ add_action('admin_init', function () {
   exit;
 });
 
+add_action('admin_init', function () {
+  if (!current_user_can('manage_options')) {
+    return;
+  }
+
+  if (empty($_GET['page']) || sanitize_key(wp_unslash($_GET['page'])) !== PAGE_SLUG) {
+    return;
+  }
+
+  if (empty($_GET['muuttohaukat_clear_d365_log'])) {
+    return;
+  }
+
+  check_admin_referer('muuttohaukat_clear_d365_log');
+  delete_option('muuttohaukat_d365_log');
+
+  wp_safe_redirect(add_query_arg([
+    'page'                    => PAGE_SLUG,
+    'tab'                     => 'links',
+    'muuttohaukat_log_cleared' => '1',
+  ], admin_url('themes.php')));
+  exit;
+});
+
 /**
  * Current settings tab from query string.
  */
@@ -126,11 +150,15 @@ function renderTabs($active) {
 }
 
 /**
- * Render GitHub updater status on the links tab.
+ * Render D365 endpoint settings on the links tab.
  */
 function renderD365Fields() {
   $endpoint = get_option('muuttohaukat_d365_endpoint', '');
-  $configured = $endpoint !== '' || defined('MUUTTOHAUKAT_D365_ENDPOINT');
+  $effective = \Muuttohaukat\d365_endpoint();
+  $configured = $effective !== '';
+  $source = $endpoint !== ''
+    ? __('Teeman asetukset', 'muuttohaukat')
+    : (defined('MUUTTOHAUKAT_D365_ENDPOINT') ? 'wp-config.php' : '');
   ?>
   <form method="post" action="options.php" style="margin-top: 1.5em;">
     <?php settings_fields(OPTION_GROUP); ?>
@@ -140,9 +168,6 @@ function renderD365Fields() {
       <p class="description">
         <?= esc_html__('Azure Function -osoite, johon tarjouspyyntölomakkeet lähetetään. Tarvitaan LibreForm-lomakkeille (kotimuutto, yritysmuutto, muuttotarvikkeet).', 'muuttohaukat') ?>
       </p>
-      <?php if (defined('MUUTTOHAUKAT_D365_ENDPOINT')) : ?>
-        <p><em><?= esc_html__('wp-config.php määrittää osoitteen — alla oleva kenttä ohitetaan.', 'muuttohaukat') ?></em></p>
-      <?php endif; ?>
       <table class="form-table" role="presentation">
         <tr>
           <th scope="row"><label for="muuttohaukat_d365_endpoint"><?= esc_html__('D365 endpoint URL', 'muuttohaukat') ?></label></th>
@@ -154,10 +179,9 @@ function renderD365Fields() {
               value="<?= esc_attr($endpoint) ?>"
               class="large-text code"
               placeholder="https://func-muuttohaukat-xrm-prod.azurewebsites.net/api/AddOfferToDynamics?..."
-              <?php disabled(defined('MUUTTOHAUKAT_D365_ENDPOINT')); ?>
             >
             <p class="description">
-              <?= esc_html__('Sama URL kuin vanhassa Haukka-teemassa. Tallennetaan tietokantaan — ei vaadi FTP- tai wp-config.php-pääsyä.', 'muuttohaukat') ?>
+              <?= esc_html__('Tallennetaan tietokantaan. Kun kenttä on täytetty, se ohittaa wp-config.php-asetuksen.', 'muuttohaukat') ?>
             </p>
           </td>
         </tr>
@@ -166,6 +190,9 @@ function renderD365Fields() {
           <td>
             <?php if ($configured) : ?>
               <span style="color: #00a32a;"><?= esc_html__('Konfiguroitu', 'muuttohaukat') ?></span>
+              <?php if ($source) : ?>
+                <br><span class="description"><?= esc_html(sprintf(__('Lähde: %s', 'muuttohaukat'), $source)) ?></span>
+              <?php endif; ?>
             <?php else : ?>
               <span style="color: #d63638;"><?= esc_html__('Puuttuu — lomakkeet eivät välity Dynamics 365:een', 'muuttohaukat') ?></span>
             <?php endif; ?>
@@ -175,6 +202,139 @@ function renderD365Fields() {
       <?php submit_button(__('Tallenna muutokset', 'muuttohaukat')); ?>
     </div>
   </form>
+  <?php
+}
+
+/**
+ * Locate a readable PHP error log file.
+ *
+ * @return string|false
+ */
+function locateErrorLogFile() {
+  $candidates = array_filter([
+    ini_get('error_log') ?: null,
+    WP_CONTENT_DIR . '/debug.log',
+    ABSPATH . '../logs/php/error.log',
+    dirname(ABSPATH) . '/logs/php/error.log',
+  ]);
+
+  foreach ($candidates as $path) {
+    if (is_string($path) && $path !== '' && is_readable($path) && is_file($path)) {
+      return $path;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Read the last lines from a text file.
+ *
+ * @param string $file
+ * @param int    $lines
+ * @return string[]
+ */
+function tailLogFile($file, $lines = 80) {
+  $handle = @fopen($file, 'rb');
+  if (!$handle) {
+    return [];
+  }
+
+  fseek($handle, 0, SEEK_END);
+  $pos = ftell($handle);
+  $buffer = '';
+  $collected = [];
+
+  while ($pos > 0 && count($collected) < $lines) {
+    $read = min(4096, $pos);
+    $pos -= $read;
+    fseek($handle, $pos);
+    $buffer = fread($handle, $read) . $buffer;
+    $parts = explode("\n", $buffer);
+    $buffer = array_shift($parts);
+
+    foreach (array_reverse($parts) as $line) {
+      if ($line === '' && empty($collected)) {
+        continue;
+      }
+      array_unshift($collected, $line);
+      if (count($collected) >= $lines) {
+        break 2;
+      }
+    }
+  }
+
+  if ($buffer !== '' && count($collected) < $lines) {
+    array_unshift($collected, $buffer);
+  }
+
+  fclose($handle);
+
+  return array_slice($collected, -$lines);
+}
+
+/**
+ * Render D365 and PHP error log on the links tab.
+ */
+function renderErrorLog() {
+  if (!empty($_GET['muuttohaukat_log_cleared'])) {
+    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Loki tyhjennetty.', 'muuttohaukat') . '</p></div>';
+  }
+
+  $d365_entries = get_option('muuttohaukat_d365_log', []);
+  if (!is_array($d365_entries)) {
+    $d365_entries = [];
+  }
+
+  $clear_url = wp_nonce_url(add_query_arg([
+    'page'                      => PAGE_SLUG,
+    'tab'                       => 'links',
+    'muuttohaukat_clear_d365_log' => '1',
+  ], admin_url('themes.php')), 'muuttohaukat_clear_d365_log');
+
+  $log_file = locateErrorLogFile();
+  $php_lines = $log_file ? tailLogFile($log_file, 80) : [];
+  $d365_php_lines = array_values(array_filter($php_lines, function ($line) {
+    return stripos($line, '[D365]') !== false
+      || stripos($line, 'Failed to send confirmation email') !== false;
+  }));
+  ?>
+  <div class="card" style="max-width: 960px; margin-top: 1.5em; padding: 1em 1.25em;">
+    <h2 class="title" style="margin-top: 0;"><?= esc_html__('Error log', 'muuttohaukat') ?></h2>
+
+    <h3><?= esc_html__('D365-lomakeloki', 'muuttohaukat') ?></h3>
+    <p class="description"><?= esc_html__('Viimeisimmät lomakelähetykset Dynamics 365:een (tallennetaan automaattisesti).', 'muuttohaukat') ?></p>
+    <?php if (empty($d365_entries)) : ?>
+      <p><em><?= esc_html__('Ei kirjauksia vielä.', 'muuttohaukat') ?></em></p>
+    <?php else : ?>
+      <textarea readonly rows="10" class="large-text code" style="font-family: Consolas, Monaco, monospace;"><?php
+        foreach ($d365_entries as $entry) {
+          if (!is_array($entry)) {
+            continue;
+          }
+          echo esc_html(sprintf('[%s] %s', $entry['time'] ?? '', $entry['message'] ?? '')) . "\n";
+        }
+      ?></textarea>
+      <p>
+        <a href="<?= esc_url($clear_url) ?>" class="button button-secondary"><?= esc_html__('Tyhjennä D365-loki', 'muuttohaukat') ?></a>
+      </p>
+    <?php endif; ?>
+
+    <h3 style="margin-top: 1.5em;"><?= esc_html__('PHP error log', 'muuttohaukat') ?></h3>
+    <?php if (!$log_file) : ?>
+      <p><em><?= esc_html__('Error log -tiedostoa ei löytynyt tai sitä ei voi lukea.', 'muuttohaukat') ?></em></p>
+    <?php elseif (empty($d365_php_lines) && empty($php_lines)) : ?>
+      <p><em><?= esc_html__('Loki on tyhjä.', 'muuttohaukat') ?></em></p>
+      <p class="description"><?= esc_html(sprintf(__('Tiedosto: %s', 'muuttohaukat'), $log_file)) ?></p>
+    <?php else : ?>
+      <p class="description">
+        <?= esc_html(sprintf(__('Tiedosto: %s — näytetään D365- ja lomakevirheet (viimeiset %d riviä).', 'muuttohaukat'), $log_file, count($d365_php_lines) ?: count($php_lines))) ?>
+      </p>
+      <textarea readonly rows="12" class="large-text code" style="font-family: Consolas, Monaco, monospace;"><?=
+        esc_textarea(implode("\n", $d365_php_lines ?: array_slice($php_lines, -30)))
+      ?></textarea>
+    <?php endif; ?>
+  </div>
   <?php
 }
 
@@ -236,6 +396,7 @@ function renderPage() {
 
     <?php if ($tab === 'links') : ?>
       <?php renderD365Fields(); ?>
+      <?php renderErrorLog(); ?>
       <?php renderUpdateStatus(); ?>
       <div class="muuttohaukat-theme-settings-links" style="margin-top: 1.5em; max-width: 640px;">
         <p><?= esc_html__('Nämä asetukset hallitaan muualla WordPress-hallinnassa:', 'muuttohaukat') ?></p>
