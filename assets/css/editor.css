@@ -9,7 +9,7 @@
     line-height: var(--content-line-height);
     color: var(--color-content-text);
     padding: var(--space-8) clamp(var(--space-4), 4vw, var(--space-12));
-    max-width: 1366px;
+    max-width: var(--content-max-width, 1350px);
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
@@ -127,7 +127,7 @@
     background: var(--color-surface-subtle);
 }
 
-/* Landing blocks: full-width canvas + yellow/white section alternation */
+/* Landing blocks: full-width canvas; backgrounds come from block Tausta setting */
 .editor-styles-wrapper .wp-block,
 .editor-styles-wrapper .is-root-container > .wp-block {
     max-width: none !important;
@@ -136,12 +136,4 @@
 .editor-styles-wrapper .wp-block[data-align="full"],
 .editor-styles-wrapper .wp-block[data-align="wide"] {
     max-width: none !important;
-}
-
-.editor-styles-wrapper .is-root-container > .wp-block:nth-of-type(even) > [class*="wp-block-muuttohaukat-landing-"] {
-    background-color: var(--color-accent);
-}
-
-.editor-styles-wrapper .is-root-container > .wp-block:nth-of-type(odd) > [class*="wp-block-muuttohaukat-landing-"] {
-    background-color: var(--color-white);
 }

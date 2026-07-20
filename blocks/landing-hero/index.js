@@ -4,6 +4,11 @@
 	var useInnerBlocksProps = blockEditor.useInnerBlocksProps;
 	var InnerBlocks = blockEditor.InnerBlocks;
 	var el = element.createElement;
+	var scriptUrl = document.currentScript && document.currentScript.src ? document.currentScript.src : '';
+	var themeRoot = scriptUrl
+		? new URL( '../../', scriptUrl ).href.replace( /\/$/, '' )
+		: '/wp-content/themes/Muuttohaukat';
+	var heroImage = themeRoot + '/assets/img/haukka.png';
 
 	var TRUST_ITEM = function ( icon, label, caption ) {
 		return [ 'muuttohaukat/icon-item', {
@@ -17,25 +22,28 @@
 	var TEMPLATE = [
 		[ 'core/group', { className: 'mh-landing__inner mh-landing-hero__inner' }, [
 			[ 'core/group', { className: 'mh-landing-hero__content' }, [
-				[ 'core/paragraph', { className: 'mh-landing-eyebrow', content: 'Muuttopalvelu Paimio · vuodesta 1992' } ],
-				[ 'core/heading', { level: 1, className: 'mh-landing-hero__title', content: 'Muuttopalvelu <em>Paimio</em>' } ],
-				[ 'core/paragraph', { className: 'mh-landing-hero__lead', content: 'Muutto edessä Paimiossa? Muuttopalvelu Paimio hoitaa raskaan työn puolestasi — ammattitaidolla, sovitussa aikataulussa ja selkeällä hinnalla, koko Paimion alueella ja Varsinais-Suomessa.' } ],
+				[ 'core/paragraph', { className: 'mh-landing-eyebrow', content: 'Muuttohaukat · vuodesta 1992' } ],
+				[ 'core/heading', { level: 1, className: 'mh-landing-hero__title', content: 'Muuttopalvelut' } ],
+				[ 'core/paragraph', { className: 'mh-landing-hero__lead', content: 'Meiltä saat muuttopalvelut Paimion alueella. Asiakaslupauksemme „Muutamme käsityksesi muuttamisesta®” rakentuu ystävällisen hyväntuulisen palvelun, jatkuvan parantamisen ja asiakasymmärryksen sekä palveluun tyytyväisen asiakkaan kokemuksen myötä. Kun tarvitset luotettavan muuttopalveluyhtiön kumppaniksesi muuton toteutuksessa Paimion seudulla, ota yhteyttä ja pyydä tarjous alta.' } ],
 				[ 'muuttohaukat/buttons', {} ],
 				[ 'core/group', { className: 'mh-landing-hero__trust' }, [
 					TRUST_ITEM( 'fa-solid fa-medal', '30+ v', 'kokemusta muuttopalveluista' ),
-					TRUST_ITEM( 'fa-solid fa-location-dot', 'Paimio', 'paikallinen muuttopalvelu' ),
+					TRUST_ITEM( 'fa-solid fa-location-dot', 'Paikallinen', 'muuttopalvelu alueellasi' ),
 					TRUST_ITEM( 'fa-solid fa-truck', 'Koko Suomi', 'palvelualue muuttopalvelulle' )
 				] ]
 			] ],
-			[ 'core/image', { className: 'mh-landing-hero__media' } ]
+			[ 'core/image', {
+				className: 'mh-landing-hero__media',
+				url: heroImage,
+				alt: 'Muuttohaukat — muuttopalvelut'
+			} ]
 		] ]
 	];
 
 	registerBlockType( 'muuttohaukat/landing-hero', {
-		edit: function () {
-			var blockProps = useBlockProps( { className: 'mh-landing-hero' } );
+		edit: function ( props ) {
 			var innerProps = useInnerBlocksProps( {}, { template: TEMPLATE, templateLock: 'all' } );
-			return el( 'section', blockProps, el( 'div', innerProps ) );
+			return window.mhLandingBackground.wrapSection( props, 'mh-landing-hero', el( 'div', innerProps ) );
 		},
 		save: function () {
 			return el( InnerBlocks.Content );

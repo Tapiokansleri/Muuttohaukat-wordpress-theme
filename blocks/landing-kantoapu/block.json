@@ -5,11 +5,21 @@
   "title": "Kantoapu",
   "category": "muuttohaukat",
   "icon": "groups",
-  "description": "Muuttopalvelu Paimio – kantoapu (helpers) split section.",
+  "description": "Kantoapu ja kuvitus — kaksipalstainen osio.",
   "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
-  "attributes": { "anchor": { "type": "string", "default": "kantoapu" } },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": ["white", "yellow", "black"]
+    },
+    "anchor": { "type": "string", "default": "kantoapu" }
+  },
   "textdomain": "muuttohaukat",
-  "editorScript": "file:./index.js",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
   "style": "file:./style.css",
   "render": "file:./render.php"
 }

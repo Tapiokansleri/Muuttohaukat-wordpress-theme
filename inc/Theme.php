@@ -16,7 +16,7 @@ add_action('after_setup_theme', function () {
   load_theme_textdomain('muuttohaukat', get_template_directory() . '/languages');
 
   // Content width used by oEmbeds and the editor.
-  $GLOBALS['content_width'] = 1366;
+  $GLOBALS['content_width'] = 1350;
 
   add_theme_support('custom-logo', [
     'flex-width'  => true,

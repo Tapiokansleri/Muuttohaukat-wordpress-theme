@@ -1,14 +1,12 @@
 <?php
 /**
- * Landing: Muutot ja kuljetukset
+ * Landing: Tarjous ja tilaus
  *
  * @var array  $attributes
  * @var string $content
  */
-$extra = isset($attributes['className']) ? ' ' . $attributes['className'] : '';
-$wrapper = get_block_wrapper_attributes([
-  'class' => 'mh-landing-section' . $extra,
-  'id'    => $attributes['anchor'] ?? 'palvelu',
+$wrapper = \Muuttohaukat\landing_block_wrapper_attributes($attributes, ['mh-landing-section'], [
+  'id' => $attributes['anchor'] ?? 'palvelu',
 ]);
 ?>
 <section <?php echo $wrapper; ?>><?php echo $content; ?></section>

@@ -2,7 +2,7 @@
 
 Custom WordPress theme for [Muuttohaukat](https://muuttohaukat.com), rebuilt from the legacy Haukka theme.
 
-**Version:** 1.1.2
+**Version:** 1.1.3
 **Repository:** [github.com/Tapiokansleri/Muuttohaukat-wordpress-theme](https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme)
 
 ## Requirements
@@ -57,7 +57,7 @@ The theme source only contains the public Azure hostname and API path — never 
 ## Theme features
 
 - Gutenberg + ACF block-based page building
-- Landing page template with custom blocks
+- Landing page Gutenberg blocks (insert via editor sidebar or pattern)
 - Post listing block with card grid
 - Header customizer (CTA buttons, colours)
 - Footer widget areas with editable block widgets
@@ -81,7 +81,6 @@ The Google Search Console verification value is stored in The SEO Framework sett
 |----------|------|
 | Default | `singular.php` |
 | Contained page | `template-contained-page.php` |
-| Landing page | `template-landing-page.php` |
 
 ## Development
 

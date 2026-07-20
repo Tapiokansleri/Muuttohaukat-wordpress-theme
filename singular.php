@@ -7,14 +7,22 @@
  */
 namespace Muuttohaukat;
 
-get_header(); ?>
+get_header();
 
-<div class="mh-root mh-root--single-post mh-scheme--base-default">
-  <?php
+$post = get_queried_object();
+$is_landing = $post instanceof \WP_Post && post_has_landing_blocks($post);
 
-  while (have_posts()) { the_post();
-    gutenbergContent();
-  } ?>
-</div>
+if ($is_landing) {
+  echo '<main id="content" class="mh-landing" role="main">';
+} else {
+  echo '<div class="mh-root mh-root--single-post mh-scheme--base-default">';
+}
 
-<?php get_footer();
+while (have_posts()) {
+  the_post();
+  gutenbergContent();
+}
+
+echo $is_landing ? '</main>' : '</div>';
+
+get_footer();

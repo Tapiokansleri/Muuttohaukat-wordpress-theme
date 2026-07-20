@@ -91,17 +91,7 @@ add_action('wp_enqueue_scripts', function () use ($localizeData) {
     wp_enqueue_style('muuttohaukat-home-hero', $themeUri . '/assets/css/home-hero.css', ['muuttohaukat-content'], $version);
   }
 
-  $should_load_landing = false;
-  if (is_page_template('template-landing-page.php')) {
-    $should_load_landing = true;
-  } elseif ($queried_post instanceof \WP_Post) {
-    if (!empty($queried_post->post_content) && (
-      strpos($queried_post->post_content, 'mh-landing-') !== false ||
-      strpos($queried_post->post_content, 'muuttohaukat/route-calculator') !== false
-    )) {
-      $should_load_landing = true;
-    }
-  }
+  $should_load_landing = $queried_post instanceof \WP_Post && post_has_landing_blocks($queried_post);
 
   if ($should_load_landing) {
     wp_enqueue_style('muuttohaukat-landing', $themeUri . '/assets/css/landing.css', ['muuttohaukat-base'], $version);

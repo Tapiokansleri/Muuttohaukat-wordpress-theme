@@ -7,9 +7,6 @@
  */
 namespace Muuttohaukat;
 
-global $wp_query;
-
-$obj   = \get_queried_object();
 $app   = app();
 $postlisting = $app->getBlock('PostListing');
 

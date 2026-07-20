@@ -2,13 +2,32 @@
 /**
  * Landing page route-calculation helpers and REST endpoint.
  *
- * Shared between template-landing-page.php (server-side rendering of preset
- * routes) and a REST endpoint at /wp-json/muuttohaukat/v1/route that powers
- * the interactive "calculate any route" form.
+ * Powers server-side preset route rendering in landing blocks and the REST
+ * endpoint at /wp-json/muuttohaukat/v1/route for the interactive route form.
  *
  * @package Muuttohaukat
  */
 namespace Muuttohaukat;
+
+/**
+ * Whether a post's content includes Muuttohaukat landing section blocks.
+ *
+ * @param \WP_Post|int|null $post Post object or ID; defaults to current post.
+ */
+function post_has_landing_blocks($post = null) {
+  if (!$post instanceof \WP_Post) {
+    $post = get_post($post);
+  }
+  if (!$post instanceof \WP_Post || $post->post_content === '') {
+    return false;
+  }
+
+  $content = $post->post_content;
+
+  return strpos($content, 'mh-landing-') !== false
+    || strpos($content, 'muuttohaukat/landing-') !== false
+    || strpos($content, 'muuttohaukat/route-calculator') !== false;
+}
 
 if (!function_exists(__NAMESPACE__ . '\landing_known_city_coords')) :
 

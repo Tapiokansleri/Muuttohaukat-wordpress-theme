@@ -7,15 +7,23 @@
 /* -------------------------------------------------------------------------
    Base prose overrides
    ------------------------------------------------------------------------- */
+.mh-gutenberg {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--content-max-width, 1350px);
+    margin-inline: auto;
+    padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
+}
+
 .mh-gutenberg.prose {
     color: var(--color-content-text);
     line-height: var(--content-line-height);
     font-size: var(--content-font-size);
 }
 
-/* Full-width content — remove the 65ch max that .prose applies */
+/* Override Tailwind Typography's 65ch cap — use theme content width instead */
 .mh-gutenberg.max-w-none {
-    max-width: none;
+    max-width: var(--content-max-width, 1350px);
 }
 
 /* -------------------------------------------------------------------------

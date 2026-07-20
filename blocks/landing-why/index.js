@@ -35,10 +35,9 @@
 	];
 
 	registerBlockType( 'muuttohaukat/landing-why', {
-		edit: function () {
-			var blockProps = useBlockProps( { className: 'mh-landing-section' } );
+		edit: function ( props ) {
 			var innerProps = useInnerBlocksProps( {}, { template: TEMPLATE, templateLock: 'all' } );
-			return el( 'section', blockProps, el( 'div', innerProps ) );
+			return window.mhLandingBackground.wrapSection( props, 'mh-landing-section', el( 'div', innerProps ) );
 		},
 		save: function () {
 			return el( InnerBlocks.Content );

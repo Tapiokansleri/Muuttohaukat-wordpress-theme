@@ -5,7 +5,6 @@
  * @var array  $attributes
  * @var string $content
  */
-$extra = isset($attributes['className']) ? ' ' . $attributes['className'] : '';
-$wrapper = get_block_wrapper_attributes(['class' => 'mh-landing-hero' . $extra]);
+$wrapper = \Muuttohaukat\landing_block_wrapper_attributes($attributes, ['mh-landing-hero']);
 ?>
 <section <?php echo $wrapper; ?>><?php echo $content; ?></section>

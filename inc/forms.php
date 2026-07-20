@@ -206,19 +206,28 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
       return;
     }
 
-    $status = wp_remote_post($endpoint, [
-      'blocking'   => true,
-      'timeout'    => 5,
+    $request_args = [
+      'blocking'    => true,
+      'timeout'     => 15,
       'redirection' => 2,
-      'headers'    => [
+      'headers'     => [
         'Content-Type' => 'application/json; charset=utf-8',
         'Accept'       => 'application/json',
       ],
       'body'        => $json,
-    ]);
+    ];
+
+    $status = wp_remote_post($endpoint, $request_args);
 
     if (\is_wp_error($status)) {
-      d365_log('[D365]: Forwarding failed: HTTP request error');
+      $retryable = in_array($status->get_error_code(), ['http_request_failed', 'http_request_timeout'], true);
+      if ($retryable) {
+        $status = wp_remote_post($endpoint, $request_args);
+      }
+    }
+
+    if (\is_wp_error($status)) {
+      d365_log(sprintf('[D365]: Forwarding failed: HTTP request error (%s)', $status->get_error_code()));
       return;
     }
 

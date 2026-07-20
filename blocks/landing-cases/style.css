@@ -29,9 +29,8 @@ article.mh-landing-case {
     letter-spacing: 0.15em;
 }
 
-/* On white (odd) sections the stars need to be visible — flip to brand
-   accent so they don't fade into the background. */
-.mh-landing > :nth-child(odd) .mh-landing-case__stars {
+/* On white sections the stars use brand accent for contrast */
+.mh-landing-section--bg-white .mh-landing-case__stars {
     color: var(--color-accent);
 }
 

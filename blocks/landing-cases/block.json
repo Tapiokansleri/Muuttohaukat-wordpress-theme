@@ -5,11 +5,21 @@
   "title": "Esimerkkimuutot",
   "category": "muuttohaukat",
   "icon": "format-quote",
-  "description": "Muuttopalvelu Paimio – example cases section.",
+  "description": "Esimerkkitapauksia ja asiakaspalautetta — muuttopalvelusivuille.",
   "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
-  "attributes": { "anchor": { "type": "string", "default": "esimerkit" } },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": ["white", "yellow", "black"]
+    },
+    "anchor": { "type": "string", "default": "esimerkit" }
+  },
   "textdomain": "muuttohaukat",
-  "editorScript": "file:./index.js",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
   "style": "file:./style.css",
   "render": "file:./render.php"
 }

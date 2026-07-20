@@ -181,9 +181,21 @@ function gutenbergContent($paginationOpts = null) {
   // Typography (and theme rules like .mh-gutenberg li { margin: 0.25em 0 })
   // don't leak into BB content.
   $is_bb_page = class_exists('FLBuilderModel') && \FLBuilderModel::is_builder_enabled($post->ID);
-  $wrapper_class = $is_bb_page ? 'mh-bb-content' : 'mh-gutenberg prose prose-lg max-w-none';
+  $is_landing = post_has_landing_blocks($post);
 
-  echo "<div class='{$wrapper_class}' {$attrs}>";
+  if ($is_bb_page) {
+    $wrapper_class = 'mh-bb-content';
+  } elseif ($is_landing) {
+    $wrapper_class = '';
+  } else {
+    $wrapper_class = 'mh-gutenberg prose prose-lg max-w-none';
+  }
+
+  if ($wrapper_class !== '') {
+    echo "<div class='{$wrapper_class}' {$attrs}>";
+  } else {
+    echo "<div {$attrs}>";
+  }
   \the_content();
 
   if ($paginationOpts !== null) {

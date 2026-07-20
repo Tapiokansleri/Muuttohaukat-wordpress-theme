@@ -6,8 +6,7 @@
  * blocks/landing-<slug>/ (each appears in the inserter on its own).
  * This file exposes:
  *
- *  - landing_default_content() — full default markup used by the autoload hook
- *    in inc/LandingTemplate.php
+ *  - landing_default_content() — full default markup for the editor pattern
  *  - A "full landing page" pattern that drops all 7 wrapper blocks at once
  *
  * @package Muuttohaukat
@@ -42,10 +41,10 @@ add_action('init', function () {
   if ($full === '') return;
 
   register_block_pattern('mh/landing-full', [
-    'title'       => __('Koko Muuttopalvelu Paimio -sivu', 'muuttohaukat'),
+    'title'       => __('Muuttohaukat — koko sivu (7 osiota)', 'muuttohaukat'),
     'categories'  => ['mh-landing'],
     'content'     => $full,
-    'description' => __('Koko muuttopalvelu Paimio -laskeutumissivu valmiina.', 'muuttohaukat'),
+    'description' => __('Valmis muuttopalvelusivun rakenne — muokattavissa mihin tahansa paikkakuntaan.', 'muuttohaukat'),
   ]);
 });
 

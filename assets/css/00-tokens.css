@@ -128,6 +128,9 @@
     --post-grid-card-padding: var(--space-5);
     --post-grid-title-size: var(--text-2xl);
     --post-grid-meta-size: var(--text-sm);
+
+    /* Layout */
+    --content-max-width: 1350px;
 }
 
 @media (max-width: 768px) {

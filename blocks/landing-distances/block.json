@@ -2,13 +2,23 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "muuttohaukat/landing-distances",
-  "title": "Välimatkat",
+  "title": "Reitit ja välimatkat",
   "category": "muuttohaukat",
   "icon": "location-alt",
-  "description": "Muuttopalvelu Paimio – distances + route calculator section.",
+  "description": "Reittilaskuri ja välimatkat — paikallisille laskeutumissivuille.",
   "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
-  "attributes": { "anchor": { "type": "string", "default": "valimatkat" } },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": ["white", "yellow", "black"]
+    },
+    "anchor": { "type": "string", "default": "valimatkat" }
+  },
   "textdomain": "muuttohaukat",
-  "editorScript": "file:./index.js",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
   "render": "file:./render.php"
 }

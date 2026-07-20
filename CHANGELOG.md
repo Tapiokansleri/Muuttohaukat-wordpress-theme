@@ -4,6 +4,30 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.3] - 2026-07-20
+
+### Added
+
+- Per-block background control (white, yellow, black) on all landing section blocks
+- Shared `haukka.png` hero default image and `--content-max-width: 1350px` layout token
+- D365 forwarding retry on transient network errors and clearer error codes in logs
+
+### Changed
+
+- Remove landing page template; landing blocks work via editor sidebar/pattern on any page
+- Rename landing blocks to generic titles and update default hero/service copy
+- Final CTA section uses selectable background instead of fixed black/yellow styling
+- Widen landing inner containers to 1350px
+
+### Fixed
+
+- Fix Gutenberg validation errors when inserting landing blocks (icon-item/buttons markup)
+- Fix production fatal error in `index.php` (unused `get_queried_object()` call)
+- Tighten hero trust badge spacing; center final CTA buttons
+- White text on black landing section backgrounds
+
+[1.1.3]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.3
+
 ## [1.1.2] - 2026-07-15
 
 ### Fixed

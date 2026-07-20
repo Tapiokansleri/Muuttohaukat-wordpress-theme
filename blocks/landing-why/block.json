@@ -2,14 +2,24 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "muuttohaukat/landing-why",
-  "title": "Miksi Muuttohaukat",
+  "title": "Miksi valita meidät",
   "category": "muuttohaukat",
   "icon": "awards",
-  "description": "Muuttopalvelu Paimio – why-us reasons section.",
+  "description": "Syitä valita Muuttohaukat — kuvakkein koristeltu lista.",
   "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
-  "attributes": { "anchor": { "type": "string", "default": "miksi" } },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": ["white", "yellow", "black"]
+    },
+    "anchor": { "type": "string", "default": "miksi" }
+  },
   "textdomain": "muuttohaukat",
-  "editorScript": "file:./index.js",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
   "style": "file:./style.css",
   "editorStyle": "file:./style.css",
   "render": "file:./render.php"

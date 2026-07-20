@@ -12,7 +12,7 @@
      - shared eyebrow / kicker / section-head utilities
      - the .mh-landing__button family and button-row layout (every block's
        CTA_ROW template renders these)
-     - global helpers (.mh-landing-areas, .mh-landing-sticky-cta)
+     - global helpers (.mh-landing-areas)
      - core/button + core/buttons compatibility shims for the shared
        button classes
 
@@ -28,7 +28,7 @@
 }
 
 .mh-landing__inner {
-    width: min(100% - 2rem, 1120px);
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
     margin-inline: auto;
 }
 
@@ -77,19 +77,58 @@
 }
 
 /* -------------------------------------------------------------------------
-   Section base + alternation (yellow/white)
+   Section base + per-block background (set in block sidebar)
    ------------------------------------------------------------------------- */
 .mh-landing-hero,
 .mh-landing-section {
     padding: clamp(3rem, 7vw, 5.5rem) 0;
 }
 
-.mh-landing > :nth-child(even) {
-    background: var(--color-accent);
+.mh-landing-hero.mh-landing-section--bg-white,
+.mh-landing-section.mh-landing-section--bg-white,
+.mh-landing-section--final.mh-landing-section--bg-white {
+    background: var(--color-white) !important;
+    color: var(--color-black);
 }
 
-.mh-landing > :nth-child(odd) {
-    background: var(--color-white);
+.mh-landing-hero.mh-landing-section--bg-yellow,
+.mh-landing-section.mh-landing-section--bg-yellow,
+.mh-landing-section--final.mh-landing-section--bg-yellow {
+    background: var(--color-accent) !important;
+    color: var(--color-black);
+}
+
+.mh-landing-hero.mh-landing-section--bg-black,
+.mh-landing-section.mh-landing-section--bg-black,
+.mh-landing-section--final.mh-landing-section--bg-black {
+    background: var(--color-black) !important;
+    color: var(--color-white);
+}
+
+.mh-landing-section--bg-black :where(
+    h1, h2, h3, h4, h5, h6,
+    p, li,
+    .mh-landing-eyebrow,
+    .mh-landing-kicker,
+    .mh-landing-final,
+    .mh-icon-item__label,
+    .mh-icon-item__caption,
+    .mh-landing-feature__num,
+    .mh-landing-case__tag,
+    .mh-landing-case__quote,
+    .mh-landing-case__stars
+) {
+    color: var(--color-white);
+}
+
+.mh-landing-section--bg-black .mh-landing-final p,
+.mh-landing-section--bg-black .mh-icon-item__caption,
+.mh-landing-section--bg-black .mh-landing-hero__lead {
+    opacity: 0.85;
+}
+
+.mh-landing-section--bg-black a:not(.mh-painike):not(.wp-block-button__link) {
+    color: var(--color-white);
 }
 
 /* -------------------------------------------------------------------------
@@ -183,27 +222,58 @@
     margin-top: var(--space-8);
 }
 
-/* On yellow (even) sections — invert button colors so they stay visible */
-.mh-landing > :nth-child(even) .mh-landing__button--primary {
+/* On yellow sections — invert button colors so they stay visible */
+.mh-landing-section--bg-yellow .mh-landing__button--primary {
     background: var(--color-black);
     color: var(--color-white);
 }
 
-.mh-landing > :nth-child(even) .mh-landing__button--primary:hover,
-.mh-landing > :nth-child(even) .mh-landing__button--primary:focus {
+.mh-landing-section--bg-yellow .mh-landing__button--primary:hover,
+.mh-landing-section--bg-yellow .mh-landing__button--primary:focus {
     background: var(--color-white);
     color: var(--color-black);
 }
 
-.mh-landing > :nth-child(even) .mh-landing__button--ghost {
+.mh-landing-section--bg-yellow .mh-landing__button--ghost {
     background: var(--color-white);
     color: var(--color-black);
 }
 
-.mh-landing > :nth-child(even) .mh-landing__button--ghost:hover,
-.mh-landing > :nth-child(even) .mh-landing__button--ghost:focus {
+.mh-landing-section--bg-yellow .mh-landing__button--ghost:hover,
+.mh-landing-section--bg-yellow .mh-landing__button--ghost:focus {
     background: var(--color-black);
     color: var(--color-white);
+}
+
+.mh-landing-section--bg-yellow .mh-painike--yellow {
+    background-color: var(--color-black);
+    color: var(--color-white) !important;
+}
+
+.mh-landing-section--bg-yellow .mh-painike--black {
+    background-color: var(--color-white);
+    color: var(--color-black) !important;
+}
+
+/* On black sections — accent primary, light secondary */
+.mh-landing-section--bg-black .mh-landing__button--primary {
+    background: var(--color-accent);
+    color: var(--color-black);
+}
+
+.mh-landing-section--bg-black .mh-landing__button--ghost {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-landing-section--bg-black .mh-painike--yellow {
+    background-color: var(--color-accent);
+    color: var(--color-black) !important;
+}
+
+.mh-landing-section--bg-black .mh-painike--black {
+    background-color: var(--color-white);
+    color: var(--color-black) !important;
 }
 
 /* -------------------------------------------------------------------------
@@ -233,56 +303,11 @@
 }
 
 /* -------------------------------------------------------------------------
-   Sticky mobile CTA (overlay; not part of any single block)
-   ------------------------------------------------------------------------- */
-.mh-landing-sticky-cta {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .mh-landing-sticky-cta {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 200;
-        box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.25);
-    }
-
-    .mh-landing-sticky-cta__btn {
-        padding: 1rem 0.75rem;
-        text-align: center;
-        text-transform: uppercase;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.875rem;
-    }
-
-    .mh-landing-sticky-cta__btn--phone {
-        background: var(--color-black);
-        color: var(--color-white);
-    }
-
-    .mh-landing-sticky-cta__btn--quote {
-        background: var(--color-accent);
-        color: var(--color-black);
-    }
-
-    body {
-        padding-bottom: 3.5rem;
-    }
-}
-
-/* -------------------------------------------------------------------------
    Small-mobile shared adjustments
    ------------------------------------------------------------------------- */
 @media (max-width: 640px) {
     .mh-landing__inner {
-        width: min(100% - 1.25rem, 1120px);
+        width: min(100% - 1.25rem, var(--content-max-width, 1350px));
     }
 
     .mh-landing__button-row {
@@ -353,13 +378,23 @@
     color: var(--color-white) !important;
 }
 
-/* Invert variants on yellow (even) sections so they stay visible */
-.mh-landing > :nth-child(even) .mh-landing__button--primary .wp-block-button__link {
+/* Invert variants on yellow sections so they stay visible */
+.mh-landing-section--bg-yellow .mh-landing__button--primary .wp-block-button__link {
     background: var(--color-black) !important;
     color: var(--color-white) !important;
 }
 
-.mh-landing > :nth-child(even) .mh-landing__button--ghost .wp-block-button__link {
+.mh-landing-section--bg-yellow .mh-landing__button--ghost .wp-block-button__link {
+    background: var(--color-white) !important;
+    color: var(--color-black) !important;
+}
+
+.mh-landing-section--bg-black .mh-landing__button--primary .wp-block-button__link {
+    background: var(--color-accent) !important;
+    color: var(--color-black) !important;
+}
+
+.mh-landing-section--bg-black .mh-landing__button--ghost .wp-block-button__link {
     background: var(--color-white) !important;
     color: var(--color-black) !important;
 }

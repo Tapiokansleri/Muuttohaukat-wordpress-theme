@@ -10,7 +10,7 @@
 .mh-icon-item--trust {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 0.125rem;
 }
 
 .mh-icon-item__label {
@@ -19,6 +19,13 @@
     gap: 0.5em;
     margin: 0;
     font-weight: 700;
+    line-height: 1.2;
+}
+
+.mh-icon-item .mh-icon-item__label,
+.mh-icon-item .mh-icon-item__caption {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .mh-icon-item__caption {
