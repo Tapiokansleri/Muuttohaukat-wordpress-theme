@@ -4,6 +4,14 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.4] - 2026-07-27
+
+### Changed
+
+- Do not write successful D365 form forwarding to the PHP error log (failures are still logged)
+
+[1.1.4]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.4
+
 ## [1.1.3] - 2026-07-20
 
 ### Added

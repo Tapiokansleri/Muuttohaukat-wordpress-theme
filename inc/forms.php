@@ -141,12 +141,17 @@ function d365_endpoint_is_valid($endpoint) {
 }
 
 /**
- * Log a D365-related message to PHP error log and theme log storage.
+ * Log a D365-related message to theme log storage and optionally PHP error log.
+ *
+ * Failures are written to both; successes are not written to PHP error log.
  *
  * @param string $message
+ * @param bool   $to_php_error_log When false, only the admin D365 log is updated.
  */
-function d365_log($message) {
-  error_log($message);
+function d365_log($message, $to_php_error_log = true) {
+  if ($to_php_error_log) {
+    error_log($message);
+  }
 
   $entries = get_option('muuttohaukat_d365_log', []);
   if (!is_array($entries)) {
@@ -234,8 +239,6 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
     $response_code = (int) wp_remote_retrieve_response_code($status);
     if ($response_code < 200 || $response_code >= 300) {
       d365_log(sprintf('[D365]: Forwarding failed: HTTP %d', $response_code));
-    } else {
-      d365_log(sprintf('[D365]: Forwarding succeeded: HTTP %d', $response_code));
     }
   }
 }, 10, 2);
