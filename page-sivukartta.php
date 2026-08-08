@@ -10,6 +10,10 @@
  */
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 get_header(); ?>
 
 <div class="mh-root mh-root--single-post sitemap mh-scheme--base-default">

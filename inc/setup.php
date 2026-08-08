@@ -6,6 +6,10 @@
  */
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Load classes (App, Block, RestRoute, Translations, Transientify, NavWalker).
  */
@@ -24,6 +28,11 @@ $app = App::init([
 
 /**
  * Return the App singleton.
+ *
+ * Templates call this after WordPress has loaded functions.php. Direct hits on
+ * theme PHP files never reach here, because those files exit without ABSPATH.
+ *
+ * @return App
  */
 function app() {
   return App::init();

@@ -4,6 +4,16 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.5] - 2026-08-08
+
+### Fixed
+
+- Stop fatal errors when theme PHP files are hit directly without WordPress bootstrap (`Muuttohaukat\app()` undefined) by exiting early unless `ABSPATH` is defined
+- Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
+- Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
+
+[1.1.5]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.5
+
 ## [1.1.4] - 2026-07-27
 
 ### Changed

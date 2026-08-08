@@ -8,6 +8,10 @@
  * @package Muuttohaukat
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /** 1. Theme setup: class autoloading, App singleton, core helpers. */
 require_once __DIR__ . '/inc/setup.php';
 

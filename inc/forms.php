@@ -9,6 +9,10 @@
  */
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 const D365_ENDPOINT_OPTION = 'muuttohaukat_d365_endpoint';
 const D365_BACKUP_OPTION   = 'muuttohaukat_d365_endpoint_backup';
 
@@ -174,31 +178,48 @@ if (!function_exists('libreform')) {
 
 /**
  * Form submission handler: send confirmations and forward to D365.
+ *
+ * D365 is sent non-blocking so a slow Azure Function cannot turn a form POST
+ * into a 10–30 s request (and a PHP-FPM slow-log entry).
  */
 add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
-  $capturedForms = ['tarjouspyynto-kotimuutto', 'tarjouspyynto-yritysmuutto', 'tilaa-muuttotarvikkeet'];
-  $deleteAfter = ['whistleblow-lomake'];
-  $email = $submission->getField('Email');
+  try {
+    $capturedForms = ['tarjouspyynto-kotimuutto', 'tarjouspyynto-yritysmuutto', 'tilaa-muuttotarvikkeet'];
+    $deleteAfter   = ['whistleblow-lomake'];
+    $email         = $submission->getField('Email');
 
-  if ($email && $form->slug !== 'tarjouspyynto-yritysmuutto') {
-    $msg = __("Hei!\n\nKiitos yhteydenotostasi.\n\nYstävällisin terveisin, Muuttohaukat", 'muuttohaukat');
+    if ($email && $form->slug !== 'tarjouspyynto-yritysmuutto') {
+      $mail_error = null;
+      $on_fail    = static function ( $error ) use ( &$mail_error ) {
+        $mail_error = $error;
+      };
 
-    if (!wp_mail($email, __('Vahvistus lomakelähetyksestä', 'muuttohaukat'), $msg)) {
-      error_log('[Theme form]: Confirmation email failed');
+      add_action( 'wp_mail_failed', $on_fail );
+      $sent = wp_mail(
+        $email,
+        __('Vahvistus lomakelähetyksestä', 'muuttohaukat'),
+        __("Hei!\n\nKiitos yhteydenotostasi.\n\nYstävällisin terveisin, Muuttohaukat", 'muuttohaukat')
+      );
+      remove_action( 'wp_mail_failed', $on_fail );
+
+      if ( ! $sent ) {
+        $detail = ( $mail_error instanceof \WP_Error ) ? $mail_error->get_error_message() : 'wp_mail returned false';
+        error_log( '[Themeform]: Confirmation email failed: ' . $detail );
+      }
     }
-  }
 
-  if (in_array($form->slug, $deleteAfter)) {
-    \libreform()->io->submission->delete($submission);
-  }
+    if ( in_array( $form->slug, $deleteAfter, true ) ) {
+      \libreform()->io->submission->delete($submission);
+    }
 
-  if (in_array($form->slug, $capturedForms)) {
-    $data = [
+    if ( ! in_array( $form->slug, $capturedForms, true ) ) {
+      return;
+    }
+
+    $json = wp_json_encode([
       'kind' => 'getSubmission',
       'data' => $submission,
-    ];
-
-    $json = wp_json_encode($data);
+    ]);
 
     $endpoint = d365_endpoint();
     if (!d365_endpoint_is_valid($endpoint)) {
@@ -211,35 +232,23 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
       return;
     }
 
-    $request_args = [
-      'blocking'    => true,
-      'timeout'     => 15,
+    $status = wp_remote_post($endpoint, [
+      // Non-blocking: form UX must not wait on Dynamics.
+      'blocking'    => false,
+      'timeout'     => 5,
       'redirection' => 2,
       'headers'     => [
         'Content-Type' => 'application/json; charset=utf-8',
         'Accept'       => 'application/json',
       ],
       'body'        => $json,
-    ];
-
-    $status = wp_remote_post($endpoint, $request_args);
-
-    if (\is_wp_error($status)) {
-      $retryable = in_array($status->get_error_code(), ['http_request_failed', 'http_request_timeout'], true);
-      if ($retryable) {
-        $status = wp_remote_post($endpoint, $request_args);
-      }
-    }
+    ]);
 
     if (\is_wp_error($status)) {
       d365_log(sprintf('[D365]: Forwarding failed: HTTP request error (%s)', $status->get_error_code()));
-      return;
     }
-
-    $response_code = (int) wp_remote_retrieve_response_code($status);
-    if ($response_code < 200 || $response_code >= 300) {
-      d365_log(sprintf('[D365]: Forwarding failed: HTTP %d', $response_code));
-    }
+  } catch ( \Throwable $e ) {
+    error_log( '[Themeform]: Submission side-effects failed: ' . $e->getMessage() );
   }
 }, 10, 2);
 

@@ -8,6 +8,10 @@
  */
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $app = app();
 
 $localizeData = [

@@ -7,6 +7,10 @@
  */
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 get_header();
 
 $post = get_queried_object();

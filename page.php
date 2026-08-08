@@ -10,4 +10,8 @@
 
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 require "singular.php";

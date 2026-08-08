@@ -10,6 +10,10 @@
  */
 namespace Muuttohaukat;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $app = app();
 $strings = [
   'Font-size: Default' => 'Default',

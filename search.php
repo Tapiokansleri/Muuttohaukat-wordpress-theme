@@ -8,6 +8,10 @@ namespace Muuttohaukat;
 
 use \Muuttohaukat\Templates as T;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $app = app();
 $postlisting = $app->getBlock('PostListing');
 $q = get_search_query();
