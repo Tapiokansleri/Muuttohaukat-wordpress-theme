@@ -4,6 +4,12 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.6] - 2026-08-10
+
+### Added
+
+- Beaver Builder module **Henkilöstö**: section heading + repeatable staff entries (photo left, details right), mobile-optimized 3-column grid
+
 ## [1.1.5] - 2026-08-08
 
 ### Fixed
@@ -12,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
 - Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
 
+[1.1.6]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.6
 [1.1.5]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.5
 
 ## [1.1.4] - 2026-07-27
