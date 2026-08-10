@@ -21,15 +21,8 @@ if ( $columns > 3 ) {
 	$columns = 3;
 }
 
-$persons = isset( $settings->persons ) && is_array( $settings->persons ) ? $settings->persons : array();
-$persons = array_values( array_filter( $persons, static function ( $person ) {
-	if ( ! is_object( $person ) ) {
-		return false;
-	}
-	$name  = isset( $person->name ) ? trim( (string) $person->name ) : '';
-	$photo = isset( $person->photo ) ? $person->photo : '';
-	return ( '' !== $name || ! empty( $photo ) );
-} ) );
+$persons = FLHenkilostoModule::collect_persons( $settings );
+$lang_labels = FLHenkilostoModule::language_labels();
 
 if ( '' === $heading && empty( $persons ) ) {
 	return;
@@ -51,10 +44,29 @@ if ( '' === $heading && empty( $persons ) ) {
 				$responsibilities = isset( $person->responsibilities ) ? trim( (string) $person->responsibilities ) : '';
 				$phone            = isset( $person->phone ) ? trim( (string) $person->phone ) : '';
 				$email            = isset( $person->email ) ? trim( (string) $person->email ) : '';
-				$photo_id         = isset( $person->photo ) ? absint( $person->photo ) : 0;
-				$photo_src        = isset( $person->photo_src ) ? (string) $person->photo_src : '';
-				$phone_href       = FLHenkilostoModule::phone_href( $phone );
-				$email_href       = $email ? 'mailto:' . antispambot( $email ) : '';
+				$photo_raw = isset( $person->photo ) ? $person->photo : '';
+				$photo_id  = is_numeric( $photo_raw ) ? absint( $photo_raw ) : 0;
+				$photo_src = isset( $person->photo_src ) ? (string) $person->photo_src : '';
+				// Bulk import may put a URL only in photo_src, or a non-numeric URL in photo.
+				if ( ! $photo_id && ! $photo_src && is_string( $photo_raw ) && $photo_raw !== '' ) {
+					list( $photo_id, $photo_src ) = FLHenkilostoModule::resolve_photo_ref( $photo_raw );
+				}
+				if ( $photo_id && ! $photo_src ) {
+					$photo_src = (string) wp_get_attachment_image_url( $photo_id, 'medium_large' );
+				}
+				$languages  = FLHenkilostoModule::normalize_languages(
+					isset( $person->languages ) ? $person->languages : array()
+				);
+				$phone_href = FLHenkilostoModule::phone_href( $phone );
+				$email_href = FLHenkilostoModule::email_href( $email );
+
+				$lang_names = array();
+				foreach ( $languages as $code ) {
+					if ( isset( $lang_labels[ $code ] ) ) {
+						$lang_names[] = $lang_labels[ $code ];
+					}
+				}
+				$lang_aria = $lang_names ? __( 'Kielet:', 'muuttohaukat' ) . ' ' . implode( ', ', $lang_names ) : '';
 				?>
 				<li class="mh-henkilosto__person">
 					<div class="mh-henkilosto__media">
@@ -85,8 +97,29 @@ if ( '' === $heading && empty( $persons ) ) {
 					</div>
 
 					<div class="mh-henkilosto__info">
-						<?php if ( '' !== $name ) : ?>
-							<p class="mh-henkilosto__name"><?php echo esc_html( $name ); ?></p>
+						<?php if ( '' !== $name || ! empty( $languages ) ) : ?>
+							<div class="mh-henkilosto__name-row">
+								<?php if ( '' !== $name ) : ?>
+									<p class="mh-henkilosto__name"><?php echo esc_html( $name ); ?></p>
+								<?php endif; ?>
+
+								<?php if ( ! empty( $languages ) ) : ?>
+									<ul class="mh-henkilosto__flags"<?php echo $lang_aria ? ' aria-label="' . esc_attr( $lang_aria ) . '"' : ''; ?>>
+										<?php foreach ( $languages as $code ) :
+											$svg   = FLHenkilostoModule::language_flag_svg( $code );
+											$label = isset( $lang_labels[ $code ] ) ? $lang_labels[ $code ] : $code;
+											if ( ! $svg ) {
+												continue;
+											}
+											?>
+											<li class="mh-henkilosto__flag" title="<?php echo esc_attr( $label ); ?>">
+												<span class="mh-henkilosto__flag-svg"><?php echo $svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted inline SVG ?></span>
+												<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								<?php endif; ?>
+							</div>
 						<?php endif; ?>
 
 						<?php if ( '' !== $role ) : ?>
@@ -105,7 +138,7 @@ if ( '' === $heading && empty( $persons ) ) {
 									</svg>
 								</span>
 								<?php if ( $phone_href ) : ?>
-									<a href="<?php echo esc_url( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a>
+									<a href="<?php echo esc_attr( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a>
 								<?php else : ?>
 									<span><?php echo esc_html( $phone ); ?></span>
 								<?php endif; ?>
@@ -120,7 +153,11 @@ if ( '' === $heading && empty( $persons ) ) {
 										<polyline points="22,6 12,13 2,6"/>
 									</svg>
 								</span>
-								<a href="<?php echo esc_url( $email_href ); ?>"><?php echo esc_html( antispambot( $email ) ); ?></a>
+								<?php if ( $email_href ) : ?>
+									<a href="<?php echo esc_attr( $email_href ); ?>"><?php echo esc_html( antispambot( $email ) ); ?></a>
+								<?php else : ?>
+									<span><?php echo esc_html( $email ); ?></span>
+								<?php endif; ?>
 							</p>
 						<?php endif; ?>
 					</div>

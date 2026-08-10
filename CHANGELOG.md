@@ -4,6 +4,17 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.7] - 2026-08-10
+
+### Added
+
+- Henkilöstö bulk-import: example CSV download, **Tuo ja korvaa** submit that replaces persons and saves
+- Language flags (FI default) shown beside each name; CSV photo column (media ID or URL)
+
+### Changed
+
+- Henkilöstö typography tweaks for role/focus lines
+
 ## [1.1.6] - 2026-08-10
 
 ### Added
@@ -18,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
 - Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
 
+[1.1.7]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.7
 [1.1.6]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.6
 [1.1.5]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.5
 

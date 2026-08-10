@@ -108,23 +108,74 @@ li.mh-henkilosto__person,
 	overflow-wrap: anywhere;
 }
 
+.mh-henkilosto__name-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.4rem 0.75rem;
+	min-width: 0;
+}
+
 .mh-henkilosto__name {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
 	font-size: var(--text-lg, 1.125rem);
 	font-weight: var(--font-bold, 700);
 	letter-spacing: -0.01em;
 	color: inherit;
 }
 
+.mh-henkilosto__flags {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.3rem;
+	margin: 0 !important;
+	padding: 0 !important;
+	list-style: none !important;
+	flex: 0 0 auto;
+}
+
+.mh-henkilosto__flag {
+	display: inline-flex;
+	margin: 0 !important;
+	padding: 0;
+	list-style: none;
+	line-height: 0;
+}
+
+.mh-henkilosto__flag-svg {
+	display: block;
+	width: 1.35rem;
+	height: 0.9rem;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	border-radius: 2px;
+	overflow: hidden;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+}
+
+.mh-henkilosto__flag-svg svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+p.mh-henkilosto__role,
 .mh-henkilosto__role {
-	font-size: var(--text-md, 1.0625rem);
+	font-size: 14px;
 	font-weight: var(--font-normal, 400);
 	font-style: italic;
 	color: inherit;
 }
 
+p.mh-henkilosto__focus,
 .mh-henkilosto__focus {
 	font-size: var(--text-md, 1.0625rem);
-	font-weight: var(--font-normal, 400);
+	font-weight: 500;
+	line-height: 140%;
 	color: inherit;
 }
 
