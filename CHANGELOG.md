@@ -4,6 +4,14 @@ All notable changes to this theme are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+## [1.1.8] - 2026-08-18
+
+### Fixed
+
+- Stop LibreForm DB errors during daily auto-draft cleanup when a form has no submissions table yet
+
 ## [1.1.7] - 2026-08-10
 
 ### Added
@@ -29,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
 - Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
 
+[1.1.8]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.8
 [1.1.7]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.7
 [1.1.6]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.6
 [1.1.5]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.5

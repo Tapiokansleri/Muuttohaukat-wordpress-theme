@@ -253,6 +253,66 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
 }, 10, 2);
 
 /**
+ * LibreForm creates a submissions table only after a form is properly saved.
+ * Auto-draft libreform posts never get that table, but WPLF still queries it on
+ * `before_delete_post` (WordPress daily auto-draft cleanup) → noisy DB errors.
+ *
+ * Replace WPLF's handler with a table-exists guard.
+ */
+function wplf_submissions_table_exists( $form_id ) {
+	global $wpdb;
+
+	$form_id = absint( $form_id );
+	if ( ! $form_id ) {
+		return false;
+	}
+
+	$table = $wpdb->prefix . 'wplf_' . $form_id . '_submissions';
+	$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+
+	return is_string( $found ) && $found === $table;
+}
+
+/**
+ * Safe WPLF before-delete callback: skip missing submissions tables.
+ *
+ * @param int $post_id
+ */
+function wplf_safe_before_delete_form( $post_id ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id || ! function_exists( 'libreform' ) ) {
+		return;
+	}
+
+	$post = get_post( $post_id );
+	if ( ! $post || $post->post_type !== 'libreform' ) {
+		return;
+	}
+
+	// Daily auto-draft cleanup: these posts never got a submissions table.
+	if ( $post->post_status === 'auto-draft' ) {
+		return;
+	}
+
+	// Never published / never created a submissions table — nothing to clean up.
+	if ( ! wplf_submissions_table_exists( $post_id ) ) {
+		return;
+	}
+
+	libreform()->beforeDeleteForm( $post_id );
+}
+
+add_action( 'init', function () {
+	if ( ! function_exists( 'libreform' ) || ! class_exists( '\\WPLF\\Plugin' ) ) {
+		return;
+	}
+
+	$plugin = libreform();
+	remove_action( 'before_delete_post', array( $plugin, 'beforeDeleteForm' ) );
+	add_action( 'before_delete_post', __NAMESPACE__ . '\\wplf_safe_before_delete_form' );
+}, 20 );
+
+/**
  * Map form slugs to template partials.
  */
 add_filter('wplfImportFormTemplate', function ($template, \WPLF\Form $form) {
