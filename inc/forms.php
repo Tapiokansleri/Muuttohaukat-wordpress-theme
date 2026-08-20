@@ -253,6 +253,51 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
 }, 10, 2);
 
 /**
+ * WPLF's submit endpoint catches its own failures and only logs them when
+ * WP_DEBUG is on, so a rejected submission leaves nothing in the log but an
+ * "Undefined variable $useFallback" warning from its own catch block. Record
+ * the actual reason instead — a silently failed submission is a lost D365 lead.
+ */
+add_filter( 'rest_request_after_callbacks', function ( $response, $handler, $request ) {
+	if ( ! ( $request instanceof \WP_REST_Request ) ) {
+		return $response;
+	}
+
+	if ( strpos( (string) $request->get_route(), '/wplf/v2/submitForm' ) === false ) {
+		return $response;
+	}
+
+	$form_id = (string) ( $request->get_param( '_formId' ) ?: 'unknown' );
+
+	if ( is_wp_error( $response ) ) {
+		d365_log( sprintf(
+			'[Themeform]: Submission rejected for form %s (%s): %s',
+			$form_id,
+			$response->get_error_code(),
+			$response->get_error_message()
+		) );
+
+		return $response;
+	}
+
+	if ( ! ( $response instanceof \WP_REST_Response ) || $response->get_status() < 400 ) {
+		return $response;
+	}
+
+	$data   = $response->get_data();
+	$reason = ( is_array( $data ) && ! empty( $data['error'] ) ) ? (string) $data['error'] : 'no reason reported';
+
+	d365_log( sprintf(
+		'[Themeform]: Submission failed for form %s (HTTP %d): %s',
+		$form_id,
+		$response->get_status(),
+		$reason
+	) );
+
+	return $response;
+}, 10, 3 );
+
+/**
  * LibreForm creates a submissions table only after a form is properly saved.
  * Auto-draft libreform posts never get that table, but WPLF still queries it on
  * `before_delete_post` (WordPress daily auto-draft cleanup) → noisy DB errors.

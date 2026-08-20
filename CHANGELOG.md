@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.9] - 2026-08-20
+
+### Fixed
+
+- Mobile menu no longer reveals page content at the bottom: page scroll is locked while the overlay is open and the overlay covers the visual viewport (`100dvh` + safe area)
+
+### Added
+
+- Log the real reason a LibreForm submission fails to the form log, instead of LibreForm silently swallowing it (only an `Undefined variable $useFallback` warning was left behind)
+- Regenerate missing Beaver Builder layout cache files before BB enqueues them, stopping `file_get_contents(...cache/NNNN-layout.css)` warnings and pages rendering without layout CSS
+
 ## [1.1.8] - 2026-08-18
 
 ### Fixed
@@ -37,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
 - Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
 
+[1.1.9]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.9
 [1.1.8]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.8
 [1.1.7]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.7
 [1.1.6]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.6

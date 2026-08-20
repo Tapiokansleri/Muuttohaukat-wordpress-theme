@@ -121,4 +121,39 @@ add_action('wp_enqueue_scripts', function () use ($localizeData) {
   wp_enqueue_script('muuttohaukat-postlisting', $themeUri . '/assets/js/postlisting.js', ['muuttohaukat-client'], $version, true);
 });
 
+/**
+ * Beaver Builder reads its cached layout CSS with file_get_contents() right
+ * after checking file_exists(). If the cache file disappears between those two
+ * calls — or PHP's per-request stat cache still reports a file that is already
+ * gone — the read emits a warning and the page renders without its layout CSS.
+ *
+ * Re-stat the cache files before BB enqueues (priority 10) and drop BB's cache
+ * entry for anything unreadable, so BB's own missing-file branch regenerates it.
+ */
+add_action('wp_enqueue_scripts', function () {
+  if (is_admin() || !is_singular() || !class_exists('\FLBuilderModel')) {
+    return;
+  }
+
+  $post_id = get_queried_object_id();
+  if (!$post_id || !\FLBuilderModel::is_builder_enabled($post_id)) {
+    return;
+  }
+
+  $info = \FLBuilderModel::get_asset_info();
+
+  foreach (['css', 'js'] as $type) {
+    $path = $info[$type] ?? '';
+    if (!is_string($path) || $path === '') {
+      continue;
+    }
+
+    clearstatcache(true, $path);
+
+    if (!is_readable($path) || filesize($path) === 0) {
+      \FLBuilderModel::delete_asset_cache($type);
+    }
+  }
+}, 5);
+
 // Font Awesome: inc/FontAwesome.php
