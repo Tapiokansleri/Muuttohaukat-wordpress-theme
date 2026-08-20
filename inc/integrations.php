@@ -29,6 +29,24 @@ function gtm_enabled() {
 }
 
 /**
+ * Print custom head snippets configured in Teeman asetukset.
+ */
+function print_head_snippets() {
+    $snippets = get_option( \Muuttohaukat\ThemeSettings\HEAD_SNIPPETS_OPTION, '' );
+    if ( ! is_string( $snippets ) || trim( $snippets ) === '' ) {
+        return;
+    }
+
+    $snippets = \Muuttohaukat\ThemeSettings\sanitizeHeadSnippets( $snippets );
+    if ( trim( $snippets ) === '' ) {
+        return;
+    }
+
+    echo "\n" . $snippets . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- run through wp_kses above.
+}
+add_action( 'wp_head', __NAMESPACE__ . '\print_head_snippets', 1 );
+
+/**
  * Print the GTM loader in the document head.
  */
 function print_gtm_head() {

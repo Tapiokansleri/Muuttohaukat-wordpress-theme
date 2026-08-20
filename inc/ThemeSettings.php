@@ -13,6 +13,8 @@ const PAGE_SLUG          = 'muuttohaukat-theme-settings';
 const GROUP_FLOATING_CTA = 'muuttohaukat_floating_cta_settings';
 const GROUP_HELLOBAR     = 'muuttohaukat_hellobar_settings';
 const GROUP_D365         = 'muuttohaukat_d365_settings';
+const GROUP_HEAD         = 'muuttohaukat_head_settings';
+const HEAD_SNIPPETS_OPTION = 'muuttohaukat_head_snippets';
 const D365_CODE_MASK     = '********';
 
 /**
@@ -123,6 +125,67 @@ function tabs() {
 }
 
 /**
+ * Allowed HTML tags for head snippets saved from Teeman asetukset.
+ *
+ * @return array<string, array<string, bool>>
+ */
+function headSnippetsAllowedHtml() {
+  return [
+    'meta' => [
+      'name'       => true,
+      'content'    => true,
+      'property'   => true,
+      'http-equiv' => true,
+      'charset'    => true,
+    ],
+    'link' => [
+      'rel'         => true,
+      'href'        => true,
+      'type'        => true,
+      'crossorigin' => true,
+    ],
+    'script' => [
+      'src'   => true,
+      'type'  => true,
+      'async' => true,
+      'defer' => true,
+    ],
+  ];
+}
+
+/**
+ * Sanitize custom head snippets (meta, link, external script tags).
+ *
+ * wp_kses() filters tags and attributes but leaves text between them intact, so
+ * an allowed <script> tag would still carry an inline body. Empty those bodies
+ * to keep the promise made in the UI: src-only scripts, no inline JavaScript.
+ *
+ * Also used on output, so snippets written straight to the option (WP-CLI,
+ * database import) get the same treatment as ones saved from the settings page.
+ *
+ * @param mixed $input Raw input.
+ * @return string
+ */
+function sanitizeHeadSnippets($input) {
+  if ($input === null) {
+    $stored = get_option(HEAD_SNIPPETS_OPTION, '');
+    return is_string($stored) ? sanitizeHeadSnippets($stored) : '';
+  }
+
+  if (!is_string($input)) {
+    return '';
+  }
+
+  $sanitized = wp_kses(trim($input), headSnippetsAllowedHtml());
+
+  return (string) preg_replace(
+    '#(<script\b[^>]*>).*?(</script\s*>)#is',
+    '$1$2',
+    $sanitized
+  );
+}
+
+/**
  * Sanitize hellobar option array.
  *
  * @param mixed $input Raw input.
@@ -190,6 +253,10 @@ add_action('admin_init', function () {
   ]);
   register_setting(GROUP_D365, 'muuttohaukat_d365_endpoint', [
     'sanitize_callback' => __NAMESPACE__ . '\\sanitizeD365Endpoint',
+    'default'           => '',
+  ]);
+  register_setting(GROUP_HEAD, HEAD_SNIPPETS_OPTION, [
+    'sanitize_callback' => __NAMESPACE__ . '\\sanitizeHeadSnippets',
     'default'           => '',
   ]);
 });
@@ -295,6 +362,47 @@ function renderTabs($active) {
     echo '<a href="' . esc_url($url) . '" class="' . esc_attr(trim($class)) . '">' . esc_html($label) . '</a>';
   }
   echo '</nav>';
+}
+
+/**
+ * Render custom head snippet settings on the links tab.
+ */
+function renderHeadSnippetsFields() {
+  $snippets = get_option(HEAD_SNIPPETS_OPTION, '');
+  if (!is_string($snippets)) {
+    $snippets = '';
+  }
+  ?>
+  <form method="post" action="options.php" style="margin-top: 1.5em;">
+    <?php settings_fields(GROUP_HEAD); ?>
+    <input type="hidden" name="_wp_http_referer" value="<?= esc_attr(add_query_arg(['page' => PAGE_SLUG, 'tab' => 'links'], admin_url('themes.php'))) ?>">
+    <div class="card" style="max-width: 640px; padding: 1em 1.25em;">
+      <h2 class="title" style="margin-top: 0;"><?= esc_html__('Head-koodi', 'muuttohaukat') ?></h2>
+      <p class="description">
+        <?= esc_html__('Lisää sivuston <head>-osioon meta-tageja ja muita vahvistuskoodeja (esim. Bing Webmaster Tools, Pinterest). Yksi tagi per rivi.', 'muuttohaukat') ?>
+      </p>
+      <table class="form-table" role="presentation">
+        <tr>
+          <th scope="row"><label for="muuttohaukat_head_snippets"><?= esc_html__('Head-snippetit', 'muuttohaukat') ?></label></th>
+          <td>
+            <textarea
+              id="muuttohaukat_head_snippets"
+              name="<?= esc_attr(HEAD_SNIPPETS_OPTION) ?>"
+              rows="6"
+              class="large-text code"
+              style="width: 100%; font-family: Consolas, Monaco, monospace;"
+              placeholder="<?= esc_attr('<meta name="msvalidate.01" content="..." />') ?>"
+            ><?= esc_textarea($snippets) ?></textarea>
+            <p class="description">
+              <?= esc_html__('Sallitut tagit: meta, link ja ulkoiset script-tagit (src). Inline-skriptejä ei tueta turvallisuussyistä.', 'muuttohaukat') ?>
+            </p>
+          </td>
+        </tr>
+      </table>
+      <?php submit_button(__('Tallenna muutokset', 'muuttohaukat')); ?>
+    </div>
+  </form>
+  <?php
 }
 
 /**
@@ -592,6 +700,7 @@ function renderPage() {
     <?php renderTabs($tab); ?>
 
     <?php if ($tab === 'links') : ?>
+      <?php renderHeadSnippetsFields(); ?>
       <?php renderD365Fields(); ?>
       <?php renderErrorLog(); ?>
       <?php renderUpdateStatus(); ?>

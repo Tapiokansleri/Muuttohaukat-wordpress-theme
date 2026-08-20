@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-20
+
+### Added
+
+- **Head-koodi** tab in Teeman asetukset for site verification tags (Bing Webmaster Tools, Pinterest and similar). Accepts `meta`, `link` and external `script` tags; inline JavaScript is stripped, and snippets are sanitized both on save and on output
+
 ## [1.1.9] - 2026-08-20
 
 ### Fixed
@@ -48,6 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
 - Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
 
+[1.2.0]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.2.0
 [1.1.9]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.9
 [1.1.8]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.8
 [1.1.7]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.7
