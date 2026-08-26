@@ -4,6 +4,7 @@
  *
  * Displays a fixed-position banner with two CTA buttons.
  * Configurable from Appearance → Teeman asetukset → Kelluva CTA.
+ * Stays above `.site-footer` while scrolling (does not cover the footer).
  *
  * @package Muuttohaukat
  */
@@ -12,8 +13,9 @@ namespace Muuttohaukat\FloatingCta;
 add_action('wp_enqueue_scripts', function () {
   $css = '
     .kansleri-floating-cta-banner {
+      --mh-floating-cta-gap: 16px;
       position: fixed;
-      bottom: 16px;
+      bottom: var(--mh-floating-cta-gap);
       left: 16px;
       z-index: 999;
     }
@@ -47,7 +49,7 @@ add_action('wp_enqueue_scripts', function () {
 
     @media (max-width: 640px) {
       .kansleri-floating-cta-banner {
-        bottom: 12px;
+        --mh-floating-cta-gap: 12px;
         left: 12px;
         right: 12px;
       }
@@ -123,7 +125,7 @@ add_action('wp_footer', function () {
     return;
   }
   ?>
-  <div class="kansleri-floating-cta-banner">
+  <div class="kansleri-floating-cta-banner" id="kansleri-floating-cta-banner">
     <div class="mh-painike-wrap">
       <?php if (!empty($text)) : ?>
       <a href="<?= esc_url($link) ?>" class="mh-painike mh-painike--yellow">
@@ -137,5 +139,38 @@ add_action('wp_footer', function () {
       <?php endif; ?>
     </div>
   </div>
+  <script>
+  (function () {
+    var banner = document.getElementById('kansleri-floating-cta-banner');
+    var footer = document.querySelector('.site-footer');
+    if (!banner || !footer) { return; }
+
+    var ticking = false;
+
+    function gapPx() {
+      var raw = getComputedStyle(banner).getPropertyValue('--mh-floating-cta-gap').trim();
+      var n = parseFloat(raw);
+      return isNaN(n) ? 16 : n;
+    }
+
+    function update() {
+      ticking = false;
+      var gap = gapPx();
+      var lift = Math.max(0, window.innerHeight - footer.getBoundingClientRect().top);
+      banner.style.bottom = (gap + lift) + 'px';
+    }
+
+    function onScrollOrResize() {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    update();
+  })();
+  </script>
   <?php
 });

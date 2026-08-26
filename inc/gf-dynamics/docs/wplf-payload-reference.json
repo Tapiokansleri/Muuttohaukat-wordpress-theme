@@ -1,0 +1,37 @@
+{
+  "_comment": "Reference shape of the Azure AddOfferToDynamics POST body. Derived from WPLF\\Submission public properties + theme wplfAfterSubmission (wp_json_encode defaults → Unicode escapes). Local LibreForm IDs: yritysmuutto=1791, kotimuutto=1793, tarvikkeet=1795. Do not store real PII here.",
+  "kind": "getSubmission",
+  "data": {
+    "ID": 1,
+    "uuid": "550e8400-e29b-41d4-a716-446655440000",
+    "title": "Submission 1",
+    "referrer": {
+      "type": "post",
+      "url": "https://example.com/example-page"
+    },
+    "historyId": null,
+    "createdAt": "2026-01-01 12:00:00",
+    "modifiedAt": "2026-01-01 12:00:00",
+    "usedFallback": false,
+    "formId": 1793,
+    "entries": {
+      "Nimi": "Example Person",
+      "Email": "example@example.com",
+      "Puhnro": "0400000000",
+      "Toimipiste": "helsinki@muuttohaukat.com",
+      "LähtöHissi": "on",
+      "Pakkauspalvelu": "Kyllä",
+      "Käyttöehdot": "Hyväksytty",
+      "Referrer": "https://example.com/example-page"
+    },
+    "formFields": {},
+    "meta": {}
+  },
+  "checkbox_semantics": {
+    "LähtöHissi": "on",
+    "KohdeHissi": "on",
+    "service_checkboxes": "Kyllä",
+    "Käyttöehdot": "Hyväksytty",
+    "unchecked": "omit key entirely"
+  }
+}

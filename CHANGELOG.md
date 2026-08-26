@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Gravity Forms → Dynamics bridge embedded in the theme (`inc/gf-dynamics*`): same Azure payload as LibreForm, feed mapping UI, sidebar **Dynamics** page with connection test, and entry resend. Boots on `init` so it works from a theme (not only as a plugin). LibreForm forwarding unchanged
+
+### Fixed
+
+- Floating CTA banner lifts above `.site-footer` on scroll so it no longer covers the footer
+
 ## [1.2.0] - 2026-08-20
 
 ### Added
