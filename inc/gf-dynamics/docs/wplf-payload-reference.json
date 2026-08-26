@@ -9,7 +9,7 @@
       "type": "post",
       "url": "https://example.com/example-page"
     },
-    "historyId": null,
+    "historyId": 0,
     "createdAt": "2026-01-01 12:00:00",
     "modifiedAt": "2026-01-01 12:00:00",
     "usedFallback": false,

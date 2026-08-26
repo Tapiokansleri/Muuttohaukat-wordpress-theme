@@ -216,6 +216,11 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
       return;
     }
 
+    // Azure AddOfferToDynamics deserializes historyId as System.Int32; JSON null → HTTP 400.
+    if ( $submission->historyId === null ) {
+      $submission->historyId = 0;
+    }
+
     $json = wp_json_encode([
       'kind' => 'getSubmission',
       'data' => $submission,

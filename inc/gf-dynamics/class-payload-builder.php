@@ -56,10 +56,12 @@ class MH_GF_Dynamics_Payload_Builder {
 
 		// LibreForm always includes Referrer as the page URL when the template sets it.
 		if ( ! isset( $entries['Referrer'] ) ) {
-			$source = rgar( $entry, 'source_url' );
-			if ( is_string( $source ) && $source !== '' ) {
+			$source = self::clean_url( rgar( $entry, 'source_url' ) );
+			if ( $source !== '' ) {
 				$entries['Referrer'] = $source;
 			}
+		} else {
+			$entries['Referrer'] = self::clean_url( $entries['Referrer'] );
 		}
 
 		return $entries;
@@ -122,9 +124,10 @@ class MH_GF_Dynamics_Payload_Builder {
 			'title'        => $title,
 			'referrer'     => array(
 				'type' => 'post',
-				'url'  => isset( $entry['source_url'] ) ? (string) $entry['source_url'] : '',
+				'url'  => self::clean_url( isset( $entry['source_url'] ) ? $entry['source_url'] : '' ),
 			),
-			'historyId'    => null,
+			// Azure Function deserializes historyId as System.Int32 — null → HTTP 400.
+			'historyId'    => 0,
 			'createdAt'    => is_string( $created ) ? $created : null,
 			'modifiedAt'   => is_string( $modified ) ? $modified : null,
 			'usedFallback' => false,
@@ -163,6 +166,19 @@ class MH_GF_Dynamics_Payload_Builder {
 		}
 
 		return rgar( $entry, (string) $gf_field_id );
+	}
+
+	/**
+	 * Decode HTML entities GF may leave in source URLs (&amp; → &).
+	 *
+	 * @param mixed $url Raw URL.
+	 * @return string
+	 */
+	private static function clean_url( $url ) {
+		if ( ! is_string( $url ) || $url === '' ) {
+			return '';
+		}
+		return html_entity_decode( $url, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	/**

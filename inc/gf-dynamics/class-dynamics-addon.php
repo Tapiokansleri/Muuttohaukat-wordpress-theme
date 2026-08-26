@@ -11,11 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 
-	const META_STATUS   = 'mh_gf_dynamics_status';
-	const META_PAYLOAD  = 'mh_gf_dynamics_payload';
-	const META_ERROR    = 'mh_gf_dynamics_error';
-	const META_SENT_AT  = 'mh_gf_dynamics_sent_at';
-	const META_RESPONSE = 'mh_gf_dynamics_http_code';
+	const META_STATUS         = 'mh_gf_dynamics_status';
+	const META_PAYLOAD        = 'mh_gf_dynamics_payload';
+	const META_ERROR          = 'mh_gf_dynamics_error';
+	const META_SENT_AT        = 'mh_gf_dynamics_sent_at';
+	const META_RESPONSE       = 'mh_gf_dynamics_http_code';
+	const META_RESPONSE_BODY  = 'mh_gf_dynamics_response_body';
 
 	/**
 	 * @var string
@@ -473,11 +474,14 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 			gform_update_meta( $entry['id'], self::META_STATUS, 'error' );
 			gform_update_meta( $entry['id'], self::META_ERROR, $message );
 			gform_update_meta( $entry['id'], self::META_SENT_AT, current_time( 'mysql' ) );
+			gform_update_meta( $entry['id'], self::META_RESPONSE_BODY, '' );
 			return;
 		}
 
-		$code = (int) $result;
+		$code = (int) $result['code'];
+		$body = (string) $result['body'];
 		gform_update_meta( $entry['id'], self::META_RESPONSE, $code );
+		gform_update_meta( $entry['id'], self::META_RESPONSE_BODY, $this->truncate_response_body( $body ) );
 		gform_update_meta( $entry['id'], self::META_SENT_AT, current_time( 'mysql' ) );
 
 		if ( $code >= 200 && $code < 300 ) {
@@ -485,7 +489,7 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 				$entry['id'],
 				sprintf(
 					/* translators: %d: HTTP status code */
-					__( 'Dynamics: forwarded successfully (HTTP %d).', 'muuttohaukat-gf-dynamics' ),
+					__( 'Forwarded successfully (HTTP %d).', 'muuttohaukat-gf-dynamics' ),
 					$code
 				),
 				'success'
@@ -498,9 +502,12 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 
 		$message = sprintf(
 			/* translators: %d: HTTP status code */
-			__( 'Dynamics: Azure returned HTTP %d.', 'muuttohaukat-gf-dynamics' ),
+			__( 'Azure returned HTTP %d.', 'muuttohaukat-gf-dynamics' ),
 			$code
 		);
+		if ( $body !== '' ) {
+			$message .= ' ' . $this->truncate_response_body( $body, 300 );
+		}
 		$this->add_feed_error( $message, $feed, $entry, $form );
 		gform_update_meta( $entry['id'], self::META_STATUS, 'error' );
 		gform_update_meta( $entry['id'], self::META_ERROR, $message );
@@ -557,7 +564,7 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 	 * Blocking POST so failures surface on the entry.
 	 *
 	 * @param string $json JSON body.
-	 * @return int|WP_Error HTTP status code or error.
+	 * @return array{code:int,body:string}|WP_Error
 	 */
 	public function send_to_azure( $json ) {
 		$endpoint = $this->get_endpoint();
@@ -583,7 +590,32 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 			return $response;
 		}
 
-		return (int) wp_remote_retrieve_response_code( $response );
+		return array(
+			'code' => (int) wp_remote_retrieve_response_code( $response ),
+			'body' => (string) wp_remote_retrieve_body( $response ),
+		);
+	}
+
+	/**
+	 * @param string $body   Raw response body.
+	 * @param int    $max_len Max characters to keep.
+	 * @return string
+	 */
+	private function truncate_response_body( $body, $max_len = 2000 ) {
+		$body = trim( wp_strip_all_tags( (string) $body ) );
+		if ( $body === '' ) {
+			return '';
+		}
+		if ( function_exists( 'mb_strlen' ) && function_exists( 'mb_substr' ) ) {
+			if ( mb_strlen( $body ) > $max_len ) {
+				return mb_substr( $body, 0, $max_len ) . '…';
+			}
+			return $body;
+		}
+		if ( strlen( $body ) > $max_len ) {
+			return substr( $body, 0, $max_len ) . '…';
+		}
+		return $body;
 	}
 
 	/**
@@ -607,14 +639,15 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 	 * @param array $args Args with entry/form.
 	 */
 	public function render_entry_meta_box( $args ) {
-		$entry   = rgar( $args, 'entry' );
-		$form    = rgar( $args, 'form' );
-		$id      = absint( rgar( $entry, 'id' ) );
-		$status  = (string) gform_get_meta( $id, self::META_STATUS );
-		$error   = (string) gform_get_meta( $id, self::META_ERROR );
-		$sent    = (string) gform_get_meta( $id, self::META_SENT_AT );
-		$code    = gform_get_meta( $id, self::META_RESPONSE );
-		$payload = (string) gform_get_meta( $id, self::META_PAYLOAD );
+		$entry    = rgar( $args, 'entry' );
+		$form     = rgar( $args, 'form' );
+		$id       = absint( rgar( $entry, 'id' ) );
+		$status   = (string) gform_get_meta( $id, self::META_STATUS );
+		$error    = (string) gform_get_meta( $id, self::META_ERROR );
+		$sent     = (string) gform_get_meta( $id, self::META_SENT_AT );
+		$code     = gform_get_meta( $id, self::META_RESPONSE );
+		$payload  = (string) gform_get_meta( $id, self::META_PAYLOAD );
+		$az_body  = (string) gform_get_meta( $id, self::META_RESPONSE_BODY );
 
 		echo '<p><strong>' . esc_html__( 'Status', 'muuttohaukat-gf-dynamics' ) . ':</strong> ';
 		echo esc_html( $status !== '' ? $status : '—' );
@@ -629,11 +662,17 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 		if ( $error !== '' ) {
 			echo '<p style="color:#b32d2e;"><strong>' . esc_html__( 'Error', 'muuttohaukat-gf-dynamics' ) . ':</strong> ' . esc_html( $error ) . '</p>';
 		}
+		if ( $az_body !== '' ) {
+			echo '<p><strong>' . esc_html__( 'Azure response', 'muuttohaukat-gf-dynamics' ) . ':</strong></p>';
+			echo '<textarea readonly rows="4" style="width:100%;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.35;">';
+			echo esc_textarea( $az_body );
+			echo '</textarea>';
+		}
 
 		if ( $payload !== '' ) {
-			$pretty = $payload;
-			$decoded = json_decode( $payload, true );
-			if ( is_array( $decoded ) ) {
+			$pretty  = $payload;
+			$decoded = json_decode( $payload ); // Keep empty objects as {} (not []).
+			if ( is_object( $decoded ) || is_array( $decoded ) ) {
 				$encoded = wp_json_encode( $decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 				if ( is_string( $encoded ) && $encoded !== '' ) {
 					$pretty = $encoded;

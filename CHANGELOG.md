@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-08-26
+
+### Fixed
+
+- Dynamics HTTP 400 from Azure when `historyId` is JSON `null` (Azure expects `System.Int32`) — GF bridge and LibreForm forwarder now send `0`
+- Decode HTML entities in GF source URLs (`&amp;` → `&`) before building the Dynamics payload
+- Surface Azure response body on the entry Dynamics box for failed sends
+
 ## [1.2.3] - 2026-08-26
 
 ### Added
