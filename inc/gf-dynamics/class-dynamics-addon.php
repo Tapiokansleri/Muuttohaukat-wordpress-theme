@@ -607,13 +607,14 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 	 * @param array $args Args with entry/form.
 	 */
 	public function render_entry_meta_box( $args ) {
-		$entry  = rgar( $args, 'entry' );
-		$form   = rgar( $args, 'form' );
-		$id     = absint( rgar( $entry, 'id' ) );
-		$status = (string) gform_get_meta( $id, self::META_STATUS );
-		$error  = (string) gform_get_meta( $id, self::META_ERROR );
-		$sent   = (string) gform_get_meta( $id, self::META_SENT_AT );
-		$code   = gform_get_meta( $id, self::META_RESPONSE );
+		$entry   = rgar( $args, 'entry' );
+		$form    = rgar( $args, 'form' );
+		$id      = absint( rgar( $entry, 'id' ) );
+		$status  = (string) gform_get_meta( $id, self::META_STATUS );
+		$error   = (string) gform_get_meta( $id, self::META_ERROR );
+		$sent    = (string) gform_get_meta( $id, self::META_SENT_AT );
+		$code    = gform_get_meta( $id, self::META_RESPONSE );
+		$payload = (string) gform_get_meta( $id, self::META_PAYLOAD );
 
 		echo '<p><strong>' . esc_html__( 'Status', 'muuttohaukat-gf-dynamics' ) . ':</strong> ';
 		echo esc_html( $status !== '' ? $status : '—' );
@@ -627,6 +628,22 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 		}
 		if ( $error !== '' ) {
 			echo '<p style="color:#b32d2e;"><strong>' . esc_html__( 'Error', 'muuttohaukat-gf-dynamics' ) . ':</strong> ' . esc_html( $error ) . '</p>';
+		}
+
+		if ( $payload !== '' ) {
+			$pretty = $payload;
+			$decoded = json_decode( $payload, true );
+			if ( is_array( $decoded ) ) {
+				$encoded = wp_json_encode( $decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+				if ( is_string( $encoded ) && $encoded !== '' ) {
+					$pretty = $encoded;
+				}
+			}
+
+			echo '<p><strong>' . esc_html__( 'Payload', 'muuttohaukat-gf-dynamics' ) . ':</strong></p>';
+			echo '<textarea readonly rows="12" style="width:100%;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.35;">';
+			echo esc_textarea( $pretty );
+			echo '</textarea>';
 		}
 
 		$url = wp_nonce_url(
