@@ -257,6 +257,9 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
  * WP_DEBUG is on, so a rejected submission leaves nothing in the log but an
  * "Undefined variable $useFallback" warning from its own catch block. Record
  * the actual reason instead — a silently failed submission is a lost D365 lead.
+ *
+ * Honeypot rejections ("Captcha wasn't filled properly") are expected bot noise
+ * and are not written to the form log.
  */
 add_filter( 'rest_request_after_callbacks', function ( $response, $handler, $request ) {
 	if ( ! ( $request instanceof \WP_REST_Request ) ) {
@@ -269,12 +272,33 @@ add_filter( 'rest_request_after_callbacks', function ( $response, $handler, $req
 
 	$form_id = (string) ( $request->get_param( '_formId' ) ?: 'unknown' );
 
+	$reason_from_response = static function ( $response ) {
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message();
+		}
+		if ( $response instanceof \WP_REST_Response ) {
+			$data = $response->get_data();
+			if ( is_array( $data ) && ! empty( $data['error'] ) ) {
+				return (string) $data['error'];
+			}
+		}
+		return '';
+	};
+
+	$is_honeypot = static function ( $reason ) {
+		return $reason !== '' && stripos( $reason, "Captcha wasn't filled properly" ) !== false;
+	};
+
 	if ( is_wp_error( $response ) ) {
+		$reason = $reason_from_response( $response );
+		if ( $is_honeypot( $reason ) ) {
+			return $response;
+		}
 		d365_log( sprintf(
 			'[Themeform]: Submission rejected for form %s (%s): %s',
 			$form_id,
 			$response->get_error_code(),
-			$response->get_error_message()
+			$reason
 		) );
 
 		return $response;
@@ -284,8 +308,13 @@ add_filter( 'rest_request_after_callbacks', function ( $response, $handler, $req
 		return $response;
 	}
 
-	$data   = $response->get_data();
-	$reason = ( is_array( $data ) && ! empty( $data['error'] ) ) ? (string) $data['error'] : 'no reason reported';
+	$reason = $reason_from_response( $response );
+	if ( $reason === '' ) {
+		$reason = 'no reason reported';
+	}
+	if ( $is_honeypot( $reason ) ) {
+		return $response;
+	}
 
 	d365_log( sprintf(
 		'[Themeform]: Submission failed for form %s (HTTP %d): %s',

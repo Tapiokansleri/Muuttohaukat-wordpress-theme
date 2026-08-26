@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-08-26
+
+### Fixed
+
+- Stop logging LibreForm honeypot rejections ("Captcha wasn't filled properly") to the PHP/form log — expected bot noise, not lost leads
+
 ## [1.2.1] - 2026-08-26
 
 ### Added
@@ -64,6 +70,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Prevent form POSTs from blocking 10–30 s on Dynamics: D365 forwarding is now non-blocking
 - Capture the real `wp_mail` failure reason for confirmation emails, and wrap submission side-effects so they cannot break LibreForm
 
+[1.2.2]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.2.0
 [1.1.9]: https://github.com/Tapiokansleri/Muuttohaukat-wordpress-theme/releases/tag/v1.1.9
