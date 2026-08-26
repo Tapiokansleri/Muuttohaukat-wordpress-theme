@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.5] - 2026-08-26
+
+### Fixed
+
+- Dynamics entry payload is a selectable/scrollable `<pre>` (bare textareas were unusable in admin)
+- **Lähetä uudelleen** permission check uses Gravity Forms' `current_user_can_any` (incl. `gform_full_access`) and registers `admin-post` handlers outside the add-on init path
+
 ## [1.2.4] - 2026-08-26
 
 ### Fixed

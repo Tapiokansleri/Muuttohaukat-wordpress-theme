@@ -46,6 +46,30 @@ function mh_gf_dynamics_bootstrap() {
 add_action( 'init', 'mh_gf_dynamics_bootstrap', 20 );
 
 /**
+ * admin-post handlers must resolve even if GFAddOn init order is awkward.
+ */
+function mh_gf_dynamics_admin_post_resend() {
+	mh_gf_dynamics_bootstrap();
+	$addon = mh_gf_dynamics();
+	if ( ! $addon ) {
+		wp_die( esc_html__( 'Dynamics bridge is not available.', 'muuttohaukat-gf-dynamics' ) );
+	}
+	$addon->handle_resend();
+}
+
+function mh_gf_dynamics_admin_post_test() {
+	mh_gf_dynamics_bootstrap();
+	$addon = mh_gf_dynamics();
+	if ( ! $addon ) {
+		wp_die( esc_html__( 'Dynamics bridge is not available.', 'muuttohaukat-gf-dynamics' ) );
+	}
+	$addon->handle_test_connection();
+}
+
+add_action( 'admin_post_mh_gf_dynamics_resend', 'mh_gf_dynamics_admin_post_resend' );
+add_action( 'admin_post_mh_gf_dynamics_test', 'mh_gf_dynamics_admin_post_test' );
+
+/**
  * Singleton accessor used by entry-detail callbacks.
  *
  * @return MH_GF_Dynamics_AddOn|null

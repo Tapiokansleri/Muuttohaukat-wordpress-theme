@@ -117,8 +117,6 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 
 		parent::init();
 		add_filter( 'gform_entry_detail_meta_boxes', array( $this, 'register_entry_meta_box' ), 10, 3 );
-		add_action( 'admin_post_mh_gf_dynamics_resend', array( $this, 'handle_resend' ) );
-		add_action( 'admin_post_mh_gf_dynamics_test', array( $this, 'handle_test_connection' ) );
 	}
 
 	/**
@@ -664,9 +662,7 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 		}
 		if ( $az_body !== '' ) {
 			echo '<p><strong>' . esc_html__( 'Azure response', 'muuttohaukat-gf-dynamics' ) . ':</strong></p>';
-			echo '<textarea readonly rows="4" style="width:100%;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.35;">';
-			echo esc_textarea( $az_body );
-			echo '</textarea>';
+			$this->render_selectable_code( $az_body, 6 );
 		}
 
 		if ( $payload !== '' ) {
@@ -680,9 +676,7 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 			}
 
 			echo '<p><strong>' . esc_html__( 'Payload', 'muuttohaukat-gf-dynamics' ) . ':</strong></p>';
-			echo '<textarea readonly rows="12" style="width:100%;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.35;">';
-			echo esc_textarea( $pretty );
-			echo '</textarea>';
+			$this->render_selectable_code( $pretty, 16 );
 		}
 
 		$url = wp_nonce_url(
@@ -697,8 +691,47 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 			'mh_gf_dynamics_resend_' . $id
 		);
 
-		echo '<p><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Lähetä uudelleen', 'muuttohaukat-gf-dynamics' ) . '</a></p>';
+		echo '<p><a class="button button-secondary" href="' . esc_url( $url ) . '">' . esc_html__( 'Lähetä uudelleen', 'muuttohaukat-gf-dynamics' ) . '</a></p>';
 		echo '<p class="description">' . esc_html__( 'Rebuilds the payload from the current feed mapping and posts to Azure (ignores test mode).', 'muuttohaukat-gf-dynamics' ) . '</p>';
+	}
+
+	/**
+	 * Selectable/scrollable code block (avoids theme CSS that disables bare textareas).
+	 *
+	 * @param string $code      Content.
+	 * @param int    $rows_hint Approximate height in rem lines.
+	 */
+	private function render_selectable_code( $code, $rows_hint = 12 ) {
+		$max_h = max( 6, (int) $rows_hint ) * 1.35;
+		$style = sprintf(
+			'display:block;width:100%%;max-height:%srem;overflow:auto;resize:vertical;box-sizing:border-box;margin:0;padding:8px;font-family:Consolas,Monaco,monospace;font-size:11px;line-height:1.35;white-space:pre;user-select:text;-webkit-user-select:text;pointer-events:auto;cursor:text;background:#f6f7f7;border:1px solid #c3c4c7;',
+			$max_h
+		);
+		echo '<pre class="mh-gf-dynamics-json" tabindex="0" style="' . esc_attr( $style ) . '">';
+		echo esc_html( (string) $code );
+		echo '</pre>';
+	}
+
+	/**
+	 * Whether the current user may resend Dynamics payloads.
+	 *
+	 * @return bool
+	 */
+	private function user_can_resend() {
+		if ( class_exists( 'GFCommon' ) && method_exists( 'GFCommon', 'current_user_can_any' ) ) {
+			return (bool) GFCommon::current_user_can_any(
+				array(
+					'gravityforms_view_entries',
+					'gravityforms_edit_entries',
+					'gform_full_access',
+				)
+			);
+		}
+
+		return current_user_can( 'gform_full_access' )
+			|| current_user_can( 'gravityforms_edit_entries' )
+			|| current_user_can( 'gravityforms_view_entries' )
+			|| current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -708,8 +741,12 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 		$entry_id = isset( $_GET['entry_id'] ) ? absint( $_GET['entry_id'] ) : 0;
 		$form_id  = isset( $_GET['form_id'] ) ? absint( $_GET['form_id'] ) : 0;
 
-		if ( ! $entry_id || ! $form_id || ! current_user_can( 'gravityforms_view_entries' ) ) {
-			wp_die( esc_html__( 'You do not have permission to resend this entry.', 'muuttohaukat-gf-dynamics' ) );
+		if ( ! $entry_id || ! $form_id || ! $this->user_can_resend() ) {
+			wp_die(
+				esc_html__( 'You do not have permission to resend this entry.', 'muuttohaukat-gf-dynamics' ),
+				esc_html__( 'Permission denied', 'muuttohaukat-gf-dynamics' ),
+				array( 'response' => 403 )
+			);
 		}
 
 		check_admin_referer( 'mh_gf_dynamics_resend_' . $entry_id );
