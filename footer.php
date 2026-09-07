@@ -59,6 +59,56 @@ foreach ($widget_columns as $sidebar_id) {
       </div>
     <?php endif; ?>
 
+    <?php
+    $eeat_facts = [
+      [
+        'value' => '1992',
+        'label' => __( 'Perheyritys vuodesta', 'muuttohaukat' ),
+        'url'   => home_url( '/muuttofirma/' ),
+      ],
+      [
+        'value' => '35+',
+        'label' => __( 'vuotta historiaa', 'muuttohaukat' ),
+        'url'   => home_url( '/muuttofirma/' ),
+      ],
+      [
+        'value' => '100 000+',
+        'label' => __( 'muuttoa', 'muuttohaukat' ),
+        'url'   => home_url( '/muuttohaukat-ylitti-100-000-muuton-rajapyykin/' ),
+      ],
+      [
+        'value' => '4',
+        'label' => __( 'toimipistettä', 'muuttohaukat' ),
+        'url'   => home_url( '/yhteystiedot/' ),
+      ],
+      [
+        'value' => '100+',
+        'label' => __( 'työntekijää', 'muuttohaukat' ),
+        'url'   => home_url( '/rekry/' ),
+      ],
+    ];
+    ?>
+    <div class="site-footer__eeat">
+      <div class="site-footer__eeat-inner">
+        <p class="site-footer__eeat-heading screen-reader-text"><?php esc_html_e( 'Muuttohaukat lyhyesti', 'muuttohaukat' ); ?></p>
+        <ul class="site-footer__eeat-list">
+          <?php foreach ( $eeat_facts as $fact ) : ?>
+            <li class="site-footer__eeat-item">
+              <a class="site-footer__eeat-link" href="<?php echo esc_url( $fact['url'] ); ?>">
+                <span class="site-footer__eeat-value"><?php echo esc_html( $fact['value'] ); ?></span>
+                <span class="site-footer__eeat-label"><?php echo esc_html( $fact['label'] ); ?></span>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+        <p class="site-footer__eeat-claim">
+          <a href="<?php echo esc_url( home_url( '/yritysmuutto/' ) ); ?>">
+            <?php esc_html_e( 'Yksi Suomen suurimmista koti- ja yritysmuuttojen tekijöistä', 'muuttohaukat' ); ?>
+          </a>
+        </p>
+      </div>
+    </div>
+
     <div class="site-footer__bottom">
       <div class="site-footer__bottom-inner">
         <p class="site-footer__copyright">

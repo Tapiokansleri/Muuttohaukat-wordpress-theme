@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.6] - 2026-09-07
+
+### Added
+
+- Footer E-E-A-T credentials strip (1992, 35+ years, 100 000+ moves, 4 offices, 100+ staff) and claim as one of Finland’s largest home and business movers
+
 ## [1.2.5] - 2026-08-26
 
 ### Fixed
