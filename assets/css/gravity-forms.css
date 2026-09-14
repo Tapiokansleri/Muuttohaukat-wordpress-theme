@@ -1,0 +1,115 @@
+/* ==========================================================================
+   Gravity Forms — match the LibreForm quote forms
+   Orbital theme stays on; colours come from gform_default_styles
+   (inc/GravityForms.php). Selectors are two classes deep so they beat
+   Orbital's one-class variable defaults whatever the stylesheet order.
+   ========================================================================== */
+
+.gform_wrapper.gform-theme--framework {
+    /* Controls: 48px, square, 14px text, no shadow (LibreForm inputs in tailwind.css) */
+    --gf-ctrl-size-md: 3rem;
+    --gf-ctrl-padding-x: 1rem;
+    --gf-ctrl-radius: 0;
+    --gf-ctrl-shadow: none;
+    --gf-font-family-base: var(--font-body);
+
+    /* Focus: keep the border, add LibreForm's soft 2px outline */
+    --gf-ctrl-border-color-focus: var(--gf-ctrl-border-color);
+    --gf-ctrl-outline-color-focus: rgba(51, 51, 51, 0.2);
+    --gf-ctrl-outline-width-focus: 2px;
+    --gf-ctrl-outline-offset: 2px;
+
+    /* Labels: regular weight; required marker matches the label text */
+    --gf-ctrl-label-font-weight-primary: var(--font-normal);
+    --gf-ctrl-label-line-height-primary: 1.75;
+    --gf-ctrl-label-color-req: var(--gf-ctrl-label-color-primary);
+    --gf-ctrl-label-font-size-req: var(--gf-ctrl-label-font-size-primary);
+    --gf-label-space-primary: 0.75rem;
+    --gf-ctrl-desc-color: var(--gf-ctrl-label-color-primary);
+
+    /* Radios: 32px circle with a small dot */
+    --gf-ctrl-choice-size-md: 2rem;
+    --gf-ctrl-radio-check-size-md: 0.5rem;
+
+    /* Buttons: 48px, square, semibold uppercase */
+    --gf-ctrl-btn-radius: 0;
+    --gf-ctrl-btn-shadow: none;
+    --gf-ctrl-btn-font-weight: var(--font-semibold);
+    --gf-ctrl-btn-text-transform: uppercase;
+
+    /* Sections read like LibreForm's h4 headings, without the divider */
+    --gf-field-section-border-width: 0;
+    --gf-field-section-padding-y-end: 0;
+
+    /* Spacing */
+    --gf-field-gap-x: 0.75rem;
+    --gf-field-gap-y: 0.75rem;
+    --gf-form-gap-y: 1.5rem;
+
+    /* Multi-page progress: square black bar, plain step text */
+    --gf-field-pg-prog-bar-bg-color-blue: var(--color-black);
+    --gf-field-pg-prog-bar-radius: 0;
+    --gf-field-pg-prog-bar-height: 0.5rem;
+    --gf-field-pg-prog-text-transform: none;
+    --gf-field-pg-prog-color: var(--gf-ctrl-label-color-primary);
+
+    /* LibreForm's prose column is 43rem; a lone form must not shrink to its content in the flex wrapper */
+    min-inline-size: min(43rem, calc(100vw - 4rem));
+}
+
+.gform_wrapper.gform-theme--framework .gfield select {
+    font-weight: var(--font-semibold);
+}
+
+/* Orbital sizes date inputs to their content; LibreForm date fields fill the column */
+.gform_wrapper.gform-theme--framework .gfield--input-type-datepicker .ginput_container_date input {
+    --gf-local-width: 100%;
+}
+
+/* The calendar button sits in the flex row and steals 10px; pin it inside the input instead */
+.gform_wrapper.gform-theme--framework .gfield--input-type-datepicker .ginput_container_date .gform-datepicker-toggle {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: var(--gf-ctrl-padding-x);
+    /* Cancels Orbital's transform: translateX(-100%), which only made sense in the flex row */
+    translate: 100% 0;
+}
+
+.gform_wrapper.gform-theme--framework .gsection {
+    margin-block-start: 0.75rem;
+}
+
+.gform_wrapper.gform-theme--framework .gsection .gsection_title {
+    margin: 0;
+    color: var(--gf-ctrl-label-color-primary);
+    font-size: 1.125rem;
+    font-weight: var(--font-semibold);
+    line-height: 1.4;
+}
+
+/* Checkboxes are LibreForm's toggle switches (DaisyUI .toggle) */
+.gform_wrapper.gform-theme--framework .gfield input[type="checkbox"].gfield-choice-input {
+    inline-size: 3rem;
+    block-size: 1.5rem;
+    border: 1px solid rgba(51, 51, 51, 0.2);
+    border-radius: 1.9rem;
+    background-color: rgba(51, 51, 51, 0.2);
+    box-shadow: -1.5rem 0 0 2px var(--color-white) inset, 0 0 0 2px var(--color-white) inset;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.gform_wrapper.gform-theme--framework .gfield input[type="checkbox"].gfield-choice-input:checked {
+    border-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--color-black);
+    box-shadow: 1.5rem 0 0 2px var(--color-white) inset, 0 0 0 2px var(--color-white) inset;
+}
+
+.gform_wrapper.gform-theme--framework .gfield input[type="checkbox"].gfield-choice-input::before {
+    content: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gform_wrapper.gform-theme--framework .gfield input[type="checkbox"].gfield-choice-input {
+        transition: none;
+    }
+}

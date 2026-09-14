@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.8] - 2026-09-14
+
+### Changed
+
+- Gravity Forms front end matches the LibreForm quote forms: 48px square inputs, regular-weight labels, section titles like LibreForm headings, checkbox toggle switches, round radios, yellow uppercase buttons and a black progress bar (Orbital theme kept via `gform_default_styles` + `assets/css/gravity-forms.css`)
+
+### Fixed
+
+- DaisyUI primary yellow (LibreForm submit buttons) is exactly `#ffed00` (hue 56 rendered `#ffee00`)
+
 ## [1.2.7] - 2026-09-14
 
 ### Added

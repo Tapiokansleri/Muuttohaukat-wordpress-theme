@@ -237,7 +237,7 @@ p.buttons > a {
    Buttons — yellow + black only (overrides DaisyUI palette in tailwind.css)
    ========================================================================== */
 :root {
-    --p: 56 100% 50%;
+    --p: 55.8 100% 50%; /* #ffed00 — hue 56 renders #ffee00 */
     --pf: 52 100% 45%;
     --pc: 0 0% 0%;
 
