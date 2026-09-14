@@ -294,7 +294,7 @@ body.header-full-width .header-inner {
 /* Hover chevron — assets/css/03-button-chevron.css */
 
 .header-cta__btn--primary {
-    background-color: var(--cta-primary-bg, #f3e200);
+    background-color: var(--cta-primary-bg, #ffed00);
     color: var(--cta-primary-color, #000000);
 }
 

@@ -28,6 +28,21 @@ LibreForm forwarding in `inc/forms.php` is untouched.
 | Service toggles (`Pakkauspalvelu`, …) | `Kyllä` | omit |
 | `Käyttöehdot` | `Hyväksytty` | omit (required on form) |
 
+## Lisätiedot template
+
+Fields Dynamics has no key for (alternative dates, preferred contact method, extra services…) can be sent inside `Lisätiedot`. In the feed, fill **Lisätiedot template** and insert fields with the merge tag picker:
+
+```text
+{Lisätiedot:38}
+
+Vaihtoehtoiset muuttopäivät: {Vaihtoehtoiset muuttopäivät:43}
+Toivottu yhteydenottotapa: {Toivottu yhteydenottotapa:45}
+```
+
+- A line whose merge tags are all empty is left out.
+- A filled template replaces the `Lisätiedot` field mapping; an empty template keeps the mapping.
+- Check the result in test mode (entry → **Dynamics** box → Payload), or with **Lähetä uudelleen** after editing the template.
+
 ## Resend
 
 On an entry’s detail screen, the **Dynamics** meta box shows status and a **Lähetä uudelleen** button.

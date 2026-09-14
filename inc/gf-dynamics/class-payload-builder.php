@@ -54,6 +54,22 @@ class MH_GF_Dynamics_Payload_Builder {
 			$entries[ $wplf_key ] = $value;
 		}
 
+		// Feed template composes Lisätiedot from any form fields; it overrides a mapped Lisätiedot.
+		$template = (string) rgars( $feed, 'meta/lisatiedot_template' );
+		if ( trim( $template ) !== '' && class_exists( 'GFCommon' ) ) {
+			$lisatiedot = self::render_template(
+				$template,
+				static function ( $text ) use ( $form, $entry ) {
+					return GFCommon::replace_variables( $text, $form, $entry, false, false, false, 'text' );
+				}
+			);
+
+			unset( $entries['Lisätiedot'] );
+			if ( $lisatiedot !== '' ) {
+				$entries['Lisätiedot'] = $lisatiedot;
+			}
+		}
+
 		// LibreForm always includes Referrer as the page URL when the template sets it.
 		if ( ! isset( $entries['Referrer'] ) ) {
 			$source = self::clean_url( rgar( $entry, 'source_url' ) );
@@ -151,6 +167,37 @@ class MH_GF_Dynamics_Payload_Builder {
 	 */
 	public static function encode( $payload ) {
 		return wp_json_encode( $payload );
+	}
+
+	/**
+	 * Render a merge-tag template line by line. A line whose merge tags all resolve
+	 * to empty is dropped, so "Label: {Field:3}" disappears when the field is blank.
+	 *
+	 * @param string   $template Template text with Gravity Forms merge tags.
+	 * @param callable $replace  Replaces merge tags in a string (GFCommon::replace_variables).
+	 * @return string
+	 */
+	public static function render_template( $template, callable $replace ) {
+		$merge_tag = '/\{[^{}]+\}/';
+		$lines     = preg_split( '/\r\n|\r|\n/', (string) $template );
+		$out       = array();
+
+		foreach ( $lines as $line ) {
+			if ( ! preg_match( $merge_tag, $line ) ) {
+				$out[] = rtrim( $line );
+				continue;
+			}
+
+			$rendered = (string) call_user_func( $replace, $line );
+			if ( trim( $rendered ) === trim( preg_replace( $merge_tag, '', $line ) ) ) {
+				continue;
+			}
+
+			$out[] = rtrim( $rendered );
+		}
+
+		// Collapse blank runs left behind by dropped lines.
+		return trim( preg_replace( "/\n{3,}/", "\n\n", implode( "\n", $out ) ) );
 	}
 
 	/**

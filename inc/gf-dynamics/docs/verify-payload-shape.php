@@ -110,6 +110,22 @@ foreach ( array_keys( $data['entries'] ) as $key ) {
 	}
 }
 
+// Lisätiedot template: lines whose merge tags all resolve to empty are dropped.
+$merge_values = array(
+	'{Lisätiedot:38}'                  => 'Piano on raskas.',
+	'{Vaihtoehtoiset muuttopäivät:43}' => '',
+	'{Toivottu yhteydenottotapa:45}'   => 'Puhelin',
+);
+$rendered = MH_GF_Dynamics_Payload_Builder::render_template(
+	"{Lisätiedot:38}\n\nVaihtoehtoiset muuttopäivät: {Vaihtoehtoiset muuttopäivät:43}\n\nYhteydenottotapa: {Toivottu yhteydenottotapa:45}\n",
+	static function ( $text ) use ( $merge_values ) {
+		return strtr( $text, $merge_values );
+	}
+);
+if ( $rendered !== "Piano on raskas.\n\nYhteydenottotapa: Puhelin" ) {
+	$errors[] = 'render_template output mismatch: ' . json_encode( $rendered, JSON_UNESCAPED_UNICODE );
+}
+
 if ( $errors ) {
 	fwrite( STDERR, "FAIL:\n - " . implode( "\n - ", $errors ) . "\n" );
 	exit( 1 );

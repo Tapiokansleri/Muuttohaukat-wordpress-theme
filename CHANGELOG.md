@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.7] - 2026-09-14
+
+### Added
+
+- `[muuttopaivat]` shortcode: three-month popularity calendar (current month first) with weekday headers. Outputs only the calendar — no heading, padding or width cap; months go side by side when the container is at least 56rem wide. Attributes: `color` (hex, default `#FFED00`), `link` (bookable days go to `link?date=Y-m-d`). Past dates are gray and not clickable.
+- Quote forms prefill **Muuttopäivä** (`Muuttopvm`) from `?date=Y-m-d`; on the `/tarjouspyynto/` chooser the date is carried to the form pages below it
+- Gravity Forms Dynamics feed: **Lisätiedot template** with the merge tag picker composes `Lisätiedot` from fields Dynamics has no key for; lines whose fields are all empty are left out, and an empty template keeps the existing mapping
+
+### Changed
+
+- Footer uses the black/white colour tokens: pure black background, token-based text colours and a divider above the bottom bar
+
+### Fixed
+
+- Brand yellow is `#ffed00` everywhere: yellow buttons (Muuttohaukat-painike), header/content CTA fallbacks, pricing-table headers and the logo swoosh were `#f3e200` / `#ffee00`
+
 ## [1.2.6] - 2026-09-07
 
 ### Added

@@ -187,6 +187,40 @@
   }
 
   // -------------------------------------------------------------------
+  // Moving date from ?date=Y-m-d ([muuttopaivat] calendar links)
+  // -------------------------------------------------------------------
+  var dateParam = new URLSearchParams(window.location.search).get('date');
+
+  if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+    var movingDateInputs = Array.from(document.querySelectorAll('input[type="date"][name="Muuttopvm"]'));
+
+    if (movingDateInputs.length) {
+      movingDateInputs.forEach(function (input) {
+        // Y-m-d strings compare chronologically; keep the form's own min date.
+        if (!input.min || dateParam >= input.min) {
+          input.value = dateParam;
+        }
+      });
+    } else if (window.location.pathname !== '/') {
+      // Chooser page (e.g. /tarjouspyynto/): carry the date to the form pages below it.
+      var currentPath = window.location.pathname;
+
+      Array.from(document.querySelectorAll('a[href]')).forEach(function (link) {
+        if (link.origin !== window.location.origin) {
+          return;
+        }
+        if (link.pathname === currentPath || link.pathname.indexOf(currentPath) !== 0) {
+          return;
+        }
+
+        var url = new URL(link.href);
+        url.searchParams.set('date', dateParam);
+        link.href = url.toString();
+      });
+    }
+  }
+
+  // -------------------------------------------------------------------
   // WPLF (LibreForm) success / error callbacks
   // -------------------------------------------------------------------
   var WPLF = window.WPLF;

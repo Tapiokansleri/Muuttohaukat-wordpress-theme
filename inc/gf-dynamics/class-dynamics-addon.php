@@ -341,6 +341,14 @@ class MH_GF_Dynamics_AddOn extends GFFeedAddOn {
 						),
 					),
 					array(
+						'name'        => 'lisatiedot_template',
+						'label'       => esc_html__( 'Lisätiedot template', 'muuttohaukat-gf-dynamics' ),
+						'type'        => 'textarea',
+						'class'       => 'large merge-tag-support mt-position-right',
+						'tooltip'     => esc_html__( 'Composes the Lisätiedot text sent to Dynamics from any form fields. Insert fields with the merge tag picker. When filled, this replaces the Lisätiedot field mapping; leave empty to use the mapping.', 'muuttohaukat-gf-dynamics' ),
+						'description' => esc_html__( 'One item per line, e.g. "Vaihtoehtoiset muuttopäivät: {Vaihtoehtoiset muuttopäivät:43}". Lines whose fields are all empty are left out. Include the customer\'s own Lisätiedot field as a merge tag too.', 'muuttohaukat-gf-dynamics' ),
+					),
+					array(
 						'label'   => esc_html__( 'Test mode', 'muuttohaukat-gf-dynamics' ),
 						'type'    => 'checkbox',
 						'name'    => 'test_mode',

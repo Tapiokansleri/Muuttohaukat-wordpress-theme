@@ -1,0 +1,127 @@
+/* ==========================================================================
+   Halutuimmat muuttopäivät — [muuttopaivat] shortcode
+   Calendar only: no padding or width cap, the surrounding container sizes it.
+   ========================================================================== */
+
+.mh-muuttopaivat {
+    box-sizing: border-box;
+    width: 100%;
+    container-type: inline-size;
+    color: var(--color-text);
+    font-family: var(--font-body);
+}
+
+.mh-muuttopaivat *,
+.mh-muuttopaivat *::before,
+.mh-muuttopaivat *::after {
+    box-sizing: border-box;
+}
+
+.mh-muuttopaivat__months {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: var(--space-8);
+}
+
+.mh-muuttopaivat__month {
+    width: 100%;
+    max-width: 22rem;
+}
+
+.mh-muuttopaivat__month-title {
+    margin: 0 0 var(--space-5);
+    color: var(--color-black);
+    font-size: var(--heading-3-size);
+    font-weight: var(--font-bold);
+    line-height: var(--heading-3-leading);
+    text-align: center;
+}
+
+.mh-muuttopaivat__grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.4rem;
+}
+
+.mh-muuttopaivat__weekday {
+    padding-bottom: 0.25rem;
+    color: var(--color-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.mh-muuttopaivat__day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: 1px solid #ececec;
+    border-radius: 0.5rem;
+    color: var(--color-black);
+    font-size: 0.9375rem;
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    text-decoration: none !important;
+    transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mh-muuttopaivat__day.is-empty {
+    background: transparent;
+    pointer-events: none;
+}
+
+.mh-muuttopaivat__day.is-past {
+    background-color: #f3f4f6;
+    color: #b4b9c1;
+    cursor: not-allowed;
+}
+
+.mh-muuttopaivat a.mh-muuttopaivat__day.is-bookable {
+    cursor: pointer;
+}
+
+.mh-muuttopaivat a.mh-muuttopaivat__day.is-bookable:hover,
+.mh-muuttopaivat a.mh-muuttopaivat__day.is-bookable:focus-visible {
+    filter: brightness(0.92);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    text-decoration: none !important;
+}
+
+.mh-muuttopaivat a.mh-muuttopaivat__day.is-bookable:focus-visible {
+    outline: 2px solid var(--color-black);
+    outline-offset: 2px;
+}
+
+/* Three months side by side once the container (not the viewport) is wide enough. */
+@container (min-width: 56rem) {
+    .mh-muuttopaivat__months {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        justify-items: stretch;
+        gap: var(--space-8) clamp(var(--space-8), 5cqi, 4.5rem);
+    }
+
+    .mh-muuttopaivat__month {
+        max-width: none;
+    }
+
+    .mh-muuttopaivat__month-title {
+        font-size: var(--text-2xl);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mh-muuttopaivat__day {
+        transition: none;
+    }
+
+    .mh-muuttopaivat a.mh-muuttopaivat__day.is-bookable:hover,
+    .mh-muuttopaivat a.mh-muuttopaivat__day.is-bookable:focus-visible {
+        transform: none;
+    }
+}
