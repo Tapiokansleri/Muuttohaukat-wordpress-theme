@@ -11,7 +11,7 @@ function FormAccessories($showHelp = true, $hideMost = true) {
     <p>Jos et ole varma mitä tarvitset, autamme mieluusti valinnassa. Voit huoletta jättää nämä kentät tyhjiksi.</p>
     <?php } ?>
 
-    <p>Tarkemmat kuvaukset saatavilla olevista tarvikkeista löydät <a href="/muuttotarvikkeet" target="_blank">Tarvikkeet-sivulta.</a>
+    <p>Tarkemmat kuvaukset saatavilla olevista tarvikkeista löydät <a href="/muuttotarvikkeet/" target="_blank">Tarvikkeet-sivulta.</a>
   </div>
 
   <div class="w-full">

@@ -64,12 +64,7 @@ foreach ($widget_columns as $sidebar_id) {
       [
         'value' => '1992',
         'label' => __( 'Perheyritys vuodesta', 'muuttohaukat' ),
-        'url'   => home_url( '/muuttofirma/' ),
-      ],
-      [
-        'value' => '35+',
-        'label' => __( 'vuotta historiaa', 'muuttohaukat' ),
-        'url'   => home_url( '/muuttofirma/' ),
+        'url'   => home_url( '/yritystiedot/' ),
       ],
       [
         'value' => '100 000+',
@@ -118,8 +113,16 @@ foreach ($widget_columns as $sidebar_id) {
           <?php endif; ?>
         </p>
         <p class="site-footer__sitemap">
-          <a href="<?= esc_url(home_url('/sivukartta')) ?>"><?= esc_html__('Sivukartta', 'muuttohaukat') ?></a>
+          <a href="<?= esc_url(home_url('/sivukartta/')) ?>"><?= esc_html__('Sivukartta', 'muuttohaukat') ?></a>
         </p>
+        <?php if (function_exists('\Muuttohaukat\company_facts')) :
+          $mh_facts = \Muuttohaukat\company_facts();
+          $mh_offices = array_map(fn($o) => $o['city'] . ', ' . $o['street'], \Muuttohaukat\offices());
+          ?>
+          <p class="site-footer__company">
+            <a href="<?= esc_url(home_url('/yritystiedot/')) ?>"><?= esc_html($mh_facts['legal_name']) ?></a><?= esc_html(' · Y-tunnus ' . $mh_facts['business_id'] . ' · ' . implode(' · ', $mh_offices)) ?>
+          </p>
+        <?php endif; ?>
       </div>
     </div>
 

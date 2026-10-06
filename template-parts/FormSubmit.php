@@ -23,7 +23,7 @@ function FormSubmit($data = []) {
       Hyväksyn tietojeni käytön tietosuojaselosteen mukaisesti. *
 
       <br><br>
-      <a href="/tietosuoja" target="_blank" rel="noopener">Tietosuojaseloste</a>
+      <a href="/tietosuoja/" target="_blank" rel="noopener">Tietosuojaseloste</a>
     </p>
   </label>
 

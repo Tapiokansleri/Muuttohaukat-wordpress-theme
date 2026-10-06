@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-calendar",
+  "title": "Muuttopäivät",
+  "category": "muuttohaukat",
+  "icon": "calendar-alt",
+  "description": "Kolmen kuukauden kalenteri ja sen tekstit. Päivät eivät ole linkkejä, joten uusia osoitteita ei synny.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": ["white", "yellow", "black"]
+    },
+    "anchor": { "type": "string", "default": "muuttopaiva" },
+    "showHighlight": { "type": "boolean", "default": true }
+  },
+  "textdomain": "muuttohaukat",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
+  "render": "file:./render.php"
+}

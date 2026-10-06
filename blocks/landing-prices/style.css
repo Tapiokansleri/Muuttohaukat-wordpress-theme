@@ -1,0 +1,57 @@
+/* Landing: hintataulukko. */
+
+.mh-landing-prices__table-wrap {
+    overflow-x: auto;
+}
+
+.mh-landing-prices__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-5, 1.5rem) 0 var(--space-4, 1rem);
+}
+
+.mh-landing-prices__table th,
+.mh-landing-prices__table td {
+    text-align: left;
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+    border-bottom: 1px solid currentColor;
+    vertical-align: top;
+}
+
+.mh-landing-prices__table thead th {
+    border-bottom-width: 2px;
+    white-space: nowrap;
+}
+
+.mh-landing-prices__table tbody th {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.mh-landing-prices__type {
+    display: block;
+    font-weight: 400;
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.mh-landing-prices__note {
+    font-size: var(--body-font-size);
+}
+
+@media (max-width: 600px) {
+    .mh-landing-prices__table th,
+    .mh-landing-prices__table td {
+        padding: var(--space-2, 0.5rem) var(--space-2, 0.5rem);
+    }
+
+    /* Three columns fit a phone when the headings may wrap */
+    .mh-landing-prices__table thead th {
+        white-space: normal;
+    }
+
+    .mh-landing-prices__table th:first-child,
+    .mh-landing-prices__table td:first-child {
+        padding-left: 0;
+    }
+}

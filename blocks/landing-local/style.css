@@ -1,0 +1,138 @@
+/* Landing: Paikallinen palvelu — teksti ja toimipistekortti rinnakkain.
+   One vertical rhythm (--mh-local-gap) between eyebrow, heading and text,
+   and the same inside the office card, instead of each element's own
+   margins (kicker 12px, section head 50px, paragraphs 16px). */
+
+.mh-landing-local {
+    --mh-local-gap: var(--space-5, 1.25rem);
+}
+
+.mh-landing-local__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-8, 2rem);
+    align-items: start;
+}
+
+.mh-landing-local__text,
+.mh-landing-local__office {
+    display: flex;
+    flex-direction: column;
+    gap: var(--mh-local-gap);
+}
+
+/* Eyebrow and heading join the column rhythm; the shared section head
+   would otherwise add its own 50px bottom margin. */
+.mh-landing-local .mh-landing-sec-head {
+    display: contents;
+}
+
+.mh-landing-local .mh-landing-local__text > *,
+.mh-landing-local .mh-landing-sec-head > *,
+.mh-landing-local .mh-landing-local__office > * {
+    margin: 0;
+}
+
+/* The office card: no border or box, like the other sections */
+.mh-landing-local__office {
+    padding: 0;
+}
+
+/* The embedded map (map attribute; inc/Offices.php) */
+.mh-office-map {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+}
+
+.mh-office-map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.mh-landing-local__address {
+    font-weight: 700;
+}
+
+.mh-landing-local__hours {
+    font-size: var(--body-font-size);
+}
+
+.mh-landing-local__route a {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* The area link is navigation, not a call to action: a plain link reads
+   better than a full width black button with a wrapped label. */
+.mh-landing-local__link a {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font-weight: 700;
+    font-size: var(--body-font-size);
+    letter-spacing: 0;
+    text-transform: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mh-landing-local__link a:hover,
+.mh-landing-local__link a:focus {
+    background: none;
+    text-decoration-thickness: 2px;
+}
+
+/* People lists: the office's people in this block, and the Henkilöstö
+   block and [henkilosto] groups elsewhere on the page. */
+.mh-landing-local__staff {
+    display: flex;
+    flex-direction: column;
+    gap: var(--mh-local-gap);
+    padding-top: var(--space-10, 2.5rem);
+}
+
+/* In this block the office's people sit in the left column under the text,
+   in the same rhythm; 40px above the "Yhteyshenkilöt" eyebrow. */
+.mh-landing-local .mh-landing-local__text > .mh-landing-local__staff {
+    padding-top: 0;
+    margin-top: var(--mh-local-gap);
+}
+
+.mh-landing-local .mh-landing-local__staff > * {
+    margin: 0;
+}
+
+.mh-landing-local .mh-landing-local__staff .mh-henkilosto .mh-henkilosto__grid {
+    --mh-henkilosto-col-gap: var(--space-10, 2.5rem);
+    row-gap: var(--space-8, 2rem);
+}
+
+/* Two people side by side only where the left column is wide enough for a
+   photo, a name and an e-mail address */
+@media (min-width: 901px) and (max-width: 1279.98px) {
+    .mh-landing-local .mh-landing-local__staff .mh-henkilosto .mh-henkilosto__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* The module puts 50px under every person; the grid gap spaces them here */
+.mh-landing-local .mh-landing-local__staff .mh-henkilosto .mh-henkilosto__grid li.mh-henkilosto__person {
+    margin: 0 !important;
+}
+
+.mh-landing-local .mh-henkilosto__info p {
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .mh-landing-local__inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

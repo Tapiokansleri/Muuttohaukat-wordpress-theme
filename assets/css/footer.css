@@ -169,7 +169,6 @@
     color: var(--color-white);
     margin: 0 0 var(--space-4) 0;
     padding-bottom: var(--space-3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .site-footer .footer-widget ul,
@@ -182,10 +181,6 @@
 .site-footer .footer-widget li {
     margin: 0;
     padding: var(--space-2) 0;
-}
-
-.site-footer .footer-widget li + li {
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .site-footer .footer-widget a {
@@ -204,7 +199,6 @@
    E-E-A-T credentials
    ------------------------------------------------------------------------- */
 .site-footer__eeat {
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
     background-color: var(--color-black);
 }
 
@@ -216,7 +210,7 @@
 
 .site-footer__eeat-list {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-6);
     margin: 0;
     padding: 0;
@@ -228,16 +222,6 @@
     margin: 0;
     padding: 0;
     min-width: 0;
-}
-
-.site-footer__eeat-item + .site-footer__eeat-item::before {
-    position: absolute;
-    top: 0.35rem;
-    bottom: 0.35rem;
-    left: calc(var(--space-6) / -2);
-    width: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    content: "";
 }
 
 .site-footer__eeat-link {
@@ -267,7 +251,6 @@
 .site-footer__eeat-claim {
     margin: var(--space-6) 0 0;
     padding-top: var(--space-5);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
     color: var(--color-white);
     font-size: var(--text-sm);
     font-weight: var(--font-semibold);
@@ -285,7 +268,6 @@
    ------------------------------------------------------------------------- */
 .site-footer__bottom {
     background-color: var(--color-black);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
     color: rgba(255, 255, 255, 0.62);
     font-size: var(--text-sm);
 }
@@ -322,13 +304,10 @@
     }
 
     .site-footer__eeat-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: var(--space-5);
     }
 
-    .site-footer__eeat-item + .site-footer__eeat-item::before {
-        display: none;
-    }
 }
 
 @media (max-width: 640px) {
@@ -373,4 +352,81 @@
     .site-footer__eeat-claim {
         text-align: left;
     }
+}
+
+/* Company name, business ID and the four offices (audit 3.8) */
+.site-footer__company {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+}
+
+/* -------------------------------------------------------------------------
+   Contact page: offices and company details (inc/StructuredData.php)
+   ------------------------------------------------------------------------- */
+.mh-company-info {
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-company-info__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    column-gap: 100px;
+    row-gap: var(--space-8);
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
+    margin-inline: auto;
+}
+
+.mh-company-info__head,
+.mh-company-info__office {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.mh-company-info__head > *,
+.mh-company-info__office > * {
+    margin: 0;
+}
+
+.mh-company-info__offices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) 100px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mh-company-info__label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mh-company-info__office a {
+    color: inherit;
+    font-weight: var(--font-bold);
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 1024px) {
+    .mh-company-info__inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-company-info__offices {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.site-footer__company a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }

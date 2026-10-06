@@ -75,10 +75,10 @@ add_action('wp_enqueue_scripts', function () use ($localizeData) {
   wp_enqueue_style('muuttohaukat-footer', $themeUri . '/assets/css/footer.css', ['muuttohaukat-base'], $version);
   // 7. Content typography - final authority on content area styling
   wp_enqueue_style('muuttohaukat-content', $themeUri . '/assets/css/content.css', ['muuttohaukat-base'], $version);
-  // Branded Muuttohaukat buttons (BB module, Gutenberg block, floating CTA)
+  // Branded Muuttohaukat buttons (Painike block, floating CTA)
   wp_enqueue_style(
     'muuttohaukat-painike',
-    $themeUri . '/fl-builder/modules/muuttohaukat-painike/css/frontend.css',
+    $themeUri . '/assets/css/painike.css',
     ['muuttohaukat-content'],
     $version
   );

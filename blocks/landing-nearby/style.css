@@ -1,0 +1,58 @@
+/* Landing: lähikuntien linkit. */
+
+.mh-landing-nearby__list {
+    list-style: none;
+    margin: var(--space-5, 1.5rem) 0 var(--space-6, 2rem);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+}
+
+.mh-landing-nearby__list li {
+    margin: 0;
+}
+
+.mh-landing-nearby__list a,
+.mh-landing-nearby__list span {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.mh-landing-nearby__list a:hover,
+.mh-landing-nearby__list a:focus {
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+.mh-landing-section--bg-black .mh-landing-nearby__list a:hover,
+.mh-landing-section--bg-black .mh-landing-nearby__list a:focus {
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-landing-nearby__hub {
+    margin-bottom: 0;
+}
+
+/* Readable tags: the default 15px inside a 999px pill looked cramped. */
+.mh-landing-nearby__list {
+    gap: var(--space-3, 0.75rem);
+}
+
+.mh-landing-nearby__list a,
+.mh-landing-nearby__list span {
+    padding: 0.55rem 1.15rem;
+    font-size: 16px;
+}
+
+/* The region page is one more link in the same list, not a second CTA. */
+.mh-landing-nearby__hub a {
+    padding: 16px 32px;
+    font-size: 0.875rem;
+}

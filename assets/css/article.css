@@ -1,0 +1,252 @@
+/* Article templates (single-post.php, template-article-blocks.php, inc/Articles.php).
+   Left-aligned like the landing sections: the header in two columns when there
+   is a featured image, 100px column gaps, one vertical rhythm per column. */
+
+.mh-article-wrap {
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
+    margin-inline: auto;
+}
+
+.mh-article-kicker {
+    margin: 0;
+    font-size: 12px;
+    font-weight: var(--font-bold, 700);
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.mh-article-kicker a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.mh-article-kicker a:hover,
+.mh-article-kicker a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ---------- header ---------- */
+.mh-article-hero {
+    padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+}
+
+.mh-article-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-8, 2rem);
+    align-items: center;
+}
+
+/* Text on the left, the mascot on the right; the text column is as wide as
+   the article column below, so the title and the body share one left edge. */
+.mh-article-hero__inner.has-media {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+}
+
+.mh-article-hero__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 1.25rem);
+    max-width: 48rem;
+}
+
+.mh-article-hero__text > * {
+    margin: 0;
+}
+
+.mh-article-hero__title {
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    /* Long single words (ENERGIANSÄÄSTÖVIIKKO) must not widen the page on phones */
+    overflow-wrap: anywhere;
+    hyphens: auto;
+}
+
+.mh-article-hero__lead {
+    font-size: var(--text-xl, 1.375rem);
+    line-height: var(--leading-normal, 1.55);
+}
+
+.mh-article-hero__media {
+    justify-self: end;
+    width: min(100%, 360px);
+    margin: 0;
+}
+
+.mh-article-hero__media img,
+.mh-article-hero__media picture {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* ---------- featured image ---------- */
+.mh-article-featured {
+    max-width: 48rem;
+    margin: 0 auto var(--space-8, 2rem);
+}
+
+.mh-article-featured img,
+.mh-article-featured picture {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.mh-article__featured-wrap {
+    padding-bottom: var(--space-8, 2rem);
+}
+
+/* ---------- text article body ---------- */
+.mh-article__body {
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+/* The reading column is centred on the page; the hero keeps the full width. */
+.mh-article .mh-article__prose {
+    max-width: 48rem;
+    margin-inline: auto;
+}
+
+.mh-article__prose > :first-child {
+    margin-top: 0;
+}
+
+.mh-article__prose h2 {
+    margin-top: 2.2em;
+}
+
+.mh-article__prose img {
+    height: auto;
+}
+
+/* ---------- author box (synced pattern "Kirjoittaja: Totte Vivolin") ---------- */
+.mh-article-author {
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+/* The author pattern itself (.mh-author): content.css, because pages use it too */
+
+/* ---------- call to action ---------- */
+.mh-article-cta {
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+    background: var(--color-black, #000);
+    color: var(--color-white, #fff);
+}
+
+.mh-article-cta__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-8, 2rem);
+    align-items: center;
+}
+
+.mh-article-cta__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 1.25rem);
+}
+
+.mh-article-cta__text > * {
+    margin: 0;
+    color: var(--color-white, #fff);
+}
+
+.mh-article-cta__text p:not(.mh-article-kicker) {
+    opacity: 0.85;
+}
+
+.mh-article-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6, 1.5rem);
+}
+
+.mh-article-cta__link {
+    color: var(--color-white, #fff);
+    font-weight: var(--font-bold, 700);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.mh-article-cta__link::after {
+    content: " →";
+}
+
+.mh-article-cta__link:hover,
+.mh-article-cta__link:focus-visible {
+    color: var(--color-accent, #ffed00);
+}
+
+/* ---------- read also ---------- */
+.mh-article-related {
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+}
+
+.mh-article-related__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+}
+
+.mh-article-related__head > * {
+    margin: 0;
+}
+
+/* The cards themselves: .mh-article-cards in content.css (inc/ArticleCards.php) */
+.mh-article-related .mh-article-cards {
+    margin-top: var(--space-8, 2rem);
+}
+
+.mh-article-related__all {
+    margin: var(--space-8, 2rem) 0 0;
+}
+
+.mh-article-related__all a {
+    color: var(--color-black, #000);
+    font-weight: var(--font-bold, 700);
+    text-underline-offset: 3px;
+}
+
+/* ---------- blocks template ---------- */
+.mh-article--blocks > .mh-root {
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+@media (max-width: 1024px) {
+    .mh-article-hero__inner.has-media,
+    .mh-article-cta__inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mh-article-hero__media {
+        grid-row: 1;
+        justify-self: start;
+        width: min(100%, 200px);
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-article-wrap {
+        width: min(100% - 1.25rem, var(--content-max-width, 1350px));
+    }
+
+    .mh-article-hero__media {
+        width: min(100%, 140px);
+    }
+}
+
+/* ---------- archives (index.php: category, author, month) ---------- */
+.mh-archive-hero .mh-article-hero__lead > * {
+    margin: 0;
+}
+
+.mh-archive-list {
+    padding-bottom: clamp(3rem, 7vw, 5.5rem);
+}

@@ -49,7 +49,7 @@
 
     --body-font-size: var(--text-lg);
     --body-line-height: var(--leading-relaxed);
-    --content-font-size: var(--text-md);
+    --content-font-size: var(--body-font-size); /* one paragraph size in the whole theme */
     --content-line-height: var(--leading-relaxed);
 
     --heading-1-size: var(--text-3xl);
@@ -150,7 +150,7 @@
 
         --body-font-size: var(--text-md);
         --body-line-height: var(--leading-relaxed);
-        --content-font-size: var(--text-md);
+        --content-font-size: var(--body-font-size);
 
         --heading-1-size: var(--text-3xl);
         --heading-2-size: var(--text-2xl);
@@ -169,7 +169,7 @@
 
         --nav-mobile-font-size: 0.8125rem;
         --nav-mobile-submenu-font-size: 0.75rem;
-        --mobile-menu-close-font-size: 1.5rem;
+        --mobile-menu-close-font-size: 2.75rem;
 
         --post-grid-gap: var(--space-4);
         --post-grid-card-padding: var(--space-4);

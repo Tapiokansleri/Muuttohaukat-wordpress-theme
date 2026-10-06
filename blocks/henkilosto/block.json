@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/henkilosto",
+  "title": "Henkilöstö",
+  "category": "muuttohaukat",
+  "icon": "groups",
+  "description": "Yhteyshenkilöt kuvineen ja yhteystietoineen. Henkilöt ja ryhmät muokataan kohdassa Henkilöt.",
+  "supports": { "html": false, "align": false },
+  "attributes": {
+    "ryhma": { "type": "string", "default": "" },
+    "nimet": { "type": "string", "default": "" },
+    "sarakkeet": { "type": "number", "default": 2 }
+  },
+  "textdomain": "muuttohaukat",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

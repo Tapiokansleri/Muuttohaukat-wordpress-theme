@@ -90,7 +90,8 @@ h4.fl-heading {
 .mh-gutenberg p {
     margin-top: 0;
     margin-bottom: 1.25em;
-    font-size: inherit;
+    /* The body size, not the 16px of an old .prose wrapper around it */
+    font-size: var(--content-font-size);
     line-height: inherit;
 }
 
@@ -732,7 +733,7 @@ body.bb-page .mh-bb-content h3 {
     color: inherit;
 }
 
-.mh-postlisting__list.template-card,
+/* Card lists are .mh-article-cards (inc/ArticleCards.php) */
 .mh-postlisting__list.template-cardbackgroundimage,
 .mh-postlisting__list.template-simplepostlistitem {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -749,7 +750,7 @@ body.bb-page .mh-bb-content h3 {
         padding: var(--space-2);
     }
 
-    .mh-postlisting__list.template-card,
+    /* Card lists are .mh-article-cards (inc/ArticleCards.php) */
     .mh-postlisting__list.template-cardbackgroundimage,
     .mh-postlisting__list.template-simplepostlistitem {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -981,4 +982,1177 @@ body.bb-page .mh-bb-content h3 {
     left: 0 !important;
     top: 0 !important;
     bottom: auto !important;
+}
+
+/* --------------------------------------------------------------------------
+   Google review widget (Business Reviews Bundle, .rpi) — keep it inside the
+   content container instead of running the full width of the window.
+   -------------------------------------------------------------------------- */
+.rpi {
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
+    margin-inline: auto;
+}
+
+/* In the theme's type and colours: the widget ships with Arial, blue
+   names and blue rounded buttons with shadows. */
+.rpi,
+.rpi :where(div, span, a, b, p, button) {
+    font-family: inherit !important;
+}
+
+.rpi a.rpi-name {
+    color: var(--color-black) !important;
+    font-weight: 700;
+}
+
+.rpi .rpi-review_us {
+    background: var(--color-accent) !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+}
+
+.rpi .rpi-review_us a {
+    color: var(--color-black) !important;
+    font-weight: 700;
+    font-size: 12px !important;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 10px 16px !important;
+}
+
+.rpi .rpi-card-inner.rpi-logo {
+    border-radius: 4px !important;
+}
+
+/* Locality directory [paikkakunnat] (inc/CityDirectory.php), also behind
+   [muuttolaatikot_paikkakunnat]; the same section on the front page,
+   /muuttosiivous/, the cleaning city pages and the box hub. Laid out like the hero:
+   eyebrow, heading and intro on the left (sticky on desktop), the towns on
+   the right, one office per group, the towns in even newspaper columns.
+   No borders, backgrounds or shadows. The section sits in Beaver Builder,
+   Gutenberg or landing content, whose h2/p/ul margins are stronger than a
+   plain class, so the resets repeat the Beaver Builder chain. */
+.mh-cities {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    column-gap: 100px;
+    row-gap: var(--space-10);
+    align-items: start;
+    margin-block: var(--space-12, 3rem);
+    text-align: left;
+}
+
+.fl-builder-content .mh-cities,
+.mh-landing .mh-cities {
+    margin-block: 0;
+}
+
+.mh-cities :is(h2, h3, p, ul, li),
+.mh-landing .mh-cities :is(h2, h3, p, ul, li),
+.mh-gutenberg .mh-cities :is(h2, h3, p, ul, li),
+body.bb-page .mh-bb-content .fl-builder-content .mh-cities :is(h2, h3, p, ul, li) {
+    margin: 0;
+    padding: 0;
+}
+
+/* Left: one 20px rhythm between eyebrow, heading and intro */
+.mh-cities__head {
+    position: sticky;
+    top: calc(var(--header-height, 80px) + var(--space-8));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+}
+
+.mh-cities__kicker {
+    font-size: 12px;
+    font-weight: var(--font-bold);
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* Right: the offices */
+.mh-cities__groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12, 3rem);
+}
+
+.mh-cities__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.mh-cities .mh-cities__label,
+body.bb-page .mh-bb-content .fl-builder-content .mh-cities .mh-cities__label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--space-3);
+    font-size: var(--heading-3-size);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-snug);
+}
+
+.mh-cities__label span {
+    font-size: var(--text-sm);
+    font-weight: var(--font-normal);
+    color: var(--color-muted);
+}
+
+.mh-cities .mh-cities__list {
+    list-style: none;
+    columns: 4 10rem;
+    column-gap: var(--space-8);
+    font-size: 1rem;
+    line-height: 2;
+}
+
+.mh-cities .mh-cities__list li {
+    break-inside: avoid;
+}
+
+.mh-cities .mh-cities__list li::before,
+.mh-cities .mh-cities__list li::marker {
+    content: none;
+}
+
+.mh-gutenberg .mh-cities .mh-cities__list a:not(.btn):not(.wp-block-button__link),
+.mh-cities .mh-cities__list a {
+    color: var(--color-black);
+    text-decoration: none;
+}
+
+.mh-gutenberg .mh-cities .mh-cities__list a:not(.btn):not(.wp-block-button__link):hover,
+.mh-gutenberg .mh-cities .mh-cities__list a:not(.btn):not(.wp-block-button__link):focus-visible,
+.mh-cities .mh-cities__list a:hover,
+.mh-cities .mh-cities__list a:focus-visible {
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mh-cities .mh-cities__list a[aria-current="page"] {
+    font-weight: var(--font-bold);
+}
+
+/* A group heading can link to the office's area page */
+.mh-cities .mh-cities__label a,
+body.bb-page .mh-bb-content .fl-builder-content .mh-cities .mh-cities__label a,
+.mh-gutenberg .mh-cities .mh-cities__label a:not(.btn):not(.wp-block-button__link) {
+    color: var(--color-black);
+    font-weight: inherit;
+    text-decoration: none;
+}
+
+.mh-cities .mh-cities__label a:hover,
+.mh-cities .mh-cities__label a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mh-cities .mh-painike {
+    text-decoration: none;
+}
+
+/* Nearby towns (landing-nearby block, inc/Nearby.php): the block's own
+   eyebrow and heading group joins the head column's 20px rhythm */
+.mh-cities__head .mh-landing-sec-head,
+.mh-cities__head .wp-block-group__inner-container {
+    display: contents;
+}
+
+.mh-cities .mh-cities__head .mh-landing-kicker {
+    margin: 0;
+    font-size: 12px;
+    font-weight: var(--font-bold);
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mh-landing .mh-cities__head h2 {
+    margin: 0;
+}
+
+/* Stack like the hero on tablets and phones */
+@media (max-width: 1024px) {
+    .mh-cities {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mh-cities__head {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-cities .mh-cities__list {
+        columns: 2;
+        column-gap: var(--space-5);
+    }
+}
+
+/* Moving box sections (inc/BoxSupplies.php): [muuttolaatikot_vuokra],
+   [muuttolaatikot_toimitus], [muuttolaatikot_tarvikkeet] and
+   [muuttolaatikot_pakkausohje], modelled on the box hub. Laid out like the
+   hero: eyebrow, heading, intro and button on the left, the content on the
+   right, 100px apart. No borders, backgrounds or shadows. The resets repeat
+   the landing, Gutenberg and Beaver Builder chains, whose h2/p/ul margins are
+   stronger than a plain class. */
+.mh-box-sec {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    column-gap: 100px;
+    row-gap: var(--space-10);
+    align-items: start;
+    margin-block: var(--space-12, 3rem);
+    text-align: left;
+}
+
+.mh-landing .mh-box-sec,
+.fl-builder-content .mh-box-sec {
+    margin-block: 0;
+}
+
+.mh-box-sec :is(h2, h3, p, ul, ol, li, dl, dt, dd),
+.mh-landing .mh-box-sec :is(h2, h3, p, ul, ol, li, dl, dt, dd),
+.mh-gutenberg .mh-box-sec :is(h2, h3, p, ul, ol, li, dl, dt, dd),
+body.bb-page .mh-bb-content .fl-builder-content .mh-box-sec :is(h2, h3, p, ul, ol, li, dl, dt, dd) {
+    margin: 0;
+    padding: 0;
+}
+
+.mh-box-sec :is(ul, ol) {
+    list-style: none;
+}
+
+.mh-box-sec li::before,
+.mh-box-sec li::marker {
+    content: none;
+}
+
+/* Left: one 20px rhythm between eyebrow, heading, intro and button */
+.mh-box-sec__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+}
+
+.mh-box-sec__kicker {
+    font-size: 12px;
+    font-weight: var(--font-bold);
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mh-box-sec .mh-painike {
+    text-decoration: none;
+}
+
+/* Rented products: photo cards, four per row on desktop, fewer as the column narrows */
+.mh-box-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-10) var(--space-8);
+}
+
+.mh-box-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+/* Imagify wraps the image in <picture> and moves the class there */
+.mh-box-sec .mh-box-card__img {
+    display: block;
+    width: 100%;
+    margin-bottom: var(--space-2);
+}
+
+.mh-box-sec img.mh-box-card__img,
+.mh-box-sec .mh-box-card__img img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1086 / 768;
+    object-fit: contain;
+}
+
+.mh-box-sec .mh-box-card__name {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-snug);
+}
+
+.mh-box-sec .mh-box-card__price {
+    font-size: var(--text-sm);
+    line-height: 1.35;
+}
+
+.mh-box-card__price strong {
+    font-size: var(--heading-3-size);
+}
+
+.mh-box-sec .mh-box-card__text {
+    font-size: var(--body-font-size);
+    line-height: var(--leading-normal);
+    color: var(--color-muted);
+}
+
+/* Supplies to buy: photo and text side by side, two per row */
+.mh-box-items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-10);
+}
+
+.mh-box-item {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    column-gap: var(--space-5);
+    align-items: start;
+}
+
+.mh-box-sec .mh-box-item__img {
+    display: block;
+    width: 112px;
+    height: 79px;
+    object-fit: contain;
+}
+
+.mh-box-sec .mh-box-item__img img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.mh-box-item__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.mh-box-sec .mh-box-item__name,
+.mh-gutenberg .mh-box-sec .mh-box-item__name:not(.btn):not(.wp-block-button__link) {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-snug);
+    color: var(--color-black);
+    text-decoration: none;
+}
+
+.mh-box-item__name::after {
+    content: " →";
+    font-weight: var(--font-normal);
+}
+
+.mh-box-sec .mh-box-item__name:hover,
+.mh-box-sec .mh-box-item__name:focus-visible {
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mh-box-item__desc {
+    font-size: var(--body-font-size);
+    line-height: var(--leading-normal);
+    color: var(--color-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Delivery: label and value rows */
+.mh-box-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.mh-box-rows__row {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    column-gap: var(--space-8);
+    align-items: baseline;
+}
+
+.mh-box-sec .mh-box-rows dt {
+    font-weight: var(--font-bold);
+}
+
+.mh-box-rows dd strong {
+    font-size: var(--heading-3-size);
+}
+
+/* Packing advice: numbered steps */
+.mh-box-tips {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    counter-reset: mh-box-tip;
+}
+
+.mh-box-sec .mh-box-tips li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: var(--space-5);
+    align-items: baseline;
+    counter-increment: mh-box-tip;
+    font-size: var(--body-font-size);
+    line-height: var(--leading-normal);
+}
+
+.mh-box-sec .mh-box-tips li::before {
+    content: counter(mh-box-tip, decimal-leading-zero);
+    font-size: var(--heading-3-size);
+    font-weight: var(--font-bold);
+}
+
+/* Stack like the hero on tablets and phones */
+@media (max-width: 1024px) {
+    .mh-box-sec {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-box-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-8) var(--space-5);
+    }
+
+    .mh-box-items {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-6);
+    }
+
+    .mh-box-item {
+        grid-template-columns: 88px minmax(0, 1fr);
+    }
+
+    .mh-box-sec .mh-box-item__img {
+        width: 88px;
+        height: 62px;
+    }
+
+    .mh-box-rows__row {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: var(--space-1);
+    }
+}
+
+/* Article cards (inc/ArticleCards.php): every article feed, i.e. the
+   PostListing Card template ("Ajankohtaista Muuttohaukoilla", /ajankohtaista/)
+   and "Lue myös" under articles. Photo, date, title, excerpt; three per row,
+   no borders, backgrounds or shadows. */
+.mh-article-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-12, 3rem) var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.mh-article-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+}
+
+.mh-article-cards :is(h2, h3, h4, p, time),
+.mh-gutenberg .mh-article-cards :is(h2, h3, h4, p, time),
+body.bb-page .mh-bb-content .fl-builder-content .mh-article-cards :is(h2, h3, h4, p, time) {
+    margin: 0;
+    padding: 0;
+}
+
+.mh-article-card__media {
+    display: block;
+    aspect-ratio: 3 / 2;
+    margin-bottom: var(--space-2);
+    overflow: hidden;
+}
+
+/* Imagify wraps the image in <picture> */
+.mh-article-card__media picture,
+.mh-article-card__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.mh-article-card:hover .mh-article-card__media img {
+    transform: scale(1.03);
+}
+
+.mh-article-cards .mh-article-card__date {
+    font-size: 12px;
+    font-weight: var(--font-bold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-black);
+}
+
+.mh-article-cards .mh-article-card__title,
+body.bb-page .mh-bb-content .fl-builder-content .mh-article-cards .mh-article-card__title {
+    font-size: 1.25rem;
+    font-weight: var(--font-bold);
+    line-height: var(--leading-snug);
+    letter-spacing: 0;
+    text-transform: none;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+}
+
+.mh-article-cards .mh-article-card__title a {
+    font-weight: inherit;
+}
+
+.mh-article-card__title a,
+.mh-gutenberg .mh-article-card__title a:not(.btn):not(.wp-block-button__link) {
+    color: var(--color-black);
+    text-decoration: none;
+}
+
+.mh-article-card__title a:hover,
+.mh-article-card__title a:focus-visible,
+.mh-gutenberg .mh-article-card__title a:not(.btn):not(.wp-block-button__link):hover,
+.mh-gutenberg .mh-article-card__title a:not(.btn):not(.wp-block-button__link):focus-visible {
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mh-article-cards .mh-article-card__text {
+    font-size: var(--body-font-size);
+    line-height: var(--leading-normal);
+    color: var(--color-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* The "Ajankohtaista Muuttohaukoilla" block (reusable block 1294): content
+   width, left-aligned heading like "Lue myös" */
+.wrapper:has(> .mh-postlisting > .mh-article-cards) {
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
+    margin-inline: auto;
+    padding-inline: 0;
+    gap: var(--space-8);
+}
+
+.wrapper:has(> .mh-postlisting > .mh-article-cards) > h2 {
+    margin: 0;
+    text-align: left;
+}
+
+@media (max-width: 1024px) {
+    .mh-article-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-article-cards {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-10);
+    }
+}
+
+/* One paragraph size in the whole theme (--body-font-size: 18px, 13px on
+   phones). Beaver Builder modules can carry their own text sizes per
+   breakpoint (e.g. 16px on phones in the module settings); body text in text
+   modules follows the theme instead. Headings keep their own sizes. */
+body .fl-builder-content .fl-module .fl-rich-text :is(p, li),
+body .fl-builder-content .fl-module .fl-callout-text :is(p, li) {
+    font-size: var(--body-font-size);
+}
+
+/* Gutenberg's paragraph size presets (global styles print them with
+   !important: normal 18px, large 36px) made body text in 13 pages and
+   blocks larger than the rest, and 36px words overflowed phones. Paragraphs
+   follow the theme's body size; headings keep their presets. */
+html body {
+    --wp--preset--font-size--normal: var(--body-font-size);
+}
+
+body :is(p, ul, ol):is(.has-normal-font-size, .has-medium-font-size, .has-large-font-size) {
+    font-size: var(--body-font-size) !important;
+}
+
+/* Office facts in the hero ([toimipiste_tiedot], inc/Offices.php):
+   address with a map link, opening hours and phone, one line each */
+.mh-office-facts,
+.mh-landing .mh-office-facts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-5);
+    padding: 0;
+    list-style: none;
+}
+
+.mh-office-facts li,
+.mh-landing .mh-office-facts li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    font-size: var(--body-font-size);
+    line-height: var(--leading-normal);
+}
+
+.mh-office-facts li::before {
+    content: none;
+}
+
+.mh-office-facts i {
+    flex: 0 0 1.1em;
+    text-align: center;
+}
+
+.mh-office-facts a,
+.mh-gutenberg .mh-office-facts a:not(.btn):not(.wp-block-button__link) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Page highlights ([nostot], inc/ArticleCards.php) use the article cards;
+   the column count can be set */
+.mh-article-cards--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mh-article-cards--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-10) var(--space-6);
+}
+
+@media (max-width: 1024px) {
+    .mh-article-cards--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-article-cards--2,
+    .mh-article-cards--4 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Card sections on landing pages: one 20px rhythm between eyebrow, heading
+   and intro (the shared section head has a 50px margin), 40px before the cards */
+.mh-landing__inner:has(> .mh-article-cards) > .mh-landing-sec-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+}
+
+.mh-landing__inner:has(> .mh-article-cards) > .mh-landing-sec-head > * {
+    margin: 0;
+}
+
+.mh-landing__inner:has(> .mh-article-cards) > p {
+    margin-bottom: 0;
+}
+
+.mh-landing__inner > .mh-article-cards {
+    margin-top: var(--space-10);
+}
+
+.mh-landing__inner > .mh-landing-sec-head + .mh-article-cards {
+    margin-top: var(--space-5);
+}
+
+/* ==========================================================================
+   Renewed Gutenberg pages (work/wp_scripts/wpx_modernize.php), converted
+   from Beaver Builder and the old ACF wrapper/prose blocks.
+   ========================================================================== */
+
+/* Text section: heading (and intro) on the left, the text on the right,
+   100px apart, like the hero; one 20px rhythm in both columns */
+.mh-text-sec {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    column-gap: 100px;
+    row-gap: var(--space-8);
+    align-items: start;
+}
+
+.mh-text-sec__head {
+    position: sticky;
+    top: calc(var(--header-height, 80px) + var(--space-8));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+}
+
+.mh-landing .mh-text-sec__head > *,
+.mh-text-sec__head > * {
+    margin: 0;
+}
+
+/* A section head group (eyebrow + H2) inside the text section head joins
+   its 20px rhythm instead of adding its own 50px margin and half width */
+.mh-text-sec__head .mh-landing-sec-head {
+    display: contents;
+}
+
+.mh-landing .mh-text-sec__head .mh-landing-sec-head > * {
+    margin: 0;
+}
+
+.mh-text-sec__body {
+    grid-column: 2;
+    min-width: 0;
+    max-width: 52rem;
+}
+
+.mh-landing .mh-text-sec__body > *,
+.mh-text-sec__body > * {
+    margin: 0 0 var(--space-5);
+}
+
+.mh-landing .mh-text-sec__body > :last-child {
+    margin-bottom: 0;
+}
+
+.mh-landing .mh-text-sec__body > :is(h2, h3, h4):not(:first-child) {
+    margin-top: var(--space-10);
+}
+
+.mh-text-sec__body .wp-block-image img {
+    height: auto;
+}
+
+/* No heading of its own: one readable column. Wide content (reviews,
+   calendar, directories, card rows) goes below the heading. */
+.mh-text-sec--nohead .mh-text-sec__body {
+    grid-column: 1;
+}
+
+.mh-text-sec--nohead,
+.mh-text-sec--wide,
+.mh-text-sec--simple {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.mh-text-sec--wide .mh-text-sec__head,
+.mh-text-sec--simple .mh-text-sec__head {
+    position: static;
+    max-width: 52rem;
+}
+
+.mh-text-sec--wide .mh-text-sec__body {
+    grid-column: 1;
+    max-width: none;
+}
+
+/* Features: short h3 + text blocks in two columns */
+.mh-landing .mh-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-10) var(--space-8);
+    margin-top: var(--space-8);
+}
+
+.mh-landing .mh-features > .wp-block-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.mh-landing .mh-features > .wp-block-group > * {
+    margin: 0;
+}
+
+/* Feature headings are item titles, smaller than section headings */
+.mh-landing .mh-features > .wp-block-group > h3 {
+    font-size: var(--text-xl, 1.375rem);
+    line-height: 1.3;
+}
+
+/* Cards built from core blocks share the article card look */
+.mh-landing .mh-article-card > figure.mh-article-card__media {
+    margin: 0 0 var(--space-2);
+}
+
+.mh-landing .mh-article-card > * {
+    margin: 0;
+}
+
+/* FAQ: core/details, no borders or boxes */
+.mh-text-sec__body .wp-block-details {
+    padding: var(--space-4) 0;
+}
+
+.mh-text-sec__body .wp-block-details summary {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-5);
+    font-size: var(--body-font-size);
+    font-weight: var(--font-bold);
+    cursor: pointer;
+    list-style: none;
+}
+
+.mh-text-sec__body .wp-block-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.mh-text-sec__body .wp-block-details summary::after {
+    content: "+";
+    flex: 0 0 auto;
+    font-weight: var(--font-normal);
+}
+
+.mh-text-sec__body .wp-block-details[open] summary::after {
+    content: "–";
+}
+
+.mh-text-sec__body .wp-block-details > :not(summary) {
+    margin: var(--space-3) 0 0;
+}
+
+@media (max-width: 1024px) {
+    .mh-text-sec {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mh-text-sec__head {
+        position: static;
+    }
+
+    .mh-text-sec__body {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing .mh-features {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* The Tarjouspyyntö block #3398 (every city page) in its renewed markup:
+   the offer on the left, business moves and TilaaMuutto.fi on the right,
+   one button width, the Google reviews well below */
+.mh-landing .mh-quote {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-12, 3rem);
+    align-items: start;
+}
+
+.mh-landing .mh-quote__main,
+.mh-landing .mh-quote__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+}
+
+.mh-landing .mh-quote__side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12, 3rem);
+}
+
+.mh-landing .mh-quote :is(h2, h3, p) {
+    margin: 0;
+}
+
+.mh-landing .mh-quote h3 {
+    font-size: var(--heading-3-size);
+    line-height: var(--heading-3-leading, 1.3);
+}
+
+.mh-landing .mh-quote .mh-painike-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 24rem;
+    margin: var(--space-2) 0 0;
+}
+
+.mh-landing .mh-quote .mh-painike {
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+}
+
+.mh-landing .mh-quote ~ .rpi {
+    margin-top: clamp(5rem, 10vw, 8.75rem);
+}
+
+@media (max-width: 1024px) {
+    .mh-landing .mh-quote {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing .mh-quote .mh-painike-wrap {
+        max-width: none;
+    }
+}
+
+/* [toimipisteet]: the offices in two columns */
+.mh-office-list,
+.mh-landing .mh-office-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-10);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mh-office-list__item,
+.mh-landing .mh-office-list__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+}
+
+.mh-office-list__item > *,
+.mh-landing .mh-office-list__item > * {
+    margin: 0;
+}
+
+.mh-office-list__item::before {
+    content: none;
+}
+
+.mh-office-list .mh-office-list__name {
+    font-size: var(--heading-3-size);
+}
+
+.mh-office-list a {
+    color: var(--color-black);
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    .mh-office-list,
+    .mh-landing .mh-office-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ---------- FAQ page (work/wp_scripts/wpx_ukk.php): topics as sections,
+   questions as open/close items ---------- */
+.mh-faq .mh-text-sec__body .wp-block-details {
+    margin: 0;
+    padding: var(--space-5, 1.25rem) 0;
+}
+
+.mh-faq .mh-text-sec__body .wp-block-details summary {
+    align-items: center;
+    font-size: var(--text-lg, 1.125rem);
+    line-height: 1.4;
+}
+
+.mh-faq .mh-text-sec__body .wp-block-details summary:hover,
+.mh-faq .mh-text-sec__body .wp-block-details summary:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* The open/close sign as a round yellow button; black on yellow sections */
+.mh-faq .mh-text-sec__body .wp-block-details summary::after {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-black);
+    font-size: 1.25rem;
+    font-weight: var(--font-bold, 700);
+    line-height: 1;
+}
+
+.mh-landing-section--bg-yellow .mh-faq .mh-text-sec__body .wp-block-details summary::after {
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+.mh-faq .mh-text-sec__body .wp-block-details > p {
+    max-width: 44rem;
+    margin-top: var(--space-4, 1rem);
+}
+
+.mh-faq__more a {
+    font-weight: var(--font-bold, 700);
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mh-faq__more a::after {
+    content: " →";
+}
+
+/* The topic list in the hero: links with a muted count */
+.mh-faq-topics a {
+    color: inherit;
+    font-weight: var(--font-bold, 700);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.mh-faq-topics span {
+    margin-left: 0.4em;
+    color: var(--color-gray-600, #666);
+    font-size: 0.875em;
+}
+
+/* ---------- author box: the synced pattern "Kirjoittaja: Totte Vivolin"
+   (wp_block 9020) under articles (inc/Articles.php) and on pages ---------- */
+/* Photo beside the text, no box */
+.mh-author {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    column-gap: var(--space-10, 2.5rem);
+    align-items: start;
+    max-width: 52rem;
+}
+
+.mh-author > * {
+    margin: 0;
+}
+
+.mh-author__photo img {
+    display: block;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.mh-author__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 0.75rem);
+}
+
+.mh-author__text > *,
+.mh-landing .mh-author__text > *,
+.mh-landing .mh-author > * {
+    margin: 0;
+}
+
+.mh-author__kicker {
+    font-size: 12px;
+    font-weight: var(--font-bold, 700);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.mh-author .mh-author__name {
+    font-size: var(--heading-3-size);
+}
+
+@media (max-width: 640px) {
+    .mh-author {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: var(--space-5, 1.25rem);
+    }
+
+    .mh-author__photo img {
+        width: 112px;
+        height: 112px;
+    }
+}
+
+/* ---------- price facts: three figures in a row (cleaning pages) ---------- */
+.mh-price-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6, 1.5rem);
+}
+
+.mh-landing .mh-text-sec__body > .mh-price-facts {
+    margin-bottom: var(--space-8, 2rem);
+}
+
+.mh-price-facts .mh-icon-item__label {
+    font-size: var(--text-xl, 1.375rem);
+}
+
+@media (max-width: 640px) {
+    .mh-price-facts {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-4, 1rem);
+    }
+}
+
+/* ---------- /kokemuksia/: every office's Google reviews as a wall of
+   three columns instead of one 450px strip (Widgets for Google Reviews) ---------- */
+.mh-reviews-wall .wp-gr {
+    width: 100%;
+    max-width: none !important;
+}
+
+.mh-reviews-wall .wp-google-list > .rpi-flx.rpi-col16 {
+    display: block !important;
+    column-count: 3;
+    column-gap: var(--space-10, 2.5rem);
+}
+
+.mh-reviews-wall .wp-google-review {
+    break-inside: avoid;
+    margin: 0 0 var(--space-8, 2rem) !important;
+}
+
+@media (max-width: 1024px) {
+    .mh-reviews-wall .wp-google-list > .rpi-flx.rpi-col16 {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-reviews-wall .wp-google-list > .rpi-flx.rpi-col16 {
+        column-count: 1;
+    }
+}
+
+.mh-landing .mh-reviews-wall .wp-gr a.wp-google-name,
+.mh-landing .mh-reviews-wall .wp-gr .wp-google-name a {
+    color: var(--color-black) !important;
+    font-weight: 700;
+}
+
+/* "Arvioi meidät" / "Jätä arvostelu": the theme's yellow button, not blue */
+.mh-landing .mh-reviews-wall .wp-gr .wp-google-wr a {
+    background: var(--color-accent) !important;
+    color: var(--color-black) !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+    font-weight: 700;
 }

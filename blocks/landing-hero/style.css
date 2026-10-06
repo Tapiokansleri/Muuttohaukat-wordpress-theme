@@ -101,3 +101,46 @@
         max-width: none;
     }
 }
+
+/* A photo instead of the mascot: rounded like the cards elsewhere would be a
+   box, so it stays square-cornered; kept to a 4:3 crop */
+.mh-landing-hero__media--photo img {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+/* Form pages (Kerro kokemuksesi, Läheltä piti, tarjouspyynnöt, …): no
+   mascot, heading and form in one centred column */
+.mh-landing-hero--form .mh-landing-hero__inner {
+    grid-template-columns: minmax(0, 760px) !important;
+    justify-content: center;
+}
+
+.mh-landing-hero--form .mh-landing-hero__title {
+    max-width: none;
+}
+
+.mh-landing-hero--form .mh-landing-hero__lead {
+    max-width: none;
+}
+
+/* Forms whose send button is a <button> (the data request form 8355) get
+   the same yellow button as the other LibreForm forms */
+.mh-landing-hero--form .wplf-form button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border: 0;
+    background: var(--color-accent);
+    color: var(--color-black);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.mh-landing-hero--form .wplf-formRow:has(> button[type="submit"]:only-child) {
+    justify-content: flex-start;
+}

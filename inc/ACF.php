@@ -78,3 +78,13 @@ add_action('acfe/init', function () {
   acfe_update_setting('modules/single_meta', true);
   acfe_update_setting('dev', !\Muuttohaukat\isProd());
 });
+
+/**
+ * ACF PRO 6.8 wraps the inner blocks of every ACF block in
+ * <div class="acf-innerblocks-container"> on the front end. The theme's
+ * acf/wrapper and acf/prose blocks are flex and grid containers whose styles
+ * expect their inner blocks as direct children, so the extra div broke their
+ * layouts after the plugin update of 21.9.2026 (the Tarjouspyyntö block #3398
+ * fell back to one centred column). The editor preview is not affected.
+ */
+add_filter('acf/blocks/wrap_frontend_innerblocks', '__return_false');

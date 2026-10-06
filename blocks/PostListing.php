@@ -176,6 +176,11 @@ class PostListing extends \Muuttohaukat\Block {
     ];
     $paginationClasses = ['mh-postlisting__pagination', 'mh-container'];
 
+    // Article cards (inc/ArticleCards.php) lay themselves out in a grid.
+    if ($template === '\Muuttohaukat\Templates\CardPostListItem') {
+      $listClasses = ['mh-postlisting__list', 'template-' . strtolower($templateName), 'mh-article-cards'];
+    }
+
     if (!empty($data["taxTermFilters"])) {
       $taxonomies = $data["taxTermFilters"];
       $taxTerms = [];

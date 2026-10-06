@@ -37,7 +37,7 @@ function muuttohaukat_customizer_header( $wp_customize ) {
 
     // Logo Max Width
     $wp_customize->add_setting( 'muuttohaukat_logo_max_width', array(
-        'default'           => 200,
+        'default'           => 150,
         'sanitize_callback' => 'absint',
         'transport'         => 'refresh',
     ) );
@@ -50,7 +50,7 @@ function muuttohaukat_customizer_header( $wp_customize ) {
 
     // Header Height
     $wp_customize->add_setting( 'muuttohaukat_header_height', array(
-        'default'           => 80,
+        'default'           => 100,
         'sanitize_callback' => 'absint',
         'transport'         => 'refresh',
     ) );
@@ -137,7 +137,7 @@ function muuttohaukat_customizer_header( $wp_customize ) {
 
     // Nav Active Color
     $wp_customize->add_setting( 'muuttohaukat_nav_active_color', array(
-        'default'           => '#ffed00',
+        'default'           => '#1a1a1a',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport'         => 'refresh',
     ) );
@@ -270,7 +270,7 @@ function muuttohaukat_customizer_header( $wp_customize ) {
     ) );
 
     $wp_customize->add_setting( 'muuttohaukat_cta_secondary_url', array(
-        'default'           => '/tarjouspyynto',
+        'default'           => '/tarjouspyynto/',
         'sanitize_callback' => 'esc_url_raw',
     ) );
     $wp_customize->add_control( 'muuttohaukat_cta_secondary_url', array(
@@ -463,13 +463,13 @@ function muuttohaukat_sanitize_checkbox( $value ) {
  * Output header CSS custom properties from customizer settings.
  */
 function muuttohaukat_header_inline_styles() {
-    $logo_max_width  = absint( get_theme_mod( 'muuttohaukat_logo_max_width', 200 ) );
-    $height          = absint( get_theme_mod( 'muuttohaukat_header_height', 80 ) );
+    $logo_max_width  = absint( get_theme_mod( 'muuttohaukat_logo_max_width', 150 ) );
+    $height          = absint( get_theme_mod( 'muuttohaukat_header_height', 100 ) );
     $bg_color        = get_theme_mod( 'muuttohaukat_header_bg_color', '#ffffff' );
     $text_color      = get_theme_mod( 'muuttohaukat_header_text_color', '#1a1a1a' );
     $nav_color       = get_theme_mod( 'muuttohaukat_nav_link_color', '#1a1a1a' );
     $nav_hover       = get_theme_mod( 'muuttohaukat_nav_hover_color', '#ffed00' );
-    $nav_active      = get_theme_mod( 'muuttohaukat_nav_active_color', '#ffed00' );
+    $nav_active      = get_theme_mod( 'muuttohaukat_nav_active_color', '#1a1a1a' );
     $nav_font_size   = get_theme_mod( 'muuttohaukat_nav_font_size', 15 );
     $nav_transform   = get_theme_mod( 'muuttohaukat_nav_text_transform', 'uppercase' );
     $sub_bg          = get_theme_mod( 'muuttohaukat_submenu_bg_color', '#ffffff' );

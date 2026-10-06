@@ -131,6 +131,19 @@
     color: var(--color-white);
 }
 
+/* Links inside running text look like links (they were plain black text).
+   Not the contact details: people lists, the office card, the hero facts. */
+.mh-landing p > a:not([class]):not(.mh-henkilosto a, .mh-landing-local__office a, .mh-office-facts a) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.mh-landing p > a:not([class]):not(.mh-henkilosto a, .mh-landing-local__office a, .mh-office-facts a):hover,
+.mh-landing p > a:not([class]):not(.mh-henkilosto a, .mh-landing-local__office a, .mh-office-facts a):focus-visible {
+    text-decoration-thickness: 2px;
+}
+
 /* -------------------------------------------------------------------------
    Eyebrow / kicker — 12px uppercase
    ------------------------------------------------------------------------- */
@@ -331,6 +344,8 @@
 .wp-block-button.mh-landing__button--primary,
 .wp-block-button.mh-landing__button--ghost {
     margin: 0;
+    /* the wrapper is only a box around the link, which carries the padding */
+    padding: 0;
     background: transparent !important;
     color: inherit !important;
 }
@@ -379,22 +394,26 @@
 }
 
 /* Invert variants on yellow sections so they stay visible */
-.mh-landing-section--bg-yellow .mh-landing__button--primary .wp-block-button__link {
+.mh-landing-section--bg-yellow .mh-landing__button--primary .wp-block-button__link,
+.mh-landing-section--bg-yellow .wp-block-button.mh-landing__button--primary .wp-block-button__link.wp-element-button {
     background: var(--color-black) !important;
     color: var(--color-white) !important;
 }
 
-.mh-landing-section--bg-yellow .mh-landing__button--ghost .wp-block-button__link {
+.mh-landing-section--bg-yellow .mh-landing__button--ghost .wp-block-button__link,
+.mh-landing-section--bg-yellow .wp-block-button.mh-landing__button--ghost .wp-block-button__link.wp-element-button {
     background: var(--color-white) !important;
     color: var(--color-black) !important;
 }
 
-.mh-landing-section--bg-black .mh-landing__button--primary .wp-block-button__link {
+.mh-landing-section--bg-black .mh-landing__button--primary .wp-block-button__link,
+.mh-landing-section--bg-black .wp-block-button.mh-landing__button--primary .wp-block-button__link.wp-element-button {
     background: var(--color-accent) !important;
     color: var(--color-black) !important;
 }
 
-.mh-landing-section--bg-black .mh-landing__button--ghost .wp-block-button__link {
+.mh-landing-section--bg-black .mh-landing__button--ghost .wp-block-button__link,
+.mh-landing-section--bg-black .wp-block-button.mh-landing__button--ghost .wp-block-button__link.wp-element-button {
     background: var(--color-white) !important;
     color: var(--color-black) !important;
 }
@@ -420,4 +439,465 @@
 
 .wp-block-buttons.mh-landing__button-row--cta {
     margin-top: 50px;
+}
+
+/* -------------------------------------------------------------------------
+   Hero checklist — yellow Font Awesome checks, used in the city page hero
+   ------------------------------------------------------------------------- */
+.mh-hero-checklist {
+    list-style: none;
+    margin: 0 0 var(--space-6);
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+}
+
+.mh-hero-checklist li {
+    position: relative;
+    padding-left: 1.9em;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.mh-hero-checklist li::before {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-style: normal;
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    color: var(--color-accent);
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+.mh-landing-section--bg-yellow .mh-hero-checklist li::before {
+    color: var(--color-black);
+}
+
+/* -------------------------------------------------------------------------
+   Legacy "Tarjouspyyntö" reusable block (#3398: acf/wrapper with three
+   acf/prose groups and p.buttons links) on landing pages, laid out like the
+   hero: the offer on the left, the two other options stacked on the right,
+   both columns from the top, everything left-aligned, one button width.
+   The old DaisyUI p.buttons rules in client.css drew 4rem buttons with dark
+   borders; the links get the .mh-painike look instead.
+   ACF 6.x can wrap the inner blocks in .acf-innerblocks-container (turned off
+   in inc/ACF.php); the rules accept both structures.
+   ------------------------------------------------------------------------- */
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-10);
+    align-items: start;
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
+    margin: 0 auto;
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    /* More room before the Google reviews that follow the block */
+    padding-bottom: clamp(5rem, 10vw, 8.75rem);
+    text-align: left;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) > .acf-innerblocks-container,
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose > .acf-innerblocks-container {
+    display: contents;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .has-text-align-center {
+    text-align: left;
+}
+
+/* Each group is one column with one vertical rhythm */
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose > *,
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose > .acf-innerblocks-container > * {
+    margin: 0;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p:empty {
+    display: none;
+}
+
+/* Left column: the offer, spanning both rows of the right column */
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose:first-child {
+    grid-row: 1 / span 2;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose:first-child h2 {
+    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+    line-height: var(--leading-snug);
+}
+
+/* The offer is an h3 in the content; read it like the paragraph below it */
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose h3,
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose p:not(.buttons) {
+    max-width: 52ch;
+    font-size: var(--body-font-size);
+    font-weight: var(--font-normal);
+    line-height: 1.7;
+}
+
+/* Right column: the two other options, smaller headings */
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose:not(:first-child) {
+    gap: var(--space-4);
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose:not(:first-child) h2 {
+    font-size: var(--heading-3-size);
+    line-height: var(--heading-3-leading);
+}
+
+/* Buttons: stacked, one width in both columns */
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 24rem;
+    margin-top: var(--space-2);
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 18px 24px;
+    border: 0;
+    border-radius: 4px;
+    box-shadow: none;
+    background-color: var(--color-accent);
+    color: var(--color-black) !important;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a:nth-of-type(2) {
+    background-color: var(--color-black);
+    color: var(--color-white) !important;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a::before,
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a::after {
+    content: none !important;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a:hover,
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a:focus-visible {
+    background-color: var(--color-accent);
+    opacity: 0.9;
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a:nth-of-type(2):hover,
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a:nth-of-type(2):focus-visible {
+    background-color: var(--color-black);
+}
+
+.mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a:focus-visible {
+    outline: 2px solid var(--color-black);
+    outline-offset: 2px;
+}
+
+/* Stack like the hero on tablets and phones */
+@media (max-width: 1024px) {
+    .mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) .prose:first-child {
+        grid-row: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons {
+        max-width: none;
+    }
+
+    .mh-landing .wrapper:is(:has(> .prose > p.buttons), :has(> .acf-innerblocks-container > .prose p.buttons)) p.buttons > a {
+        font-size: 0.8125rem;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Muuttosiivous on moving landing pages (inc/CleaningCrossSell.php):
+   two columns like the hero, one vertical rhythm inside each column.
+   ------------------------------------------------------------------------- */
+.mh-landing-cleaning__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-8, 2rem);
+    align-items: start;
+}
+
+.mh-landing-cleaning__text,
+.mh-landing-cleaning__offer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5, 1.25rem);
+}
+
+.mh-landing-cleaning__text > *,
+.mh-landing-cleaning__offer > * {
+    margin: 0;
+}
+
+.mh-landing-cleaning .mh-hero-checklist {
+    margin: 0;
+}
+
+.mh-landing-cleaning__price {
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-accent) !important;
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-cleaning__inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Yritystiedot page (inc/CompanyPage.php)
+   ------------------------------------------------------------------------- */
+.mh-company__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 100px;
+    row-gap: var(--space-8, 2rem);
+    align-items: start;
+}
+
+.mh-company__col,
+.mh-company-offices__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 1.25rem);
+}
+
+.mh-company__col > *,
+.mh-company-offices__head > *,
+.mh-company .mh-hero-checklist {
+    margin: 0;
+}
+
+.mh-company__facts {
+    margin: 0;
+    border-top: 1px solid var(--color-black);
+}
+
+.mh-company__fact {
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: var(--space-4, 1rem);
+    padding: var(--space-3, 0.75rem) 0;
+    border-bottom: 1px solid var(--color-black);
+}
+
+.mh-company__fact dt {
+    font-weight: 700;
+}
+
+.mh-company__fact dd {
+    margin: 0;
+}
+
+.mh-company-offices__list {
+    list-style: none;
+    margin: var(--space-8, 2rem) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6, 1.5rem);
+}
+
+.mh-company-offices__office {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+    padding: var(--space-6, 1.5rem);
+    border: 1px solid var(--color-black);
+    background: var(--color-white);
+}
+
+.mh-company-offices__office p {
+    margin: 0;
+}
+
+.mh-company-offices__label {
+    font-weight: 700;
+}
+
+.mh-company-offices__office a {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 1024px) {
+    .mh-company__inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mh-company-offices__list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-company__fact {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    .mh-company-offices__list {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Business move contacts by office ([yritysmuutto_yhteyshenkilot])
+   ------------------------------------------------------------------------- */
+.mh-business-staff {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10, 2.5rem);
+    margin-top: var(--space-8, 2rem);
+}
+
+.mh-business-staff__office {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5, 1.25rem);
+}
+
+.mh-business-staff__office > * {
+    margin: 0;
+}
+
+.mh-business-staff .mh-henkilosto .mh-henkilosto__grid {
+    --mh-henkilosto-col-gap: 100px;
+    row-gap: var(--space-8, 2rem);
+}
+
+.mh-business-staff .mh-henkilosto .mh-henkilosto__grid li.mh-henkilosto__person {
+    margin: 0 !important;
+}
+
+.mh-business-staff .mh-henkilosto__info p {
+    margin: 0;
+}
+
+/* Reference cases and numbered steps on service landing pages */
+.mh-landing-steps .mh-landing-features {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-12, 3rem) 60px;
+}
+
+/* No lines or boxes: the big number marks each step */
+.mh-landing-steps .mh-landing-feature {
+    background: transparent;
+}
+
+.mh-landing-steps .mh-landing-feature__body {
+    padding: 0;
+    gap: var(--space-3, 0.75rem);
+}
+
+.mh-landing .mh-landing-steps .mh-landing-feature__body > * {
+    margin: 0;
+}
+
+.mh-landing-steps .mh-landing-feature__num {
+    font-size: 2.5rem;
+    font-weight: var(--font-bold, 700);
+    line-height: 1;
+    opacity: 1;
+}
+
+.mh-landing-steps .mh-landing-feature h3 {
+    font-size: var(--text-xl, 1.375rem);
+    line-height: 1.3;
+}
+
+.mh-landing-steps .mh-landing-feature p:not(.mh-landing-feature__num) {
+    font-size: var(--body-font-size);
+    line-height: var(--leading-normal, 1.6);
+}
+
+@media (max-width: 1024px) {
+    .mh-landing-steps .mh-landing-features {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .mh-landing-steps .mh-landing-features {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Box rental prices ([muuttolaatikot_hinnat]) on the box city pages */
+.mh-box-prices {
+    width: 100%;
+    max-width: 40rem;
+    border-collapse: collapse;
+    margin: var(--space-6, 1.5rem) 0 0;
+}
+
+.mh-box-prices th,
+.mh-box-prices td {
+    padding: var(--space-3, 0.75rem) 0;
+    border-bottom: 1px solid var(--color-black);
+    text-align: left;
+    font-weight: 400;
+}
+
+.mh-box-prices thead th {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.mh-box-prices tbody th {
+    font-weight: 700;
+    padding-right: var(--space-6, 1.5rem);
+}
+
+.mh-box-prices td {
+    white-space: nowrap;
+}
+
+/* A button after the steps grid gets the grid's row gap above it */
+.mh-landing .mh-landing-steps .mh-landing-features + .mh-painike-wrap {
+    margin-top: var(--space-12, 3rem);
 }

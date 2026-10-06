@@ -1,0 +1,42 @@
+/* ==========================================================================
+   "Varaa muuttopäivä heti kun tiedät sen" — section around the
+   [muuttopaivat] calendar, printed before the footer on subpages.
+   ========================================================================== */
+
+.mh-calendar-section {
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+    background: var(--color-white);
+    color: var(--color-black);
+}
+
+.mh-calendar-section__inner {
+    width: min(100% - 2rem, var(--content-max-width, 1350px));
+    margin-inline: auto;
+}
+
+.mh-calendar-section__text {
+    max-width: 38rem;
+    margin-bottom: var(--space-8, 3rem);
+}
+
+.mh-calendar-section__title {
+    margin: 0 0 var(--space-5, 1.5rem);
+}
+
+.mh-calendar-section__text p {
+    margin: 0 0 var(--space-4, 1rem);
+}
+
+.mh-calendar-section__text p:last-child {
+    margin-bottom: 0;
+}
+
+.mh-calendar-section__highlight {
+    font-weight: 700;
+}
+
+@media (min-width: 900px) {
+    .mh-calendar-section__text {
+        max-width: 34rem;
+    }
+}

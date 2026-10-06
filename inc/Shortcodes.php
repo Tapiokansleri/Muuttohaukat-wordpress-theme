@@ -252,7 +252,8 @@ add_shortcode('muuttopaivat', function ($atts) {
               if ($is_bookable) :
                 $href = add_query_arg('date', $ymd, $link);
                 ?>
-                <a class="<?php echo esc_attr($class); ?>" href="<?php echo esc_url($href); ?>" style="<?php echo esc_attr($style); ?>" aria-label="<?php echo esc_attr($aria); ?>"><?php echo esc_html((string) $day); ?></a>
+                <?php // nofollow + robots.txt Disallow: /*?date= keep the day addresses out of crawling (audit 3.2). ?>
+                <a class="<?php echo esc_attr($class); ?>" href="<?php echo esc_url($href); ?>" rel="nofollow" style="<?php echo esc_attr($style); ?>" aria-label="<?php echo esc_attr($aria); ?>"><?php echo esc_html((string) $day); ?></a>
               <?php else : ?>
                 <span class="<?php echo esc_attr($class); ?>"<?php echo $style !== '' ? ' style="' . esc_attr($style) . '"' : ''; ?> aria-label="<?php echo esc_attr($aria); ?>"<?php echo $is_past ? ' aria-disabled="true"' : ''; ?>><?php echo esc_html((string) $day); ?></span>
               <?php endif;

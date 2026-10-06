@@ -14,14 +14,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 $app   = app();
 $postlisting = $app->getBlock('PostListing');
 
+// The heading of the archive: which category, author or month this is. The
+// author archive used to come from a Beaver Themer layout (Tapio, 22.9.2026).
+$news_label = $app->translations->getText('Title: Blog Heading');
+$news_page  = get_page_by_path('ajankohtaista');
+$kicker     = $news_label;
+$title      = $news_label;
+$lead       = '';
+if (is_category() || is_tag() || is_tax()) {
+  $title = single_term_title('', false);
+  $lead  = term_description();
+} elseif (is_author()) {
+  $author = get_queried_object();
+  $kicker = 'Kirjoittaja';
+  $title  = $author instanceof \WP_User ? $author->display_name : get_the_author();
+  $lead   = $author instanceof \WP_User ? wpautop(esc_html($author->description)) : '';
+} elseif (is_year()) {
+  $title = get_the_date('Y');
+} elseif (is_month()) {
+  $title = ucfirst(get_the_date('F Y'));
+} elseif (is_day()) {
+  $title = get_the_date('j.n.Y');
+}
+
 get_header(); ?>
 
 <div class="mh-root mh-root--archive bg-white">
-  <div class="prose mx-auto my-8">
-    <h2><strong><?= esc_html($app->translations->getText('Title: Blog Heading')) ?></strong></h2>
-  </div>
+  <header class="mh-article-hero mh-archive-hero">
+    <div class="mh-article-wrap">
+      <div class="mh-article-hero__text">
+        <p class="mh-article-kicker"><?php if ($news_page && $kicker === $news_label) : ?><a href="<?= esc_url(get_permalink($news_page)) ?>"><?= esc_html($kicker) ?></a><?php else : echo esc_html($kicker); endif; ?></p>
+        <h1 class="mh-article-hero__title"><?= esc_html(wp_strip_all_tags($title)) ?></h1>
+        <?php if (trim(wp_strip_all_tags((string) $lead)) !== '') : ?>
+          <div class="mh-article-hero__lead"><?= wp_kses_post($lead) ?></div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </header>
 
-  <div class="px-4">
+  <div class="mh-article-wrap mh-archive-list">
     <?php
     echo withTransient(capture([$postlisting, 'render'], [
       'mode' => 'mainQuery',

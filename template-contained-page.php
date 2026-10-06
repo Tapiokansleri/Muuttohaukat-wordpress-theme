@@ -14,6 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Pages built from landing blocks lay out their own full-width sections in
+// .mh-landing like every other page; the container is for plain content only.
+$post = get_queried_object();
+if ($post instanceof \WP_Post && post_has_landing_blocks($post)) {
+  require locate_template('singular.php');
+  return;
+}
+
 get_header(); ?>
 
 <div class="mh-root mh-root--single-post mh-root--contained mh-scheme--base-default">

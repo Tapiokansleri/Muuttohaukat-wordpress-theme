@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-prices",
+  "title": "Hinnat asunnon koon mukaan",
+  "category": "muuttohaukat",
+  "icon": "money-alt",
+  "description": "Hintataulukko asunnon koon mukaan. Luvut tulevat yhdestä paikasta, joten hinnan muutos päivittyy kaikille sivuille kerralla.",
+  "supports": { "html": false, "multiple": false, "reusable": false, "align": false, "anchor": true },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": ["white", "yellow", "black"]
+    },
+    "anchor": { "type": "string", "default": "hinnat" },
+    "showBasic": { "type": "boolean", "default": true },
+    "note": { "type": "boolean", "default": true }
+  },
+  "textdomain": "muuttohaukat",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
+  "style": "file:./style.css",
+  "editorStyle": "file:./style.css",
+  "render": "file:./render.php"
+}

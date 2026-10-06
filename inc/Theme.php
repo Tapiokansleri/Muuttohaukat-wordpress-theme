@@ -44,7 +44,7 @@ add_action('after_setup_theme', function () {
     'assets/css/editor.css',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
     'assets/css/icon-picker.css',
-    'fl-builder/modules/muuttohaukat-painike/css/frontend.css',
+    'assets/css/painike.css',
     'assets/css/03-button-chevron.css',
     'assets/css/landing.css',
   ]);

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "muuttohaukat/landing-local",
+  "title": "Paikallinen palvelu",
+  "category": "muuttohaukat",
+  "icon": "location",
+  "description": "Paikkakunnan oma teksti ja se toimipiste, josta muutto lähtee, valinnaisesti kartan kanssa. Yhteystietosivulla yksi jokaiselle toimipisteelle.",
+  "supports": {
+    "html": false,
+    "multiple": true,
+    "reusable": false,
+    "align": false,
+    "anchor": true
+  },
+  "attributes": {
+    "background": {
+      "type": "string",
+      "default": "white",
+      "enum": [
+        "white",
+        "yellow",
+        "black"
+      ]
+    },
+    "anchor": {
+      "type": "string",
+      "default": "paikallisesti"
+    },
+    "office": {
+      "type": "string",
+      "default": "hyvinkaa",
+      "enum": [
+        "hyvinkaa",
+        "vantaa",
+        "tampere",
+        "turku",
+        ""
+      ]
+    },
+    "city": {
+      "type": "string",
+      "default": ""
+    },
+    "schema": {
+      "type": "boolean",
+      "default": true
+    },
+    "map": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "textdomain": "muuttohaukat",
+  "editorScript": [
+    "file:../landing-shared/background-panel.js",
+    "file:./index.js"
+  ],
+  "style": "file:./style.css",
+  "editorStyle": "file:./style.css",
+  "render": "file:./render.php"
+}

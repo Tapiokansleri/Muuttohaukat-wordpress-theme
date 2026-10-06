@@ -26,22 +26,22 @@ class Personnel extends \Muuttohaukat\Block {
     $officeUrl = function($office = 'Hyvinkää') {
       switch ($office) {
         case 'Hyvinkää':
-          return '/hyvinkaa';
+          return '/hyvinkaa-uusimaa/';
  
         case 'Kerava':
-          return '/kerava';
+          return '/yhteystiedot/';
         
         case 'Kirkkonummi':
-          return '/kirkkonummi';
+          return '/yhteystiedot/';
  
         case 'Kouvola':
-          return '/kouvola';
+          return '/yhteystiedot/';
  
         case 'Lohja':
-          return '/lohja';
+          return '/yhteystiedot/';
  
         default: 
-          return '/yhteystiedot';
+          return '/yhteystiedot/';
       }
     };
  
@@ -71,7 +71,7 @@ class Personnel extends \Muuttohaukat\Block {
       $email = $x['email'];
       $office = $x['office'] ?? "Yleisesti";
  
-      $image = !empty($imgId) ? \Muuttohaukat\Media\image($imgId, ['responsive' => false]) : null;
+      $image = !empty($imgId) ? \Muuttohaukat\Media\image($imgId, ['responsive' => false, 'altFallback' => $name]) : null;
  
   ?>
   <div class="

@@ -31,3 +31,85 @@
         margin-top: var(--space-7);
     }
 }
+
+/* Two text columns (front page "Miksi Muuttohaukat?"): both start at the top */
+.mh-landing-split--top {
+    align-items: start;
+}
+
+.mh-landing-split__text > :first-child {
+    margin-top: 0;
+}
+
+/* A video still that opens the video on YouTube */
+.mh-video-link img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* ---------- Finish (Tapio 22.9.2026: "tee viimeistellymmän näköinen") ----------
+   The text column keeps one 20px rhythm like the hero: eyebrow, heading,
+   subheading, paragraphs, lists and buttons are spaced by the flex gap only. */
+.mh-landing-split > .wp-block-group:first-child,
+.mh-landing-split > .mh-landing-split__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5, 1.25rem);
+}
+
+.mh-landing .mh-landing-split > .wp-block-group:first-child > *,
+.mh-landing .mh-landing-split > .mh-landing-split__text > *,
+.mh-landing .mh-landing-split .mh-landing-sec-head > * {
+    margin: 0;
+}
+
+.mh-landing-split .mh-landing-sec-head {
+    display: contents;
+}
+
+/* A subheading straight under the section heading reads as its lead */
+.mh-landing .mh-landing-split h2 + h3 {
+    font-size: var(--text-xl, 1.375rem);
+    font-weight: 600;
+    line-height: 1.4;
+    max-width: 34em;
+}
+
+/* A new topic further down the column gets more air than a paragraph */
+.mh-landing .mh-landing-split > .wp-block-group:first-child > h3:not(h2 + h3),
+.mh-landing .mh-landing-split > .mh-landing-split__text > h3:not(:first-child) {
+    margin-top: var(--space-5, 1.25rem);
+}
+
+/* Heading and text pairs in the second column: the text close to its heading */
+.mh-landing .mh-landing-split > .mh-landing-split__text > h3 + p {
+    margin-top: calc(var(--space-3, 0.75rem) - var(--space-5, 1.25rem));
+}
+
+/* Buttons a step apart from the text above them */
+.mh-landing .mh-landing-split .mh-painike-wrap {
+    margin-top: var(--space-2, 0.5rem);
+}
+
+/* Photos in one shape, so sections keep an even height; illustrations
+   (PNG, transparent) keep theirs. */
+.mh-landing-split__media img[src*=".jpg"],
+.mh-landing-split__media img[src*=".jpeg"] {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: 50% 45%;
+}
+
+/* A badge-like picture (logo or round emblem) at badge size, not column size */
+.mh-landing-split__media--badge {
+    justify-self: start;
+    width: min(100%, 420px);
+}
+
+/* Heading and text pairs in a second text column are items, not sections */
+.mh-landing .mh-landing-split > .mh-landing-split__text > h3 {
+    font-size: var(--text-xl, 1.375rem);
+    line-height: 1.3;
+}

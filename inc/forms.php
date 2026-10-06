@@ -414,3 +414,36 @@ add_filter('wplfImportFormTemplate', function ($template, \WPLF\Form $form) {
 
   return $template;
 }, 10, 2);
+
+/**
+ * Yritysmuutto: the number of workstations (audit action 7) travels as the
+ * first line of Lisätiedot, the field the Dynamics function already maps.
+ * The form, its submissions table and the Azure function need no new field.
+ *
+ * WPLF validates a filtered copy of the entries but saves the originals, so
+ * the field is dropped from the copy (or "Additional fields are present"
+ * rejects the lead) and moved into Lisätiedot after validation.
+ */
+add_filter('wplfFieldsBeforeValidateSubmission', function ($entries, \WPLF\Form $form) {
+  if ($form->slug === 'tarjouspyynto-yritysmuutto' && is_array($entries)) {
+    unset($entries['Tyopisteet']);
+  }
+
+  return $entries;
+}, 10, 2);
+
+add_filter('wplfFieldsAfterValidateSubmission', function ($entries, \WPLF\Form $form) {
+  if ($form->slug !== 'tarjouspyynto-yritysmuutto' || !is_array($entries) || !array_key_exists('Tyopisteet', $entries)) {
+    return $entries;
+  }
+
+  $count = preg_replace('/\D+/', '', (string) $entries['Tyopisteet']);
+  unset($entries['Tyopisteet']);
+
+  if ($count !== '') {
+    $notes = trim((string) ($entries['Lisätiedot'] ?? ''));
+    $entries['Lisätiedot'] = 'Työpisteiden määrä: ' . $count . ($notes !== '' ? "\n\n" . $notes : '');
+  }
+
+  return $entries;
+}, 10, 2);

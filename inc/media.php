@@ -23,6 +23,7 @@ function image($image = null, array $data = []) {
     'responsive' => true,
     'sizes' => null,
     'allowCaption' => false,
+    'altFallback' => '', // used when the attachment has no alt text
   ], $data);
 
   $image = getImageData($image, $data['size']);
@@ -32,8 +33,14 @@ function image($image = null, array $data = []) {
     return false;
   }
 
+  // Audit 3.7: empty alt only when nothing describes the image.
+  $alt_text = trim((string) $image['alt']);
+  if ($alt_text === '') {
+    $alt_text = trim((string) $data['altFallback']) ?: alt_from_title($image['title'] ?? '');
+  }
+
   $src    = \esc_url($image['src']);
-  $alt    = \esc_attr($image['alt']);
+  $alt    = \esc_attr($alt_text);
   $width  = \esc_attr($image['width']);
   $height = \esc_attr($image['height']);
 
@@ -60,6 +67,56 @@ function image($image = null, array $data = []) {
   }
 
   return $tag;
+}
+
+/**
+ * An alt text from an attachment title, or '' when the title is only a file
+ * or camera name (IMG_1234, DSC01234, "kuva 3"). A trailing "(2)" that
+ * WordPress adds to duplicate titles is dropped.
+ */
+function alt_from_title($title) {
+  $title = trim(preg_replace('/\s*\(\d+\)$/u', '', \wp_strip_all_tags((string) $title)));
+  // File-name titles ("rullakko_takaseinä", "Lindell_Jari_") read better with spaces.
+  $title = trim(preg_replace('/[\s_]+/u', ' ', $title));
+  if ($title === '' || !preg_match('/\p{L}{3}/u', $title) || preg_match('/^(img|dsc|dscn|pxl|image|kuva|photo|screenshot|näyttökuva)[\s_-]*\d/iu', $title)) {
+    return '';
+  }
+
+  return $title;
+}
+
+/**
+ * Audit 3.7: images typed into post content or Beaver Builder text modules
+ * keep a hard-coded alt="" after their attachment gets an alt text (the 111
+ * moving box pages print seven product photos this way). Fill it from the
+ * attachment when the page is rendered.
+ */
+\add_filter('wp_content_img_tag', function ($image, $context, $attachment_id) {
+  if (!preg_match('/\salt=(""|\'\')/', $image) || !preg_match('/\ssrc=["\']([^"\']+)/', $image, $src)) {
+    return $image;
+  }
+
+  $id  = content_image_attachment($src[1], (int) $attachment_id);
+  $alt = $id ? trim((string) \get_post_meta($id, '_wp_attachment_image_alt', true)) : '';
+
+  return $alt === '' ? $image : preg_replace('/\salt=(""|\'\')/', ' alt="' . \esc_attr($alt) . '"', $image, 1);
+}, 10, 3);
+
+/**
+ * The attachment behind a content image. The wp-image-N class counts only
+ * when it points at the same file, because imported posts carry the IDs of
+ * other images.
+ */
+function content_image_attachment($src, $class_id) {
+  if ($class_id) {
+    $meta = \wp_get_attachment_metadata($class_id);
+    if (is_array($meta) && \wp_image_file_matches_image_meta($src, $meta, $class_id)) {
+      return $class_id;
+    }
+  }
+
+  // attachment_url_to_postid() knows only the full size file.
+  return (int) \attachment_url_to_postid(preg_replace('/-\d+x\d+(?=\.\w+$)/', '', $src));
 }
 
 /**

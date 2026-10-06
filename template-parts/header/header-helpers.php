@@ -67,7 +67,7 @@ function muuttohaukat_header_cta_buttons( $class = 'header-cta' ) {
     $primary_text   = get_theme_mod( 'muuttohaukat_cta_primary_text', 'Tilaa muutto' );
     $primary_url    = get_theme_mod( 'muuttohaukat_cta_primary_url', 'https://tilaamuutto.fi' );
     $secondary_text = get_theme_mod( 'muuttohaukat_cta_secondary_text', 'Tarjouspyyntö' );
-    $secondary_url  = get_theme_mod( 'muuttohaukat_cta_secondary_url', '/tarjouspyynto' );
+    $secondary_url  = get_theme_mod( 'muuttohaukat_cta_secondary_url', '/tarjouspyynto/' );
 
     $has_primary   = ! empty( $primary_text ) && ! empty( $primary_url );
     $has_secondary = ! empty( $secondary_text ) && ! empty( $secondary_url );
