@@ -202,16 +202,18 @@ function office_hours(): array {
 /**
  * Price list by apartment size, as published on /kotimuutto/muuttopalvelun-hinta/.
  *
- * A null price renders as a quote link instead of a number. The 40-59 m²
- * price without boxes is null on purpose: the price page shows 450 as both
- * the lower and the upper bound, and the real upper bound is unconfirmed.
+ * A null price renders as a quote link instead of a number. Every size has a
+ * price: Tapio 7.10.2026 "40–59 m² kaksio ei saa olla pyydä tarjous!". The old
+ * price page said 450–450 € for 40-59 m² without boxes; 450 is the lower bound it
+ * stated, and 600 keeps the 100 € gap to the price with boxes that the other
+ * sizes have.
  *
  * @return array<int, array<string, string|null>>
  */
 function price_rows(): array {
   return apply_filters('mh_price_rows', [
     ['size' => '20-29 m²',  'type' => 'yksiö',       'basic' => '300-500 €',  'boxes' => '350-600 €'],
-    ['size' => '40-59 m²',  'type' => 'kaksio',      'basic' => null,         'boxes' => '500-700 €'],
+    ['size' => '40-59 m²',  'type' => 'kaksio',      'basic' => '450-600 €',  'boxes' => '500-700 €'],
     ['size' => '60-79 m²',  'type' => 'kolmio',      'basic' => '600-850 €',  'boxes' => '650-950 €'],
     ['size' => '80-100 m²', 'type' => 'perheasunto', 'basic' => '800-1000 €', 'boxes' => '850-1150 €'],
   ]);

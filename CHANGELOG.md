@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.11] - 2026-10-07
+
+### Fixed
+
+- `price_rows()`: 40-59 m² (kaksio) without boxes is 450-600 € instead of a "Pyydä tarjous" link in every price table (Tapio 7.10.2026). 450 is the lower bound the old price page stated (it said 450–450 €); 600 keeps the 100 € gap to the price with boxes that the other sizes have. The full-service table (multiplier 2.15) shows 970-1290 €.
+
 ## [1.2.10] - 2026-10-07
 
 ### Added
