@@ -15,7 +15,8 @@
     },
     "anchor": { "type": "string", "default": "hinnat" },
     "showBasic": { "type": "boolean", "default": true },
-    "note": { "type": "boolean", "default": true }
+    "note": { "type": "boolean", "default": true },
+    "multiplier": { "type": "number", "default": 1 }
   },
   "textdomain": "muuttohaukat",
   "editorScript": [

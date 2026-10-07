@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.10] - 2026-10-07
+
+### Added
+
+- Landing-prices block: `multiplier` attribute ("Hintakerroin" in the editor) derives another price list from the same rows in `price_rows()`; every price is multiplied and rounded to the nearest 5 €. The full-service move page /kotimuutto/tayden-palvelun-muutto/ uses 2.15 (Tapio 7.10.2026: the full-service price is 115 % more than the move, including packing and unpacking). Other pages keep 1.
+
 ## [1.2.9] - 2026-10-06
 
 ### Added

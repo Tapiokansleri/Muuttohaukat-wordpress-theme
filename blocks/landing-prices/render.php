@@ -8,10 +8,20 @@ $wrapper = \Muuttohaukat\landing_block_wrapper_attributes($attributes, ['mh-land
   'id' => $attributes['anchor'] ?? 'hinnat',
 ]);
 
-$cell = function ($value) use ($quote_url) {
+// A multiplier derives another price list from the same rows, e.g. 2.15 for the full-service
+// move (Tapio 7.10.2026: "Hintaa lisää 115% nykyisestä"). Results are rounded to the nearest 5 €.
+$multiplier = isset($attributes['multiplier']) ? (float) $attributes['multiplier'] : 1.0;
+$scale = function ($value) use ($multiplier) {
+  if ($value === null || $value === '' || $multiplier <= 0 || abs($multiplier - 1.0) < 0.0001) {
+    return $value;
+  }
+  return preg_replace_callback('/\d+/', fn($m) => (string) (int) (round((int) $m[0] * $multiplier / 5) * 5), $value);
+};
+
+$cell = function ($value) use ($quote_url, $scale) {
   return $value === null || $value === ''
     ? '<a href="' . esc_url($quote_url) . '">Pyydä tarjous</a>'
-    : esc_html($value);
+    : esc_html($scale($value));
 };
 ?>
 <section <?php echo $wrapper; ?>>

@@ -5,6 +5,7 @@
 	var InnerBlocks = blockEditor.InnerBlocks;
 	var PanelBody = components.PanelBody;
 	var ToggleControl = components.ToggleControl;
+	var TextControl = components.TextControl;
 	var el = element.createElement;
 	var Fragment = element.Fragment;
 
@@ -33,6 +34,18 @@
 					checked: !! props.attributes.note,
 					onChange: function ( value ) { props.setAttributes( { note: value } ); }
 				} ),
+				el( TextControl, {
+					label: 'Hintakerroin',
+					help: 'Kertoo taulukon hinnat, esim. 2.15 = +115 % (täyden palvelun muutto). Tulokset pyöristetään lähimpään 5 euroon.',
+					type: 'number',
+					step: '0.01',
+					min: '0',
+					value: props.attributes.multiplier === undefined ? 1 : props.attributes.multiplier,
+					onChange: function ( value ) {
+						var n = parseFloat( value );
+						props.setAttributes( { multiplier: isNaN( n ) || n <= 0 ? 1 : n } );
+					}
+				} ),
 				el( 'p', { style: { margin: '8px 0 0', fontSize: '12px', opacity: 0.8 } },
 					'Luvut tulevat teeman tiedostosta inc/LandingLocal.php, joten ne ovat samat kaikilla sivuilla.'
 				)
@@ -43,9 +56,15 @@
 	function Table( attributes ) {
 		var rows = window.mhPrices || [];
 		var showBasic = !! attributes.showBasic;
+		var multiplier = parseFloat( attributes.multiplier ) || 1;
 
+		// Same rule as render.php: multiply every number, round to the nearest 5 €.
 		function cell( value ) {
-			return value ? value : 'Pyydä tarjous';
+			if ( ! value ) return 'Pyydä tarjous';
+			if ( Math.abs( multiplier - 1 ) < 0.0001 ) return value;
+			return String( value ).replace( /\d+/g, function ( n ) {
+				return String( Math.round( parseInt( n, 10 ) * multiplier / 5 ) * 5 );
+			} );
 		}
 
 		var head = [ el( 'th', { key: 'h0', scope: 'col' }, 'Asunnon koko' ) ];
