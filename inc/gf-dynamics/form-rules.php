@@ -9,7 +9,8 @@
  * - Dates (Muuttopvm, TarvikkeidenToimituspvm, TarvikkeidenPalautuspvm): not today
  *   and not in the past, and the return date not before the delivery or the moving
  *   date. Same rules and messages as the LibreForm form (assets/js/client.js), but
- *   checked on the server; the date pickers also start from tomorrow.
+ *   checked on the server when a page is sent: the Gravity Forms 3 date picker has
+ *   no minimum date setting (only gform_date_min_year / max_year).
  * - Moving date from ?date=Y-m-d (the [muuttopaivat] calendar links): a date field
  *   with the dynamic population parameter "date" is filled in its own date format.
  * - A successful submission pushes `gf_lead_submit` to the dataLayer, so Google Tag
@@ -192,33 +193,6 @@ function mh_gf_dynamics_validate_dates( $result, $value, $form, $field ) {
 }
 
 add_filter( 'gform_field_validation', 'mh_gf_dynamics_validate_dates', 10, 4 );
-
-/**
- * Date pickers of the mapped date fields start from tomorrow.
- *
- * Runs after Gravity Forms' own gform_post_render handlers (setTimeout), so the
- * jQuery UI date pickers exist when the option is set.
- *
- * @param array $form Form.
- */
-function mh_gf_dynamics_datepicker_min( $form ) {
-	$map = mh_gf_dynamics_field_map_for_form( rgar( $form, 'id' ) );
-	$ids = array();
-	foreach ( mh_gf_dynamics_date_keys() as $key ) {
-		if ( ! empty( $map[ $key ] ) && ctype_digit( (string) $map[ $key ] ) ) {
-			$ids[] = '#input_' . absint( $form['id'] ) . '_' . absint( $map[ $key ] );
-		}
-	}
-	if ( ! $ids || ! class_exists( 'GFFormDisplay' ) ) {
-		return;
-	}
-
-	$script = 'setTimeout(function(){jQuery(' . wp_json_encode( implode( ',', $ids ) ) . ').each(function(){'
-		. 'var $i=jQuery(this);if($i.hasClass("hasDatepicker")){$i.datepicker("option","minDate",1);}});},0);';
-	GFFormDisplay::add_init_script( $form['id'], 'mh_gf_dynamics_datepicker_min', GFFormDisplay::ON_PAGE_RENDER, $script );
-}
-
-add_action( 'gform_register_init_scripts', 'mh_gf_dynamics_datepicker_min' );
 
 /**
  * ?date=Y-m-d from the moving day calendar fills a date field whose dynamic

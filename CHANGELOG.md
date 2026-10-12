@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.13] - 2026-10-12
+
+### Removed
+
+- The "date pickers start from tomorrow" script of 1.2.12: it set a jQuery UI option, and Gravity Forms 3 has its own date picker without a minimum date setting, so it did nothing. The server-side date rules stay.
+
 ## [1.2.12] - 2026-10-12
 
 ### Fixed
@@ -14,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- `inc/gf-dynamics/form-rules.php`, for every Gravity Forms form with an active Dynamics feed (fields found through the feed's field map): the LibreForm date rules on the server (not today, not in the past, return not before delivery or the move) with date pickers from tomorrow; ?date=Y-m-d from the moving day calendar fills the date field with dynamic population parameter `date`; a successful submission pushes `gf_lead_submit` to the dataLayer for Google Tag Manager.
+- `inc/gf-dynamics/form-rules.php`, for every Gravity Forms form with an active Dynamics feed (fields found through the feed's field map): the LibreForm date rules on the server (not today, not in the past, return not before delivery or the move); ?date=Y-m-d from the moving day calendar fills the date field with dynamic population parameter `date`; a successful submission pushes `gf_lead_submit` to the dataLayer for Google Tag Manager.
 
 ## [1.2.11] - 2026-10-07
 
