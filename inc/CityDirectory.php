@@ -10,8 +10,9 @@
  *
  * A town's office comes from the moving city pages (_mh_city / _mh_office),
  * so cleaning and box pages follow the same office as the town's moving page.
- * Pages whose town has no office (regions) form the last group. The list
- * follows the published pages, so it needs no upkeep.
+ * Towns whose moving page has no office (outside the offices' local areas,
+ * Muuttohaukat 12.10.2026) and pages with no town of their own (regions) form
+ * the last groups. The list follows the published pages, so it needs no upkeep.
  *
  * @package Muuttohaukat
  */
@@ -52,13 +53,15 @@ function city_directory_services(): array {
       'title'        => 'Muuttolaatikot paikkakunnittain',
       'text'         => 'Toimitamme muuttolaatikot ja noudamme ne muuton jälkeen. Valitse oma paikkakuntasi.',
       'office_links' => false,
+      'other'        => 'Muut paikkakunnat',
       'areas'        => 'Maakunnat',
     ],
   ]);
 }
 
 /**
- * Town name (lower case) => office key, from the moving city pages.
+ * Town name (lower case) => office key, from the moving city pages; '' for a
+ * town whose moving page has no office.
  */
 function city_office_map(): array {
   static $map = null;
@@ -74,15 +77,16 @@ function city_office_map(): array {
   }
   $map = [];
   foreach ($meta as $m) {
-    if (!empty($m['_mh_city']) && !empty($m['_mh_office'])) {
-      $map[mb_strtolower($m['_mh_city'])] = $m['_mh_office'];
+    if (!empty($m['_mh_city'])) {
+      $map[mb_strtolower($m['_mh_city'])] = (string) ($m['_mh_office'] ?? '');
     }
   }
   return $map;
 }
 
 /**
- * Office key (or 'areas') => [['label', 'url', 'id'], …], towns in Finnish order.
+ * Office key, 'other' (a town without an office, when the service names that
+ * group) or 'areas' => [['label', 'url', 'id'], …], towns in Finnish order.
  */
 function city_directory_groups(string $service): array {
   $conf = city_directory_services()[$service] ?? null;
@@ -98,8 +102,9 @@ function city_directory_groups(string $service): array {
     $name = $city !== '' ? $city : html_entity_decode(wp_strip_all_tags(get_the_title($post)), ENT_QUOTES, 'UTF-8');
     $name = trim(preg_replace($conf['prefix'], '', $name), " :\t");
     $key  = mb_strtolower(trim(preg_replace('/\s*\(.*\)$/u', '', $name)));
-    $office = (string) get_post_meta($post->ID, '_mh_office', true) ?: ($office_of[$key] ?? 'areas');
-    $groups[office($office) ? $office : 'areas'][] = ['label' => $name, 'url' => get_permalink($post), 'id' => $post->ID];
+    $office = (string) get_post_meta($post->ID, '_mh_office', true) ?: ($office_of[$key] ?? null);
+    $group = $office !== null && office($office) ? $office : ($office !== null && isset($conf['other']) ? 'other' : 'areas');
+    $groups[$group][] = ['label' => $name, 'url' => get_permalink($post), 'id' => $post->ID];
   }
 
   $collator = class_exists('\Collator') ? new \Collator('fi_FI') : null;
@@ -127,7 +132,7 @@ function city_directory_html(array $args): string {
   static $n = 0;
   $id = 'mh-cities-' . $service . (++$n > 1 ? '-' . $n : '');
   $current = is_singular() ? get_queried_object_id() : 0;
-  $order = array_merge(array_keys(offices()), ['areas']);
+  $order = array_merge(array_keys(offices()), ['other', 'areas']);
 
   ob_start();
   ?>
@@ -143,8 +148,8 @@ function city_directory_html(array $args): string {
     <div class="mh-cities__groups">
       <?php foreach ($order as $key) :
         if (empty($groups[$key])) continue;
-        $office = $key === 'areas' ? null : office($key);
-        $label = $office['label'] ?? $conf['areas'];
+        $office = office($key);
+        $label = $office['label'] ?? ($conf[$key] ?? $conf['areas']);
         $count = count($groups[$key]);
         $page = ($office && $conf['office_links'] && !empty($office['page'])) ? home_url($office['page']) : '';
         ?>

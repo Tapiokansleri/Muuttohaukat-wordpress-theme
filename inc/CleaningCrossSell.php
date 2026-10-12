@@ -2,13 +2,16 @@
 /**
  * Muuttosiivous on the moving landing pages.
  *
- * The person who books a move also has an old home to hand over, so every
- * city page offers the cleaning right after its prices. The 13 cities that
- * kept their own cleaning page (audit 3.10) link to it; the other cities link
- * to /muuttosiivous/. The cleaning pages already link back from their hero.
+ * The person who books a move also has an old home to hand over, so a city
+ * page offers the cleaning right after its prices, when the cleaning crews
+ * reach the town: it has its own cleaning page, or it lies within
+ * CLEANING_RADIUS_KM of a town that has one. Cities with their own page link
+ * to it; the others link to /muuttosiivous/. The cleaning pages already link
+ * back from their hero.
  *
  * The section is added in render_block after the landing-prices block of any
- * post with _mh_city, so the 103 city pages need no content change.
+ * post with _mh_city, so the city pages need no content change. Distances use
+ * the _mh_coords meta ("lat,lng") of the moving pages.
  *
  * @package Muuttohaukat
  */
@@ -38,6 +41,84 @@ function cleaning_page_for(string $city): array {
   return isset($pages[$slug])
     ? ['url' => $pages[$slug], 'own' => true]
     : ['url' => home_url('/muuttosiivous/'), 'own' => false];
+}
+
+/**
+ * How far the cleaning crews reach from a town with its own cleaning page, as
+ * the crow flies (Muuttohaukat 12.10.2026: no cleaning in Pori, Savonlinna or
+ * Lappeenranta, "Yltää about 50km säteellä").
+ */
+const CLEANING_RADIUS_KM = 50;
+
+/**
+ * A post's _mh_coords meta as [lat, lng], or null.
+ */
+function city_coords(int $post_id): ?array {
+  $raw = (string) get_post_meta($post_id, '_mh_coords', true);
+  if (!preg_match('/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/', $raw, $m)) {
+    return null;
+  }
+  return [(float) $m[1], (float) $m[2]];
+}
+
+/**
+ * Great-circle distance in kilometres.
+ */
+function km_between(array $a, array $b): float {
+  [$lat1, $lng1, $lat2, $lng2] = array_map('deg2rad', [$a[0], $a[1], $b[0], $b[1]]);
+  $h = sin(($lat2 - $lat1) / 2) ** 2 + cos($lat1) * cos($lat2) * sin(($lng2 - $lng1) / 2) ** 2;
+  return 2 * 6371 * asin(min(1, sqrt($h)));
+}
+
+/**
+ * Coordinates of the towns with a published cleaning page, from their moving
+ * pages (the cleaning page muuttosiivous-<town> and the moving page share the
+ * town's _mh_city).
+ *
+ * @return array<int, array{0: float, 1: float}>
+ */
+function cleaning_town_coords(): array {
+  static $coords = null;
+  if ($coords !== null) {
+    return $coords;
+  }
+
+  $own = [];
+  foreach (get_posts(['post_type' => 'muuttosiivous', 'post_status' => 'publish', 'numberposts' => -1]) as $post) {
+    $own[preg_replace('/^muuttosiivous-/', '', $post->post_name)] = true;
+  }
+
+  $coords = [];
+  foreach (get_posts(['post_type' => 'muutto', 'post_status' => 'publish', 'numberposts' => -1, 'meta_key' => '_mh_coords']) as $post) {
+    $point = city_coords($post->ID);
+    if ($point && isset($own[sanitize_title((string) get_post_meta($post->ID, '_mh_city', true))])) {
+      $coords[] = $point;
+    }
+  }
+
+  return $coords;
+}
+
+/**
+ * Whether the cleaning crews reach the town of a city page.
+ */
+function cleaning_reaches(int $post_id, string $city): bool {
+  if (cleaning_page_for($city)['own']) {
+    return true;
+  }
+
+  $point = city_coords($post_id);
+  if (!$point) {
+    return false;
+  }
+
+  foreach (cleaning_town_coords() as $town) {
+    if (km_between($point, $town) <= CLEANING_RADIUS_KM) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function cleaning_cross_sell_html(string $city, string $iness): string {
@@ -85,7 +166,7 @@ add_filter('render_block', function ($html, $block) {
 
   $post_id = get_the_ID() ?: get_queried_object_id();
   $city = trim((string) get_post_meta($post_id, '_mh_city', true));
-  if ($city === '' || get_post_type($post_id) === 'muuttosiivous') {
+  if ($city === '' || get_post_type($post_id) === 'muuttosiivous' || !cleaning_reaches((int) $post_id, $city)) {
     return $html;
   }
 

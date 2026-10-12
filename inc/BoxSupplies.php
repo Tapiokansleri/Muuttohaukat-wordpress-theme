@@ -197,12 +197,41 @@ add_shortcode('muuttolaatikot_vuokra', function () {
 });
 
 /**
+ * The delivery section for a town that no office serves (Muuttohaukat
+ * 12.10.2026: "Hyvinkäältä pois", "Vantaalta pois"): delivery there is agreed
+ * case by case, so no delivery days or prices are promised.
+ */
+function box_delivery_by_agreement(string $place, string $iness): string {
+  $cities = array_column(offices(), 'city');
+  $last = array_pop($cities);
+  $pickup = ($cities ? implode(', ', $cities) . ' ja ' . $last : (string) $last) . ' aukioloaikoina';
+
+  $list = '';
+  foreach ([['Toimitus', 'Sovitaan erikseen'], ['Nouto itse', $pickup]] as $row) {
+    $list .= '<div class="mh-box-rows__row"><dt>' . esc_html($row[0]) . '</dt><dd>' . esc_html($row[1]) . '</dd></div>';
+  }
+
+  return box_section('toimitus', [
+    'kicker'     => 'Toimitus',
+    'title'      => $iness !== '' ? sprintf('Toimitus ja nouto %s', $iness) : 'Toimitus ja nouto',
+    'paragraphs' => [
+      esc_html(sprintf('%s on toimipisteidemme lähialueiden ulkopuolella, joten laatikoiden toimituksesta ja noudosta sovitaan aina erikseen. Kerro tarjouspyynnössä muuton päivä ja osoitteet, niin ehdotamme sopivaa tapaa.', $place)),
+      esc_html('Voit myös noutaa laatikot ja tarvikkeet itse mistä tahansa toimipisteestämme ilman eri varausta aukioloaikoina.'),
+    ],
+  ], '<dl class="mh-box-rows">' . $list . '</dl>');
+}
+
+/**
  * [muuttolaatikot_toimitus iness="Espoossa" place="Espoo" office="vantaa" km="30" time="29 min"]
  * All attributes are optional; with place, office and km the list also
- * shows the drive from the serving office.
+ * shows the drive from the serving office. A place without an office gets
+ * box_delivery_by_agreement().
  */
 add_shortcode('muuttolaatikot_toimitus', function ($atts) {
   $atts = shortcode_atts(['iness' => '', 'place' => '', 'office' => '', 'km' => '', 'time' => ''], $atts, 'muuttolaatikot_toimitus');
+  if ($atts['place'] !== '' && !office((string) $atts['office'])) {
+    return box_delivery_by_agreement($atts['place'], $atts['iness']);
+  }
   $delivery = box_delivery();
 
   $rows = [

@@ -168,6 +168,12 @@
     gap: var(--space-6, 1.5rem);
 }
 
+/* Brand colours (painike.css): the quote button is black, which would vanish here */
+.mh-article-cta a.mh-painike:is([href*="/tarjouspyynto"], [href^="#tarjous"]) {
+    background-color: var(--color-white, #fff);
+    color: var(--color-black, #000) !important;
+}
+
 .mh-article-cta__link {
     color: var(--color-white, #fff);
     font-weight: var(--font-bold, 700);

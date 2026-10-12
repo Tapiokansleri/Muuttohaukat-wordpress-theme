@@ -57,6 +57,21 @@
 	color: #fff !important;
 }
 
+/* Brand colours (Muuttohaukat 12.10.2026: "Tilaa muutto keltainen, pyydä tarjous musta"):
+   ordering on tilaamuutto.fi is yellow and asking for a quote is black, whatever colour
+   the button was given. The link decides, so the Painike block, the floating CTA and the
+   theme's own sections all follow it. On a section of the same colour landing.css and
+   article.css turn the button white. */
+a.mh-painike[href*="tilaamuutto.fi"] {
+	background-color: #ffed00;
+	color: #000 !important;
+}
+
+a.mh-painike:is([href*="/tarjouspyynto"], [href^="#tarjous"]) {
+	background-color: #000;
+	color: #fff !important;
+}
+
 /* Stack to full-width on small screens for better tap targets */
 @media (max-width: 640px) {
 	.mh-painike-wrap,

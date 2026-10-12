@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.14] - 2026-10-12
+
+### Changed
+
+- Brand colours (Muuttohaukat 12.10.2026: "Tilaa muutto keltainen, pyydä tarjous musta"): a button that links to tilaamuutto.fi is yellow and a button that asks for a quote (`/tarjouspyynto…`, `#tarjous…`) is black, whatever colour it was given. The link decides, so the Painike block, the floating CTA, core buttons with the theme's styles and the article CTA all follow it. On a yellow or black section the button of the section's own colour turns white.
+- Muuttosiivous is offered on a city page only where the cleaning crews reach: the town has its own cleaning page, or it lies within 50 km (as the crow flies, from the new `_mh_coords` meta) of a town that has one (Muuttohaukat 12.10.2026: no cleaning in Pori, Savonlinna or Lappeenranta, "Yltää about 50km säteellä").
+
+### Added
+
+- `[muuttolaatikot_toimitus]` with a place but no office: delivery is agreed case by case and the boxes can be picked up from any office, instead of delivery days and prices counted from an office (for towns outside the offices' local areas).
+- The box directory groups towns whose moving page has no office as "Muut paikkakunnat", before "Maakunnat".
+
 ## [1.2.13] - 2026-10-12
 
 ### Removed

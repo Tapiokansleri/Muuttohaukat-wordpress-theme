@@ -901,3 +901,28 @@
 .mh-landing .mh-landing-steps .mh-landing-features + .mh-painike-wrap {
     margin-top: var(--space-12, 3rem);
 }
+
+/* Brand colours (painike.css): ordering on tilaamuutto.fi is yellow and asking for
+   a quote is black. Core buttons with the theme's primary or ghost style follow the
+   same rule, and on a section of the button's own colour the button turns white. */
+.wp-block-button.mh-landing__button .wp-block-button__link:is([href*="/tarjouspyynto"], [href^="#tarjous"]),
+.wp-block-button.mh-landing__button .wp-block-button__link.wp-element-button:is([href*="/tarjouspyynto"], [href^="#tarjous"]) {
+    background: var(--color-black) !important;
+    color: var(--color-white) !important;
+}
+
+.wp-block-button.mh-landing__button .wp-block-button__link[href*="tilaamuutto.fi"],
+.wp-block-button.mh-landing__button .wp-block-button__link.wp-element-button[href*="tilaamuutto.fi"] {
+    background: var(--color-accent) !important;
+    color: var(--color-black) !important;
+}
+
+.mh-landing-section--bg-yellow a.mh-painike[href*="tilaamuutto.fi"],
+.mh-landing-section--bg-black a.mh-painike:is([href*="/tarjouspyynto"], [href^="#tarjous"]),
+.mh-landing-section--bg-yellow .wp-block-button.mh-landing__button .wp-block-button__link[href*="tilaamuutto.fi"],
+.mh-landing-section--bg-yellow .wp-block-button.mh-landing__button .wp-block-button__link.wp-element-button[href*="tilaamuutto.fi"],
+.mh-landing-section--bg-black .wp-block-button.mh-landing__button .wp-block-button__link:is([href*="/tarjouspyynto"], [href^="#tarjous"]),
+.mh-landing-section--bg-black .wp-block-button.mh-landing__button .wp-block-button__link.wp-element-button:is([href*="/tarjouspyynto"], [href^="#tarjous"]) {
+    background: var(--color-white) !important;
+    color: var(--color-black) !important;
+}
