@@ -28,6 +28,16 @@ LibreForm forwarding in `inc/forms.php` is untouched.
 | Service toggles (`Pakkauspalvelu`, …) | `Kyllä` | omit |
 | `Käyttöehdot` | `Hyväksytty` | omit (required on form) |
 
+A yes/no question asked as a radio (e.g. lift: **Ei** / **On**) can be mapped to a checkbox key: negative answers (`Ei`, `No`, `0`, `false`, `off`) are omitted like an unchecked box, any other answer becomes the canonical checked value.
+
+## Form rules (`form-rules.php`)
+
+Every form with an active Dynamics feed gets these, found through the feed's field map (no field IDs in code):
+
+- **Dates** mapped to `Muuttopvm`, `TarvikkeidenToimituspvm`, `TarvikkeidenPalautuspvm`: not today, not in the past, return not before delivery or moving date (server-side, same messages as the LibreForm form); the date pickers start from tomorrow. Use the date format `dd.mm.yyyy`.
+- **?date=Y-m-d** (moving day calendar links) fills a date field whose *Allow field to be populated dynamically* parameter is `date`.
+- **Lead event**: a successful submission pushes `{"event": "gf_lead_submit", "gf_form_id": …, "wplf_form_id": …, "lomake": "kotimuutto"}` to the dataLayer. Before a GF form replaces a LibreForm one, add a GTM Custom Event trigger on `gf_lead_submit` to the lead conversion tags (GA4 and Google Ads); the current trigger only fires for forms with the class `wplf-form`.
+
 ## Lisätiedot template
 
 Fields Dynamics has no key for (alternative dates, preferred contact method, extra services…) can be sent inside `Lisätiedot`. In the feed, fill **Lisätiedot template** and insert fields with the merge tag picker:

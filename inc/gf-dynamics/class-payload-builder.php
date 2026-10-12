@@ -46,7 +46,11 @@ class MH_GF_Dynamics_Payload_Builder {
 			}
 
 			if ( isset( $canonical[ $wplf_key ] ) ) {
-				// Any truthy mapped value for a LibreForm checkbox becomes the canonical checked string.
+				// A "no" answer (e.g. the Ei radio of a lift question) is an unchecked box: omit it.
+				if ( mh_gf_dynamics_is_negative_answer( $value ) ) {
+					continue;
+				}
+				// Any other mapped value for a LibreForm checkbox becomes the canonical checked string.
 				$entries[ $wplf_key ] = $canonical[ $wplf_key ];
 				continue;
 			}

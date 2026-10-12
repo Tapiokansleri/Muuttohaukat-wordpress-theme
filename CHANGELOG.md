@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.12] - 2026-10-12
+
+### Fixed
+
+- Gravity Forms → Dynamics: a "no" answer mapped to a checkbox key (the Ei radio of the lift questions) is left out like an unchecked box. It used to become LähtöHissi / KohdeHissi "on", so a flat without a lift would have reached Dynamics as one with a lift.
+
+### Added
+
+- `inc/gf-dynamics/form-rules.php`, for every Gravity Forms form with an active Dynamics feed (fields found through the feed's field map): the LibreForm date rules on the server (not today, not in the past, return not before delivery or the move) with date pickers from tomorrow; ?date=Y-m-d from the moving day calendar fills the date field with dynamic population parameter `date`; a successful submission pushes `gf_lead_submit` to the dataLayer for Google Tag Manager.
+
 ## [1.2.11] - 2026-10-07
 
 ### Fixed

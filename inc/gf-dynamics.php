@@ -37,6 +37,7 @@ function mh_gf_dynamics_bootstrap() {
 	require_once MH_GF_DYNAMICS_PATH . 'wplf-field-keys.php';
 	require_once MH_GF_DYNAMICS_PATH . 'class-payload-builder.php';
 	require_once MH_GF_DYNAMICS_PATH . 'class-dynamics-addon.php';
+	require_once MH_GF_DYNAMICS_PATH . 'form-rules.php';
 
 	GFAddOn::register( 'MH_GF_Dynamics_AddOn' );
 	// Theme loads after gform_loaded / init:15 — instantiate and init manually.
