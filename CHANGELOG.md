@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.19] - 2026-10-19
+
+### Added
+
+- Price table row "yli 100 m² omakotitalo": 1000–2000 € with boxes, the figure the price page and the example cards already give for detached house moves (Tapio 19.10.2026: fill the price page's missing information). It shows on every page with the price table and in the price page's offers; the full-service table scales it like the other rows.
+
 ## [1.2.18] - 2026-10-19
 
 ### Added

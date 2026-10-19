@@ -218,6 +218,12 @@ function office_hours(): array {
  * stated, and 600 keeps the 100 € gap to the price with boxes that the other
  * sizes have.
  *
+ * Over 100 m²: the price page has long said that detached house moves cost
+ * 1000–2000 € or more, and the example cards show the same, so the table
+ * says so too (Tapio 19.10.2026: fill the price page's missing sizes). Only
+ * the "Muutto ja laatikot" column is shown on the site; a price without boxes
+ * has never been published for this size, so `basic` stays empty.
+ *
  * @return array<int, array<string, string|null>>
  */
 function price_rows(): array {
@@ -226,6 +232,7 @@ function price_rows(): array {
     ['size' => '40-59 m²',  'type' => 'kaksio',      'basic' => '450-600 €',  'boxes' => '500-700 €'],
     ['size' => '60-79 m²',  'type' => 'kolmio',      'basic' => '600-850 €',  'boxes' => '650-950 €'],
     ['size' => '80-100 m²', 'type' => 'perheasunto', 'basic' => '800-1000 €', 'boxes' => '850-1150 €'],
+    ['size' => 'yli 100 m²', 'type' => 'omakotitalo', 'basic' => null,        'boxes' => '1000-2000 €'],
   ]);
 }
 
