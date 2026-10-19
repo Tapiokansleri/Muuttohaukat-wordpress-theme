@@ -55,10 +55,11 @@ function example_prices_html(): string {
       . '</div>';
   }
 
-  // The price page's own figure for the biggest moves (it is not in the price table).
+  // The biggest moves: the price table's over 100 m² row, priced by quote within that range.
+  $house = !empty($rows['omakotitalo']['basic']) ? example_price($rows['omakotitalo']['basic'], 1.0) : '1000–2000 €';
   $cards .= '<div class="mh-example">'
     . '<h3 class="mh-example__title">' . esc_html('Omakotitalo') . '</h3>'
-    . '<p class="mh-example__price">' . esc_html('1000–2000 €') . '</p>'
+    . '<p class="mh-example__price">' . esc_html($house) . '</p>'
     . '<p class="mh-example__boxes">' . esc_html('tai enemmän tavaramäärän mukaan') . '</p>'
     . '<p>' . esc_html('Suuremmissa omakotitalomuutoissa hinta lasketaan aina tarjouksessa tavaramäärän ja matkan mukaan.') . '</p>'
     . '</div>';

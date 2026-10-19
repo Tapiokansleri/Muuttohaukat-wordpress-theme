@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.20] - 2026-10-19
+
+### Fixed
+
+- The over 100 m² row's 1000–2000 € is the moving price ("Muuttopalvelu"), as on the Omakotitalo example card, not the price with boxes; the boxes cell asks for a quote until a price is given. The example card now takes its figure from that row.
+
 ## [1.2.19] - 2026-10-19
 
 ### Added
