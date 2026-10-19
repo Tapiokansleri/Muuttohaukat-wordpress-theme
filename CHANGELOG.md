@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.23] - 2026-10-19
+
+### Changed
+
+- Price table row over 100 m²: 1100–2200 € with boxes (Tapio 19.10.2026). Every row now has a price in both columns.
+
 ## [1.2.22] - 2026-10-19
 
 ### Changed
