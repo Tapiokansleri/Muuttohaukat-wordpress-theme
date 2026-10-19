@@ -138,6 +138,8 @@ add_shortcode('muuttohaukat_yritystiedot', __NAMESPACE__ . '\\company_page_html'
 /**
  * The organization with its history, people and offices. Shares the @id of
  * The SEO Framework's Organization node, so the two describe one company.
+ * Printed on the company page and the front page, where assistants look for
+ * the company's address, phone and offices first.
  */
 function organization_schema(): array {
   $f = company_facts();
@@ -172,13 +174,20 @@ function organization_schema(): array {
       'addressLocality' => $hq['city'],
       'addressCountry'  => 'FI',
     ],
+    'contactPoint'     => [
+      '@type'             => 'ContactPoint',
+      'contactType'       => 'customer service',
+      'telephone'         => $f['phone'],
+      'email'             => $f['email'],
+      'availableLanguage' => 'fi',
+    ],
     'areaServed'       => ['@type' => 'Country', 'name' => 'Suomi'],
     'department'       => $offices,
   ];
 }
 
 add_action('wp_head', function () {
-  if (is_singular() && current_path() === COMPANY_PAGE) {
+  if (is_front_page() || (is_singular() && current_path() === COMPANY_PAGE)) {
     print_json_ld(organization_schema());
   }
 }, 20);

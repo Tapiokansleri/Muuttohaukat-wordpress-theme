@@ -52,6 +52,7 @@ function schema_provider(): array {
 
   return [
     '@type'     => 'MovingCompany',
+    '@id'       => home_url('/#/schema/Organization'),
     'name'      => $facts['name'],
     'legalName' => $facts['legal_name'],
     'vatID'     => $facts['vat_id'],
@@ -74,7 +75,9 @@ function service_schema(string $name, string $path, array $extra = []): array {
 
 /**
  * The home move price list (price_rows()) as offers. Rows without a
- * confirmed price are left out.
+ * confirmed price are left out. The list applies within the offices' local
+ * areas, so its area is their maakunnat, not all of Finland; moves elsewhere
+ * are priced by distance.
  */
 function price_schema(): array {
   $offers = [];
@@ -97,7 +100,10 @@ function price_schema(): array {
     }
   }
 
-  return service_schema('Kotimuutto', '/kotimuutto/muuttopalvelun-hinta/', ['offers' => $offers]);
+  return service_schema('Kotimuutto', '/kotimuutto/muuttopalvelun-hinta/', [
+    'areaServed' => regions_schema(served_regions()),
+    'offers'     => $offers,
+  ]);
 }
 
 /**

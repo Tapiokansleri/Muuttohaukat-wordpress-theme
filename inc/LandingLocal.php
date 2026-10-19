@@ -16,7 +16,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * The four offices. Addresses and postcodes match the Google profiles.
+ * The four offices. Addresses and postcodes match the Google profiles;
+ * `profile` is the office's Google Maps place and `geo` its pin there.
+ * `regions` are the maakunnat its towns lie in (a few edge towns aside).
  *
  * @return array<string, array<string, mixed>>
  */
@@ -32,7 +34,9 @@ function offices(): array {
       'phone'   => '010 400 4500',
       'area'    => 'Uusimaa, Kanta-Häme ja Päijät-Häme',
       'page'    => '/hyvinkaa-uusimaa/',
-      'profile' => '',
+      'profile' => 'https://maps.google.com/?cid=11433821925429721701',
+      'geo'     => ['lat' => 60.650256, 'lng' => 24.8450867],
+      'regions' => ['Uusimaa', 'Kanta-Häme', 'Päijät-Häme'],
       'staff'   => 'hyvinkaa-henkilot',
       'reviews' => 7649, // Business Reviews Bundle collection "Hyvinkää"
     ],
@@ -46,7 +50,9 @@ function offices(): array {
       'phone'   => '010 400 4500',
       'area'    => 'pääkaupunkiseutu',
       'page'    => '/paakaupunkiseutu-helsinki-vantaa-espoo/',
-      'profile' => '',
+      'profile' => 'https://maps.google.com/?cid=8392292102119291085',
+      'geo'     => ['lat' => 60.2628266, 'lng' => 24.8818141],
+      'regions' => ['Uusimaa'],
       'staff'   => 'pk-seudun-henkilot',
       'reviews' => 7652, // "Helsinki PK seutu"
     ],
@@ -60,7 +66,9 @@ function offices(): array {
       'phone'   => '010 400 4500',
       'area'    => 'Pirkanmaa',
       'page'    => '/tampere-pirkanmaa/',
-      'profile' => '',
+      'profile' => 'https://maps.google.com/?cid=16242424661017334574',
+      'geo'     => ['lat' => 61.4593627, 'lng' => 23.7752207],
+      'regions' => ['Pirkanmaa'],
       'staff'   => 'tampere-henkilot',
       'reviews' => 6503, // "Muuttohaukat Oy Tampere"
     ],
@@ -74,7 +82,9 @@ function offices(): array {
       'phone'   => '010 400 4500',
       'area'    => 'Varsinais-Suomi',
       'page'    => '/turku-varsinais-suomi/',
-      'profile' => '',
+      'profile' => 'https://maps.google.com/?cid=7912306566104831936',
+      'geo'     => ['lat' => 60.4447761, 'lng' => 22.3060201],
+      'regions' => ['Varsinais-Suomi'],
       'staff'   => 'turku-henkilot',
       'reviews' => 7643, // "Turku"
     ],
@@ -247,20 +257,58 @@ function office_schema(array $office, string $city = ''): array {
     'openingHours'  => $hours['schema'],
     'parentOrganization' => [
       '@type' => 'Organization',
+      '@id'   => home_url('/#/schema/Organization'),
       'name'  => 'Muuttohaukat Oy',
       'url'   => home_url('/'),
     ],
   ];
 
+  if (!empty($office['geo'])) {
+    $schema['geo'] = [
+      '@type'     => 'GeoCoordinates',
+      'latitude'  => $office['geo']['lat'],
+      'longitude' => $office['geo']['lng'],
+    ];
+  }
+
+  // A city page names its town; the office itself serves its maakunnat.
   if ($city !== '') {
     $schema['areaServed'] = ['@type' => 'City', 'name' => $city];
+  } elseif (!empty($office['regions'])) {
+    $schema['areaServed'] = regions_schema($office['regions']);
   }
 
   if (!empty($office['profile'])) {
+    $schema['hasMap'] = $office['profile'];
     $schema['sameAs'] = [$office['profile']];
   }
 
   return apply_filters('mh_office_schema', $schema, $office, $city);
+}
+
+/**
+ * Maakunnat as schema.org areaServed.
+ *
+ * @param string[] $regions
+ */
+function regions_schema(array $regions): array {
+  return array_map(fn($name) => ['@type' => 'AdministrativeArea', 'name' => $name], array_values($regions));
+}
+
+/**
+ * Every maakunta the offices serve, in office order: the area of the price
+ * list (price_rows() applies within the offices' local areas).
+ *
+ * @return string[]
+ */
+function served_regions(): array {
+  $regions = [];
+  foreach (offices() as $office) {
+    foreach ($office['regions'] ?? [] as $name) {
+      $regions[$name] = $name;
+    }
+  }
+  return array_values($regions);
 }
 
 /**

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.17] - 2026-10-19
+
+### Added
+
+- Each office in `offices()` has its Google Maps place (`profile`, a `?cid=` link to the verified Business Profile), its pin (`geo`) and the maakunnat its towns lie in (`regions`). The office markup carries them as `sameAs`, `hasMap`, `geo` and, on the office's own page, `areaServed`; city pages keep their town as `areaServed`.
+- The front page prints the full organization (`organization_schema()`: address, phone, e-mail, Y-tunnus, founding year 1992, founder, staff count and the four offices), as the company page already did, plus a customer service `contactPoint`. The search trends and AI agents report of 19.10.2026 found the front page's Organization had only a name, logo and URL.
+
+### Changed
+
+- The price page's `areaServed` is the maakunnat the offices serve (Uusimaa, Kanta-Häme, Päijät-Häme, Pirkanmaa, Varsinais-Suomi) instead of all of Finland, since the price list applies within the offices' local areas.
+- The office markup and the services' `provider` point to the organization's `@id`, so every page describes the same company.
+
 ## [1.2.16] - 2026-10-19
 
 ### Fixed
