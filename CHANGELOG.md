@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.16] - 2026-10-19
+
+### Fixed
+
+- Example price cards: the landing text margins no longer add up between the price and the lines under it; one 10px rhythm inside each card.
+
 ## [1.2.15] - 2026-10-19
 
 ### Added

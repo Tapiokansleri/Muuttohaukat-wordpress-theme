@@ -939,11 +939,13 @@
 .mh-example {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2, 0.5rem);
+    gap: 10px;
     min-width: 0;
 }
 
-.mh-example > * {
+/* The landing text rules give headings and paragraphs their own margins;
+   inside a card the flex gap alone sets the rhythm. */
+.mh-landing .mh-examples .mh-example > * {
     margin: 0;
 }
 
@@ -961,11 +963,6 @@
 .mh-example__boxes {
     font-size: var(--body-font-size);
     opacity: 0.75;
-}
-
-.mh-example__price + .mh-example__boxes + p,
-.mh-example__price + p {
-    margin-top: var(--space-2, 0.5rem);
 }
 
 @media (max-width: 1024px) {
