@@ -13,6 +13,8 @@
  *   no minimum date setting (only gform_date_min_year / max_year).
  * - Moving date from ?date=Y-m-d (the [muuttopaivat] calendar links): a date field
  *   with the dynamic population parameter "date" is filled in its own date format.
+ * - A date typed as Y-m-d, as browser agents and assistants write dates, is
+ *   rewritten in the field's own format (pp.kk.vvvv) before it is validated.
  * - A successful submission pushes `gf_lead_submit` to the dataLayer, so Google Tag
  *   Manager can count these leads; its LibreForm trigger only listens to forms with
  *   the class wplf-form.
@@ -212,6 +214,21 @@ function mh_gf_dynamics_prefill_moving_date( $value, $field = null ) {
 		return $value;
 	}
 
+	return mh_gf_dynamics_format_date( $field, (int) $m[1], (int) $m[2], (int) $m[3] );
+}
+
+add_filter( 'gform_field_value_date', 'mh_gf_dynamics_prefill_moving_date', 10, 2 );
+
+/**
+ * A date in a date field's own format.
+ *
+ * @param GF_Field $field Date field.
+ * @param int      $year  Year.
+ * @param int      $month Month.
+ * @param int      $day   Day.
+ * @return string
+ */
+function mh_gf_dynamics_format_date( $field, $year, $month, $day ) {
 	$formats = array(
 		'mdy'       => 'm/d/Y',
 		'dmy'       => 'd/m/Y',
@@ -223,10 +240,35 @@ function mh_gf_dynamics_prefill_moving_date( $value, $field = null ) {
 	);
 	$format = isset( $formats[ $field->dateFormat ] ) ? $formats[ $field->dateFormat ] : 'm/d/Y';
 
-	return gmdate( $format, gmmktime( 0, 0, 0, (int) $m[2], (int) $m[3], (int) $m[1] ) );
+	return gmdate( $format, gmmktime( 0, 0, 0, $month, $day, $year ) );
 }
 
-add_filter( 'gform_field_value_date', 'mh_gf_dynamics_prefill_moving_date', 10, 2 );
+/**
+ * A date typed as Y-m-d in a date picker field is rewritten in the field's own
+ * format before validation, so an agent that writes 2026-11-15 is not stopped
+ * by "Please enter a valid date". Other values are left to Gravity Forms.
+ *
+ * @param array $form Form.
+ */
+function mh_gf_dynamics_accept_iso_dates( $form ) {
+	if ( ! mh_gf_dynamics_active_feeds( rgar( $form, 'id' ) ) ) {
+		return;
+	}
+
+	foreach ( (array) rgar( $form, 'fields' ) as $field ) {
+		if ( ! is_object( $field ) || $field->type !== 'date' || $field->dateType !== 'datepicker' ) {
+			continue;
+		}
+		$name = 'input_' . str_replace( '.', '_', (string) $field->id );
+		$raw  = isset( $_POST[ $name ] ) && is_string( $_POST[ $name ] ) ? trim( wp_unslash( $_POST[ $name ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! preg_match( '/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $raw, $m ) || ! checkdate( (int) $m[2], (int) $m[3], (int) $m[1] ) ) {
+			continue;
+		}
+		$_POST[ $name ] = mh_gf_dynamics_format_date( $field, (int) $m[1], (int) $m[2], (int) $m[3] );
+	}
+}
+
+add_action( 'gform_pre_process', 'mh_gf_dynamics_accept_iso_dates', 5 );
 
 /**
  * dataLayer event for a successful offer form submission (not spam, not aborted).

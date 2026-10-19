@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.18] - 2026-10-19
+
+### Added
+
+- Gravity Forms offer forms accept a date typed as vvvv-kk-pp (2026-11-15), the way browser agents and assistants write dates: it is rewritten as pp.kk.vvvv before validation instead of failing with "Please enter a valid date" (`mh_gf_dynamics_accept_iso_dates()` in `inc/gf-dynamics/form-rules.php`, date picker fields of forms with an active Dynamics feed).
+
 ## [1.2.17] - 2026-10-19
 
 ### Added
