@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.22] - 2026-10-19
+
+### Changed
+
+- Price table row 30–39 m²: 350–550 € without boxes (Tapio 19.10.2026), so the row has a price in both columns.
+
 ## [1.2.21] - 2026-10-19
 
 ### Added
