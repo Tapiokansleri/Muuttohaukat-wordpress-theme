@@ -224,11 +224,16 @@ function office_hours(): array {
  * sizes). No price with boxes has been published for this size, so that cell
  * asks for a quote.
  *
+ * 30-39 m²: 400–650 € with boxes (Tapio 19.10.2026, "Muutto ja laatikot"); no
+ * price without boxes was given. The type must differ from the 20-29 m² row,
+ * since the example cards look rows up by type.
+ *
  * @return array<int, array<string, string|null>>
  */
 function price_rows(): array {
   return apply_filters('mh_price_rows', [
     ['size' => '20-29 m²',  'type' => 'yksiö',       'basic' => '300-500 €',  'boxes' => '350-600 €'],
+    ['size' => '30-39 m²',  'type' => 'yksiö tai pieni kaksio', 'basic' => null, 'boxes' => '400-650 €'],
     ['size' => '40-59 m²',  'type' => 'kaksio',      'basic' => '450-600 €',  'boxes' => '500-700 €'],
     ['size' => '60-79 m²',  'type' => 'kolmio',      'basic' => '600-850 €',  'boxes' => '650-950 €'],
     ['size' => '80-100 m²', 'type' => 'perheasunto', 'basic' => '800-1000 €', 'boxes' => '850-1150 €'],

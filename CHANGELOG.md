@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.21] - 2026-10-19
+
+### Added
+
+- Price table row 30–39 m² (yksiö tai pieni kaksio): 400–650 € with boxes (Tapio 19.10.2026). No price without boxes was given, so that cell asks for a quote. It shows on every page with the price table and in the price page's offers.
+
 ## [1.2.20] - 2026-10-19
 
 ### Fixed
