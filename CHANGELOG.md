@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.15] - 2026-10-19
+
+### Added
+
+- `[esimerkkihinnat]` (`inc/ExamplePrices.php`): worked examples of what a move costs (yksiö, kaksio, kolmio, perheasunto, a full-service kaksio and a detached house), generated from `price_rows()` and the full-service multiplier 2.15 (Muuttohaukat 12.10.2026: "Voidaan generoida hinta-haarukan perusteella"). They are examples from the price ranges, not realized moves, and follow any price change. Styles `.mh-examples` in landing.css.
+
 ## [1.2.14] - 2026-10-12
 
 ### Changed
