@@ -258,6 +258,27 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
 }, 10, 2);
 
 /**
+ * A submission that names no existing form is refused before LibreForm runs.
+ * Only bots send these (often with SQL in _formId); LibreForm would refuse
+ * them too, but its catch block first logs "Undefined variable $useFallback"
+ * (php-error.log, 321 times in four weeks before 21.10.2026). The check is
+ * LibreForm's own form lookup, so a real form is never refused here.
+ */
+add_filter( 'rest_request_before_callbacks', function ( $response, $handler, $request ) {
+	if ( is_wp_error( $response ) || ! ( $request instanceof \WP_REST_Request ) ) {
+		return $response;
+	}
+	if ( strpos( (string) $request->get_route(), '/wplf/v2/submitForm' ) === false || ! function_exists( '\WPLF\getFormPostObject' ) ) {
+		return $response;
+	}
+	$form_id = $request->get_param( '_formId' );
+	if ( ( is_string( $form_id ) || is_int( $form_id ) ) && $form_id !== '' && \WPLF\getFormPostObject( $form_id ) instanceof \WP_Post ) {
+		return $response;
+	}
+	return new \WP_Error( 'mh_wplf_unknown_form', 'Unknown form.', [ 'status' => 400 ] );
+}, 10, 3 );
+
+/**
  * WPLF's submit endpoint catches its own failures and only logs them when
  * WP_DEBUG is on, so a rejected submission leaves nothing in the log but an
  * "Undefined variable $useFallback" warning from its own catch block. Record
@@ -275,7 +296,8 @@ add_filter( 'rest_request_after_callbacks', function ( $response, $handler, $req
 		return $response;
 	}
 
-	$form_id = (string) ( $request->get_param( '_formId' ) ?: 'unknown' );
+	$raw_id  = $request->get_param( '_formId' );
+	$form_id = ( is_scalar( $raw_id ) && (string) $raw_id !== '' ) ? (string) $raw_id : 'unknown';
 
 	$reason_from_response = static function ( $response ) {
 		if ( is_wp_error( $response ) ) {
@@ -296,7 +318,8 @@ add_filter( 'rest_request_after_callbacks', function ( $response, $handler, $req
 
 	if ( is_wp_error( $response ) ) {
 		$reason = $reason_from_response( $response );
-		if ( $is_honeypot( $reason ) ) {
+		// Honeypot hits and submissions to forms that do not exist are bot noise
+		if ( $is_honeypot( $reason ) || $response->get_error_code() === 'mh_wplf_unknown_form' ) {
 			return $response;
 		}
 		d365_log( sprintf(

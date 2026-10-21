@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.24] - 2026-10-21
+
+### Fixed
+
+- A LibreForm submission that names no existing form (bots, often with SQL in `_formId`) is refused with HTTP 400 before LibreForm runs, using LibreForm's own form lookup, so a real form is never refused. LibreForm's catch block had logged "Undefined variable $useFallback" for each of them (321 times in four weeks), and the theme logged them as failed submissions; refused unknown forms are no longer logged.
+- The submission logger no longer warns "Array to string conversion" when `_formId` is sent as an array.
+
 ## [1.2.23] - 2026-10-19
 
 ### Changed
