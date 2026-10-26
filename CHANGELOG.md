@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.25] - 2026-10-26
+
+### Added
+
+- `[me_vs_muut]`: a filterable "Me vs muut" comparison. Eight rows (price, insurance, damage and packing, service area, environment, offer, cancellation, services) with Muuttohaukat's facts quoted from the site and a neutral question to ask any moving company; the visitor ticks the topics that matter.
+- `[hintalaskuri]`: a price calculator. The visitor picks the apartment size (20–150 m²), one of four packages (with or without boxes, normal or full service), extra services (cleaning with the household deduction estimate, piano or safe, furniture assembly, storage) and separate box rental with delivery. The result updates at once and lists what is and is not in the sum. All numbers come from the theme's own tables (`price_rows()`, `box_rental_products()`, `box_delivery()`); the full service price is 2.15 times the base price rounded to 5 €, which reproduces the published full service table on every row.
+- Both print the head and body columns of a `.mh-text-sec` and load `assets/css/interactive.css` and `assets/js/interactive.js` only on pages that use them (`inc/InteractiveSections.php`). Filters: `mh_interactive_data`, `mh_interactive_comparison_rows`, `mh_interactive_comparison_topics`.
+
 ## [1.2.24] - 2026-10-21
 
 ### Fixed
