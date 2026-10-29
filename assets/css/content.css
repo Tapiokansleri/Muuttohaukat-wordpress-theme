@@ -2156,3 +2156,62 @@ body :is(p, ul, ol):is(.has-normal-font-size, .has-medium-font-size, .has-large-
     box-shadow: none !important;
     font-weight: 700;
 }
+
+/* Password protected pages: WordPress's own form, styled like the theme's fields and buttons */
+.post-password-form {
+    max-width: 36rem;
+}
+
+.post-password-form p {
+    margin: 0 0 var(--space-4);
+}
+
+.post-password-form label {
+    display: block;
+    font-weight: 600;
+}
+
+.post-password-form input[type="password"] {
+    display: block;
+    width: 100%;
+    max-width: 24rem;
+    min-height: 3rem;
+    margin-top: 0.35rem;
+    padding: 0.55rem 0.8rem;
+    background: var(--color-white);
+    color: var(--color-black);
+    border: 2px solid var(--color-black);
+    border-radius: 4px;
+    font: inherit;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.post-password-form input[type="password"]:focus-visible,
+.post-password-form input[type="submit"]:focus-visible {
+    outline: 3px solid var(--color-black);
+    outline-offset: 3px;
+}
+
+.post-password-form input[type="submit"] {
+    padding: 1rem 2.5rem;
+    background: var(--color-black);
+    color: var(--color-white);
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* The quote form opened from the price calculator, with the choices filled in (client.js) */
+.mh-prefill-note {
+    margin: 0 0 var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-accent);
+    color: var(--color-black);
+    font-weight: 600;
+}

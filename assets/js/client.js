@@ -221,6 +221,99 @@
   }
 
   // -------------------------------------------------------------------
+  // Quote form prefilled from the price calculator ([hintalaskuri], "Pyydä tarjous")
+  //   ?pa=50&pkt=taysi&lisa=siivous,piano&laatikot=50&paivat=14&matka=alle-12-km&arvio=970-1290
+  // Only whitelisted values and numbers are used; what the address holds is never written as HTML.
+  // -------------------------------------------------------------------
+  (function () {
+    var q = new URLSearchParams(window.location.search);
+    if (!q.has('pa') && !q.has('pkt')) {
+      return;
+    }
+    var form = document.querySelector('form.wplf-form');
+    if (!form || !form.querySelector('[name="LähtöPA"]')) {
+      return;
+    }
+
+    var PACKAGES = {
+      'perus': 'Muuttopalvelu',
+      'laatikot': 'Muutto ja laatikot',
+      'taysi': 'Täyden palvelun muutto',
+      'taysi-laatikot': 'Täyden palvelun muutto ja laatikot'
+    };
+    var EXTRAS = {
+      'siivous': ['MuuttosiivousLähtöpaikassa', 'muuttosiivous'],
+      'piano': ['PianonTaiKassakaapinMuutto', 'piano tai kassakaappi'],
+      'kaluste': ['Kalusteasennus', 'kalusteasennus'],
+      'varastointi': ['Varastointi', 'varastointi']
+    };
+    var TRIPS = { 'alle-12-km': 'alle 12 km', '12-30-km': '12–30 km', 'yli-30-km': 'yli 30 km', 'nouto': 'nouto itse toimipisteestä' };
+    var NBSP = String.fromCharCode(160);
+
+    function field(name) { return form.querySelector('[name="' + name + '"]'); }
+    function whole(value, min, max) {
+      if (!/^\d{1,4}$/.test(value || '')) { return null; }
+      var n = parseInt(value, 10);
+      return n >= min && n <= max ? n : null;
+    }
+    function changed(el) {
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    var size = whole(q.get('pa'), 20, 150);
+    var pkt = Object.prototype.hasOwnProperty.call(PACKAGES, q.get('pkt')) ? q.get('pkt') : null;
+    var extras = (q.get('lisa') || '').split(',').filter(function (k) { return Object.prototype.hasOwnProperty.call(EXTRAS, k); });
+    var boxes = whole(q.get('laatikot'), 1, 500);
+    var days = whole(q.get('paivat'), 1, 90);
+    var trip = Object.prototype.hasOwnProperty.call(TRIPS, q.get('matka')) ? q.get('matka') : null;
+    var estimate = /^\d{1,5}-\d{1,5}$/.test(q.get('arvio') || '') ? q.get('arvio').split('-') : null;
+    var rental = q.has('paivat');
+
+    var areaInput = field('LähtöPA');
+    if (size !== null && areaInput && !areaInput.value) {
+      areaInput.value = size;
+      changed(areaInput);
+    }
+    if ((pkt === 'taysi' || pkt === 'taysi-laatikot') && field('Pakkauspalvelu')) {
+      field('Pakkauspalvelu').checked = true;
+      changed(field('Pakkauspalvelu'));
+    }
+    extras.forEach(function (key) {
+      var box = field(EXTRAS[key][0]);
+      if (box) { box.checked = true; changed(box); }
+    });
+    var boxInput = field('Muuttolaatikkoja');
+    if (boxes !== null && boxInput && (pkt === 'laatikot' || pkt === 'taysi-laatikot' || rental) && Number(boxInput.value) === 0) {
+      boxInput.value = boxes;
+      changed(boxInput);
+    }
+
+    // A short summary for the staff, only when the visitor has written nothing yet
+    var notes = field('Lisätiedot');
+    if (notes && !notes.value) {
+      var lines = ['Hinta-arvio laskurista:'];
+      if (pkt) { lines.push('- Paketti: ' + PACKAGES[pkt] + (size !== null ? ', ' + size + NBSP + 'm²' : '')); }
+      else if (size !== null) { lines.push('- Asunnon koko: ' + size + NBSP + 'm²'); }
+      if (extras.length) { lines.push('- Lisäpalvelut: ' + extras.map(function (k) { return EXTRAS[k][1]; }).join(', ')); }
+      if (rental && boxes !== null) {
+        lines.push('- Laatikoiden vuokra: ' + boxes + ' kpl' + (days !== null ? ', ' + days + ' päivää' : '') + (trip ? ', toimitus ' + TRIPS[trip] : ''));
+      }
+      if (estimate) {
+        var grouped = function (n) { return String(parseInt(n, 10)).replace(/\B(?=(\d{3})+(?!\d))/g, NBSP); };
+        lines.push('- Laskurin arvio: ' + grouped(estimate[0]) + '–' + grouped(estimate[1]) + NBSP + '€');
+      }
+      if (lines.length > 1) { notes.value = lines.join('\n'); changed(notes); }
+    }
+
+    var note = document.createElement('p');
+    note.className = 'mh-prefill-note';
+    note.setAttribute('role', 'status');
+    note.textContent = 'Täytimme lomakkeeseen valitsemasi tiedot hinta-arviosta. Tarkista ne ja täydennä loput.';
+    form.parentNode.insertBefore(note, form);
+  })();
+
+  // -------------------------------------------------------------------
   // WPLF (LibreForm) success / error callbacks
   // -------------------------------------------------------------------
   var WPLF = window.WPLF;

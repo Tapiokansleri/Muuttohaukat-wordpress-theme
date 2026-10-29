@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.26] - 2026-10-29
+
+### Changed
+
+- The calculator's "Pyydä tarjous" button opens the quote form with the choices filled in: apartment size, full service (the Pakkauspalvelu switch), cleaning, furniture assembly, piano or safe, storage, the number of boxes, and a short summary with the calculator's estimate in Lisätiedot. Only whitelisted values from the address are used, and a note above the form says the fields were filled in (`client.js`, `inc/InteractiveSections.php` unchanged).
+- The calculator's result panel reads more easily: one text size, prices in a right hand column, lines no longer than 40rem, more space between groups, a labelled "Huomioitavaa" list, and two repeated sentences removed.
+- Password protected pages: the password field has a border and the button matches the theme's buttons (`content.css`).
+
 ## [1.2.25] - 2026-10-26
 
 ### Added

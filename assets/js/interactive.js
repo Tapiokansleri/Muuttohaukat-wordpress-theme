@@ -102,8 +102,7 @@
           });
         } else {
           eiMukana.push({ id: 'siivous', nimi: 'Muuttosiivous', teksti: S.iso, selite: S.isoSelite });
-          huomiot.push('Muuttosiivouksen hintaa ei lasketa ' + (S.hintaAlle + 1) + NBSP + 'm²:n ja sitä suuremmille asunnoille, koska hinta nousee koon mukaan. Se ei ole mukana summassa.');
-        }
+            }
       }
       if (t.piano)  eiMukana.push({ id: 'piano',  nimi: 'Piano tai kassakaappi', teksti: DATA.piano.teksti });
       if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: 'Kalusteasennus', teksti: DATA.kaluste.teksti });
@@ -231,7 +230,7 @@
 
     function draw(r) {
       var L = Laskenta;
-      var h = '';
+      var h = '<div class="mhi-result__head">';
       h += '<p class="mhi-result__top">' + r.paketti.nimi + ', ' + r.m2 + NBSP + 'm²</p>';
       h += '<p class="mhi-result__price"><span class="mhi-vh">Hinta-arvio </span><span class="mhi-nw">' + L.summa(r.yhteensa[0], r.yhteensa[1]) + '</span></p>';
 
@@ -240,7 +239,7 @@
       } else {
         h += '<p class="mhi-result__change">Muita paketteja verrataan tähän hintaan samalle asunnon koolle.</p>';
       }
-      h += '<p class="mhi-result__note">Summa sisältää vain hinnoitellut rivit' + (r.eiMukana.length ? '. Alla olevat kohdat, joilla ei ole hintaa, eivät ole mukana summassa.' : '.') + '</p>';
+      h += '<p class="mhi-result__note">Summa sisältää vain hinnoitellut rivit.</p></div>';
 
       h += '<div class="mhi-result__group"><p class="mhi-label">Mukana summassa</p><dl class="mhi-lines">';
       r.mukana.forEach(function (rivi) {
@@ -261,9 +260,9 @@
       }
 
       if (r.huomiot.length) {
-        h += '<ul class="mhi-remarks">';
+        h += '<div class="mhi-result__group"><p class="mhi-label">Huomioitavaa</p><ul class="mhi-remarks">';
         r.huomiot.forEach(function (n) { h += '<li>' + n + '</li>'; });
-        h += '</ul>';
+        h += '</ul></div>';
       }
       return h;
     }
@@ -277,6 +276,21 @@
       var html = draw(r);
       if (html !== previous) { el.tulos.innerHTML = html; previous = html; }
       el.tilaa.hidden = !r.tilaaHeti;
+      el.tarjous.setAttribute('href', quoteLink(r));
+    }
+
+    // "Pyydä tarjous" opens the quote form with the choices already filled in (see client.js)
+    function quoteLink(r) {
+      var s = readState();
+      var p = new URLSearchParams();
+      p.set('pa', r.m2);
+      p.set('pkt', r.paketti.id);
+      var extras = ['siivous', 'piano', 'kaluste', 'varastointi'].filter(function (k) { return s[k]; });
+      if (extras.length) { p.set('lisa', extras.join(',')); }
+      if (r.paketti.laatikot || s.vuokra) { p.set('laatikot', s.laatikoita); }
+      if (s.vuokra) { p.set('paivat', s.paivia); p.set('matka', s.matka); }
+      p.set('arvio', Math.floor(r.yhteensa[0] / 100) + '-' + Math.ceil(r.yhteensa[1] / 100));
+      return DATA.linkit.tarjous + (DATA.linkit.tarjous.indexOf('?') === -1 ? '?' : '&') + p.toString();
     }
 
     el.koko.addEventListener('input', function () {
@@ -313,7 +327,6 @@
 
     head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra, #mhi-vuokra-matka').forEach(function (e) { e.addEventListener('change', update); });
 
-    el.tarjous.setAttribute('href', DATA.linkit.tarjous);
     el.tilaa.setAttribute('href', DATA.linkit.tilaaHeti);
     setSize(K.oletus);
     update();
