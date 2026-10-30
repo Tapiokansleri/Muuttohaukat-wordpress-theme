@@ -29,7 +29,12 @@
     /** [min, max] senttejä -> "450–600 €" (en-viiva, kovo välilyönti ennen €) */
     function alue(lo, hi) { return lo === hi ? eur(lo) + NBSP + '€' : eur(lo) + '–' + eur(hi) + NBSP + '€'; }
     function summa(lo, hi) { return alue(Math.floor(lo / 100) * 100, Math.ceil(hi / 100) * 100); }  // kokonaiset eurot, alue ei kutistu
-    function nw(teksti) { return '<span class="mhi-nw">' + teksti + '</span>'; }   // pitää alueen samalla rivillä
+    function nw(teksti) { return '<span class="mhi-nw">' + teksti + '</span>'; }
+    /** link to an internal page (the addresses come from the theme), or plain text if the page is not known */
+    function linkki(avain, teksti) {
+      const u = (DATA.linkit.sivut || {})[avain];
+      return u ? '<a href="' + String(u).replace(/"/g, '%22') + '">' + teksti + '</a>' : teksti;
+    }   // pitää alueen samalla rivillä
     function monikko(n, yksikko, monta) { return n + NBSP + (n === 1 ? yksikko : monta); }
 
     function kokoluokka(m2) {
@@ -86,7 +91,7 @@
       const erotus = vertailupaketti.p.id === paketti.id ? null : [hinta[0] - vertailupaketti.h[0], hinta[1] - vertailupaketti.h[1]];
 
       const mukana = [{
-        id: 'paketti', nimi: 'Valittu paketti: ' + paketti.nimi, hinta,
+        id: 'paketti', nimi: 'Valittu paketti: ' + paketti.nimi, linkki: paketti.taysi ? 'taysi' : 'kotimuutto', hinta,
         selite: [paketti.kuvaus + '. Kokoluokka ' + nw(luokanNimi(luokka)) + '.']
       }];
       const eiMukana = [];
@@ -101,19 +106,18 @@
           const jalkeen = [lo - v[0], hi - v[1]];
           siivousTiedot = { hinta: [sent(lo), sent(hi)], vahennys: v.map(sent), jalkeen: jalkeen.map(sent) };
           mukana.push({
-            id: 'siivous', nimi: 'Muuttosiivous', hinta: siivousTiedot.hinta,
+            id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', hinta: siivousTiedot.hinta,
             selite: [
-              'Kotitalousvähennyksen jälkeen noin ' + nw(alue(siivousTiedot.jalkeen[0], siivousTiedot.jalkeen[1])) + ' (arvio).',
-              'Vähennys on ' + S.vahennysProsentti + NBSP + '% työn hinnasta, josta vähennetään ' + S.omavastuu + NBSP + 'euron omavastuu (enintään ' + tuhat(S.vahennysKatto) + NBSP + '€ henkilöä kohden vuodessa), joten tällä hinnalla vähennys on ' + nw(alue(siivousTiedot.vahennys[0], siivousTiedot.vahennys[1])) + '.'
+              'Kotitalousvähennyksen jälkeen noin ' + nw(alue(siivousTiedot.jalkeen[0], siivousTiedot.jalkeen[1])) + ' (arvio).'
             ]
           });
         } else {
-          eiMukana.push({ id: 'siivous', nimi: 'Muuttosiivous', teksti: S.iso, selite: S.isoSelite });
+          eiMukana.push({ id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', teksti: S.iso, selite: S.isoSelite });
             }
       }
-      if (t.piano)  eiMukana.push({ id: 'piano',  nimi: 'Piano tai kassakaappi', teksti: DATA.piano.teksti });
-      if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: 'Kalusteasennus', teksti: DATA.kaluste.teksti });
-      if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: 'Varastointi', teksti: DATA.varastointi.teksti });
+      if (t.piano)  eiMukana.push({ id: 'piano',  nimi: 'Piano tai kassakaappi', linkki: 'piano', teksti: DATA.piano.teksti });
+      if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: 'Kalusteasennus', linkki: 'kaluste', teksti: DATA.kaluste.teksti });
+      if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: 'Varastointi', teksti: DATA.varastointi.teksti.replace('Pelican Self Storagen', linkki('varastointi', 'Pelican Self Storagen')) });
 
       // Laatikoiden vuokraus erikseen: vain paketeille ilman laatikoita
       if (t.vuokra && !paketti.laatikot) {
@@ -121,7 +125,7 @@
         vuokraTiedot = v;
         const L = DATA.laatikkovuokra;
         mukana.push({
-          id: 'vuokra', nimi: 'Laatikoiden vuokraus', hinta: v.yhteensa,
+          id: 'vuokra', nimi: 'Laatikoiden vuokraus', linkki: 'laatikot', hinta: v.yhteensa,
           selite: [
             monikko(v.maara, 'laatikko', 'laatikkoa') + ' × ' + monikko(v.paivat, 'päivä', 'päivää') + ' × ' + eur(sent(L.paivaHintaEuroa)) + NBSP + '€' + NBSP + '=' + NBSP + eur(v.vuokra) + NBSP + '€.',
             'Toimitus ja nouto ' + L.suuntia + NBSP + '×' + NBSP + nw(alue(v.suunta[0], v.suunta[1])) + ' = ' + nw(alue(v.toimitus[0], v.toimitus[1])) + ', alle 30' + NBSP + 'km:n matkalla. Yli 30' + NBSP + 'km:n matkalta toimitus ja nouto laskutetaan tuntiveloituksella.'
@@ -132,8 +136,8 @@
 
       if (paketti.taysi) huomiot.push('Täyden palvelun muutto sisältää pakkauksen ja purkamisen. Hinnat ovat esimerkkihintoja asunnon koon mukaan, ja lopullinen hinta riippuu tavaramäärästä ja matkasta.');
       if (t.siivous) huomiot.push('Muuttosiivous tehdään vain siivouspaikkakuntien lähellä.');
-      if (t.siivous || t.kaluste) huomiot.push('Kotitalousvähennys koskee muuttosiivousta ja uusien kalusteiden kokoonpanoa, kun se laskutetaan erikseen. Se ei koske muuttotyötä.');
-      if (m2 > DATA.tilaaHetiEnintaan) huomiot.push('Tilaa heti -palvelusta voi tilata muuton, kun asunto on alle ' + (DATA.tilaaHetiEnintaan + 1) + NBSP + 'm². Suuremmista asunnoista pyydä tarjous.');
+      if (t.siivous || t.kaluste) huomiot.push(linkki('ehdot', 'Kotitalousvähennys') + ' koskee muuttosiivousta ja uusien kalusteiden kokoonpanoa, kun se laskutetaan erikseen. Se ei koske muuttotyötä.');
+      if (m2 > DATA.tilaaHetiEnintaan) huomiot.push('<a href="' + DATA.linkit.tilaaHeti + '" target="_blank" rel="noopener noreferrer">Tilaamuutto.fi</a>-palvelussa voi tilata muuton, kun asunto on alle ' + (DATA.tilaaHetiEnintaan + 1) + NBSP + 'm². Suuremmista asunnoista pyydä tarjous.');
 
       let lo = 0, hi = 0;
       mukana.forEach((r) => { lo += r.hinta[0]; hi += r.hinta[1]; });
@@ -147,7 +151,7 @@
       };
     }
 
-    return { laske, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, eur, alue, summa, sent };
+    return { laske, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, linkki, eur, alue, summa, sent };
   })();
 
   // ------------------------------------------------------------ Me vs muut filter
@@ -243,7 +247,6 @@
       h += '<p class="mhi-result__top">' + r.paketti.nimi + ', ' + r.m2 + NBSP + 'm²</p>';
       h += '<p class="mhi-result__price"><span class="mhi-vh">Hinta-arvio </span><span class="mhi-nw">' + L.summa(r.yhteensa[0], r.yhteensa[1]) + '</span></p>';
 
-      h += '<p class="mhi-result__note">Summa sisältää vain hinnoitellut rivit.</p>';
       if (r.erotus) {
         h += '<p class="mhi-result__change"><strong class="mhi-result__delta">+' + NBSP + '<span class="mhi-nw">' + L.alue(r.erotus[0], r.erotus[1]) + '</span> ' + r.paketti.erotusSana + '</strong><span class="mhi-result__vs">verrattuna samankokoisen asunnon pakettiin ' + r.vertailupaketti.paketti.nimi + ' (<span class="mhi-nw">' + L.alue(r.vertailupaketti.hinta[0], r.vertailupaketti.hinta[1]) + '</span>).</span></p>';
       } else {
@@ -251,10 +254,12 @@
       }
       h += '</div>';
 
-      h += '<div class="mhi-result__group"><p class="mhi-label">Mukana summassa</p><dl class="mhi-lines">';
+      h += '<div class="mhi-result__group"><dl class="mhi-lines">';
       r.mukana.forEach(function (rivi) {
         var kicker = /^(Valittu paketti): (.*)$/.exec(rivi.nimi);
-        var nimi = kicker ? '<span class="mhi-lines__kicker">' + kicker[1] + '</span>' + kicker[2] : rivi.nimi;
+        var nimiTeksti = kicker ? kicker[2] : rivi.nimi;
+        var linkitetty = rivi.linkki ? L.linkki(rivi.linkki, nimiTeksti) : nimiTeksti;
+        var nimi = kicker ? '<span class="mhi-lines__kicker">' + kicker[1] + '</span>' + linkitetty : linkitetty;
         h += '<div class="mhi-lines__row"><dt>' + nimi + '</dt><dd class="mhi-lines__sum"><span class="mhi-nw">' + L.alue(rivi.hinta[0], rivi.hinta[1]) + '</span></dd>';
         rivi.selite.forEach(function (s) { h += '<dd class="mhi-lines__note">' + s + '</dd>'; });
         h += '</div>';
@@ -264,7 +269,7 @@
       if (r.eiMukana.length) {
         h += '<div class="mhi-result__group"><p class="mhi-label">Ei mukana summassa</p><dl class="mhi-lines">';
         r.eiMukana.forEach(function (rivi) {
-          h += '<div class="mhi-lines__row"><dt>' + rivi.nimi + '</dt><dd class="mhi-lines__text">' + rivi.teksti + '</dd>';
+          h += '<div class="mhi-lines__row"><dt>' + (rivi.linkki ? L.linkki(rivi.linkki, rivi.nimi) : rivi.nimi) + '</dt><dd class="mhi-lines__text">' + rivi.teksti + '</dd>';
           if (rivi.selite) { h += '<dd class="mhi-lines__note">' + rivi.selite + '</dd>'; }
           h += '</div>';
         });

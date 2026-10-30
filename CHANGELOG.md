@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.30] - 2026-10-30
+
+### Changed
+
+- Calculator result, fewer words (Tapio 30.10.2026): the lines "Summa sisältää vain hinnoitellut rivit", "Mukana summassa", "Hinta-arvio perustuu julkaistuun hinnastoon…", "Kuluttajahinnat sisältävät ALV:n" and the explanation of how the household deduction is counted are gone. "Tilaa heti -palvelusta" became "Tilaamuutto.fi-palvelussa" (a link).
+
+### Added
+
+- Internal links in the calculator: the package, cleaning, piano and safe, furniture assembly and box rental names in the result link to their pages, "Pelican Self Storagen" links to the Pelican Self Storage page (/varastointi/), "Kotitalousvähennys" links to the price page's "Hinnan ehdot", and a "Lue lisää" list under the buttons links to the price page, full service, boxes, cleaning, piano and safe, storage and the FAQ. Addresses come from `interactive_page_links()` (filter `mh_interactive_page_links`); a page that is not published is left out.
+
 ## [1.2.29] - 2026-10-30
 
 ### Changed

@@ -79,6 +79,36 @@ function interactive_price_classes(): array {
   return $classes;
 }
 
+/**
+ * Internal pages the calculator links to: key => [label, address]. A page that does not exist (or is not published)
+ * is left out, so a link is never broken.
+ */
+function interactive_page_links(): array {
+  $pages = [
+    'kotimuutto' => ['Kotimuutto', 'kotimuutto'],
+    'hinnasto' => ['Muuttopalvelun hinta', 'kotimuutto/muuttopalvelun-hinta'],
+    'taysi' => ['Täyden palvelun muutto', 'kotimuutto/tayden-palvelun-muutto'],
+    'laatikot' => ['Muuttolaatikot ja muuttotarvikkeet', 'muuttolaatikot-ja-muuttotarvikkeet'],
+    'siivous' => ['Muuttosiivous', 'muuttosiivous'],
+    'piano' => ['Piano- ja kassakaappikuljetus', 'kassakaappikuljetus'],
+    'kaluste' => ['Kalusteasennus', 'yritysmuutto/kalusteasennus'],
+    'varastointi' => ['Varastointi (Pelican Self Storage)', 'varastointi'],
+    'ukk' => ['Usein kysyttyä', 'usein-kysyttyja-kysymyksia'],
+  ];
+  $links = [];
+  foreach ($pages as $key => [$label, $path]) {
+    $page = get_page_by_path($path, OBJECT, 'page');
+    if ($page && $page->post_status === 'publish') {
+      $links[$key] = [$label, get_permalink($page)];
+    }
+  }
+  if (isset($links['hinnasto'])) {
+    // The price page's "Hinnan ehdot" section: VAT, insurance, cancellation and the household deduction.
+    $links['ehdot'] = ['Hinnan ehdot', $links['hinnasto'][1] . '#hinnan-ehdot'];
+  }
+  return apply_filters('mh_interactive_page_links', $links);
+}
+
 /** Everything the calculator script needs, as one object. */
 function interactive_calculator_data(): array {
   $classes = interactive_price_classes();
@@ -101,7 +131,11 @@ function interactive_calculator_data(): array {
   $trips[] = ['id' => 'nouto', 'nimi' => 'Noudan itse toimipisteestä', 'suuntaEuroa' => 0];
 
   $data = [
-    'linkit' => ['tarjous' => home_url('/tarjouspyynto/kotimuutto/'), 'tilaaHeti' => 'https://tilaamuutto.fi/'],
+    'linkit' => [
+      'tarjous' => home_url('/tarjouspyynto/kotimuutto/'),
+      'tilaaHeti' => 'https://tilaamuutto.fi/',
+      'sivut' => array_map(fn($l) => $l[1], interactive_page_links()),
+    ],
     'koko' => ['min' => 20, 'max' => 150, 'oletus' => 50],
     // The site says "alle 80 m²" for ordering directly at tilaamuutto.fi.
     'tilaaHetiEnintaan' => 79,
@@ -387,7 +421,7 @@ add_shortcode('hintalaskuri', function ($atts) {
     . '<a class="mh-painike mh-painike--black" data-mhi-quote href="' . esc_url($data['linkit']['tarjous']) . '">Pyydä tarjous</a>'
     . '<a class="mh-painike mh-painike--yellow" data-mhi-order href="' . esc_url($data['linkit']['tilaaHeti']) . '" target="_blank" rel="noopener noreferrer">Tilaa heti</a>'
     . '</div>'
-    . '<div class="mhi-notes"><p>Hinta-arvio perustuu julkaistuun hinnastoon. Tarkka hinta sovitaan tarjouksessa.</p><p>Kuluttajahinnat sisältävät ALV:n.</p></div>'
+    . interactive_more_links_html()
     . '<p class="mhi-small">Esimerkkihinnat. Tarkka hinta pyydettäessä.</p>'
     . '</div>'
     // Floating price on phones and tablets: shown while the controls are in view and the result is not (interactive.js).
@@ -400,3 +434,16 @@ add_shortcode('hintalaskuri', function ($atts) {
 
   return $head . $body;
 });
+
+/** The "Lue lisää" list under the calculator's buttons. */
+function interactive_more_links_html(): string {
+  $links = interactive_page_links();
+  $show = ['hinnasto', 'taysi', 'laatikot', 'siivous', 'piano', 'varastointi', 'ukk'];
+  $items = '';
+  foreach ($show as $key) {
+    if (isset($links[$key])) {
+      $items .= '<li><a href="' . esc_url($links[$key][1]) . '">' . esc_html($links[$key][0]) . '</a></li>';
+    }
+  }
+  return $items === '' ? '' : '<nav class="mhi-readmore" aria-label="Lue lisää"><p class="mhi-label">Lue lisää</p><ul>' . $items . '</ul></nav>';
+}
