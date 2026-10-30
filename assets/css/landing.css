@@ -974,11 +974,18 @@
 }
 
 /* ==========================================================================
-   Two choices at the start of the front page (client proposal 30.10.2026):
-   "Haluan tietää muuton hinnan" (to Tilaamuutto.fi) and "Haluan asiantuntijan
-   apua muuttooni" (to the quote form). Side by side on wide screens, stacked
-   on phones; flat panels, nothing centred.
+   Two choices after the hero, as in the client's mockup (30.10.2026):
+   "Haluan tietää muuton hinnan" (yellow button to Tilaamuutto.fi) and "Haluan
+   asiantuntijan apua muuttooni" (light button to the quote form). A dark
+   section, dark cards with a thin border and a yellow or light stripe on top,
+   a line icon, full-width buttons with an arrow, a note under each button and
+   three checks under the cards. The section is a landing-why block with
+   background "black" and the class mh-choices-section; nothing is centred.
    ========================================================================== */
+.mh-landing-section--bg-black.mh-choices-section {
+    background: #1a1a1a !important;
+}
+
 .mh-choices {
     display: flex;
     flex-direction: column;
@@ -989,18 +996,33 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-5);
+    gap: var(--space-4);
     max-width: 52rem;
 }
 
-.mh-choices__head > * {
+/* `.mh-landing p` and `.mh-landing h3` add bottom margins on top of the flex gaps */
+.mh-landing .mh-choices > *,
+.mh-landing .mh-choices__head > *,
+.mh-landing .mh-choice-card > * {
     margin: 0;
+}
+
+.mh-choices .mh-landing-kicker {
+    color: #c9c9c9;
+    font-weight: 600;
+}
+
+.mh-choices__head > p:not(.mh-landing-kicker),
+.mh-choice-card > p {
+    color: #c9c9c9;
+    font-size: 1.0625rem;
+    line-height: 1.6;
 }
 
 .mh-choices__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
+    gap: var(--space-5);
 }
 
 @media (max-width: 760px) {
@@ -1012,131 +1034,125 @@
 .mh-choice-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-5);
+    align-items: stretch;
+    gap: var(--space-4);
     padding: var(--space-8);
-    background: #f4f4f1;
-    color: var(--color-black);
+    background: #242424;
+    border: 1px solid #3a3a3a;
+    border-top: 4px solid #f2f2f2;
+    color: var(--color-white);
 }
 
-.mh-choice-card > * {
-    margin: 0;
+.mh-choice-card--price {
+    border-top-color: var(--color-accent);
 }
 
-.mh-choice-card__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    background: var(--color-accent);
-    border-radius: 4px;
-    font-size: 1.25rem;
-    line-height: 1;
+.mh-landing .mh-choice-card > .mh-choice-card__icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin-bottom: var(--space-4);
+    color: #c9c9c9;
+}
+
+.mh-choice-card__icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .mh-choice-card__title {
-    font-size: clamp(1.5rem, 2.4vw, 2rem);
-    line-height: 1.2;
+    max-width: 20ch;
+    font-size: clamp(1.375rem, 2vw, 1.625rem);
     font-weight: 700;
+    line-height: 1.25;
+    text-wrap: balance;
 }
 
 /* the button sits at the bottom of both cards, whatever the length of the text above it */
-.mh-choice-card > .wp-block-muuttohaukat-buttons {
-    margin-top: auto;
-    margin-bottom: 0;
-}
-
-/* the theme sets its own (smaller on phones) paragraph size: the cards keep one size, the note a little smaller */
-.mh-choices__head > p:not(.mh-landing-kicker),
-.mh-choice-card > p:not(.mh-choice-card__icon) {
-    font-size: 1.0625rem;
-    line-height: 1.6;
-}
-
-.mh-choice-card > .mh-choice-card__note {
-    font-size: 0.9375rem;
-}
-
-@media (max-width: 640px) {
-    .mh-choice-card {
-        padding: var(--space-6);
-    }
-
-    .mh-choice-card > .wp-block-muuttohaukat-buttons .mh-painike {
-        width: 100%;
-    }
-}
-
-/* `.mh-landing p` and `.mh-landing h3` add bottom margins on top of the flex gap, which made
-   the gaps in the cards uneven (16, 24 and 32px); the gap is the only spacing */
-.mh-landing .mh-choices > *,
-.mh-landing .mh-choices__head > *,
-.mh-landing .mh-choice-card > * {
-    margin: 0;
-}
-
 .mh-landing .mh-choice-card > .wp-block-muuttohaukat-buttons {
     margin-top: auto;
+    padding-top: var(--space-4);
 }
 
-/* Inside the price card: three example prices from the price table ([hintahaarukka]),
-   the apartment type above its price, in three columns on every width */
-.mh-choice-card__prices {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-4);
+.mh-choices .mh-painike {
     width: 100%;
-    margin: 0;
+    gap: 0.625rem;
+    padding: 18px 24px;
+    font-size: 1rem;
+    letter-spacing: 0;
+    text-transform: none;
+    border-radius: 2px;
+}
+
+.mh-choices .mh-painike:hover,
+.mh-choices .mh-painike:focus-visible {
+    padding: 18px 24px;
+}
+
+/* the arrow shows all the time, right after the text (elsewhere the chevron comes on hover) */
+.mh-choices .mh-painike::after {
+    position: static;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    opacity: 1;
+    transform: none;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M12 5l7 7-7 7'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M12 5l7 7-7 7'/%3E%3C/svg%3E");
+    transition: transform 0.2s ease;
+}
+
+.mh-choices .mh-painike:hover::after,
+.mh-choices .mh-painike:focus-visible::after {
+    transform: translateX(3px);
+}
+
+.mh-landing .mh-choice-card > .mh-choice-card__note {
+    margin-top: calc(var(--space-1) * -1);
+    color: #a3a3a3;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.mh-choices__checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
     padding: 0;
     list-style: none;
 }
 
-.mh-choice-card__prices li {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
+.mh-choices__checks li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
     margin: 0;
     padding: 0;
+    color: #d9d9d9;
     font-size: 0.9375rem;
-    font-weight: 400;
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
-.mh-choice-card__prices strong {
-    font-size: 1.0625rem;
-    font-weight: 700;
+.mh-choices__checks li::before {
+    content: "";
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
-/* the opening hours never break inside "8–16" */
-.mh-choice-card__phone span {
-    white-space: nowrap;
-}
+@media (max-width: 640px) {
+    .mh-choice-card {
+        padding: var(--space-6) var(--space-5);
+    }
 
-.mh-choice-card__prices li::before,
-.mh-choice-card__prices li::marker {
-    content: none;
-}
-
-.mh-choice-card a:not(.mh-painike) {
-    color: var(--color-black);
-    font-weight: 700;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-}
-
-/* Business customers: one line under the two cards */
-.mh-choices__business {
-    margin: 0;
-    font-size: 1.0625rem;
-}
-
-.mh-choices__business a {
-    color: var(--color-black);
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    .mh-choices__checks {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
 }
 
 /* ==========================================================================
@@ -1265,23 +1281,4 @@ body.mh-v2.mh-hero-cta-in-view .kansleri-floating-cta-banner {
         font-size: 0.9375rem;
     }
 
-    body.mh-v2 .mh-choice-card {
-        gap: var(--space-4);
-        padding: var(--space-6) var(--space-5);
-    }
-
-    body.mh-v2 .mh-choice-card__title {
-        font-size: 1.375rem;
-    }
-
-    /* full-width buttons like in the hero (the card's flex-start left the wrapper as wide as its text) */
-    body.mh-v2 .mh-choice-card > .wp-block-muuttohaukat-buttons {
-        align-self: stretch;
-    }
-
-    body.mh-v2 .mh-choice-card__icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        font-size: 1.0625rem;
-    }
 }

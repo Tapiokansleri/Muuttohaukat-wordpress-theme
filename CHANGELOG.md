@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.36] - 2026-10-30
+
+### Changed
+
+- The two-choice section (`.mh-choices`, `.mh-choice-card`) follows the client's mockup (Tapio 30.10.2026: "Luo boksit näin miten asiakas halusi"): a dark section (`mh-choices-section` on a landing-why block with the black background), dark cards with a thin border and a yellow (price) or light (expert help) stripe on top, a line icon, full-width buttons in sentence case with an arrow that always shows, a note under each button and three checks under the cards (`.mh-choices__checks`).
+
+### Removed
+
+- The light card look of 1.2.32 and the example price, phone and business line styles of 1.2.33–1.2.34 (`.mh-choice-card__prices`, `.mh-choice-card__phone`, `.mh-choices__business`), which the mockup does not have. `[hintahaarukka]` stays.
+
 ## [1.2.35] - 2026-10-30
 
 ### Changed
