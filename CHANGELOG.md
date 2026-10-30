@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.28] - 2026-10-30
+
+### Changed
+
+- The calculator's result panel is easier to read, above all on a phone (Tapio 30.10.2026: "todella vaikea lukea"). The price comes first with its footnote under it; the extra cost of a package is on its own bold line with what it is compared against under it; each group (included in the sum, not included, notes) starts with a hairline and a label; "Valittu paketti" is a small heading above the package name; on a phone the price sits under the name in a larger size instead of beside it; the text is 17px and the notes 16px. On wider screens the prices stay in a right hand column. No wording changed.
+
 ## [1.2.27] - 2026-10-30
 
 ### Changed

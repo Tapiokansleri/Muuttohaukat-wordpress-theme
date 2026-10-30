@@ -447,12 +447,12 @@
     }
 }
 
-/* The result: flat yellow, left aligned, no frames. One text size, two weights,
-   prices in a right hand column, lines no longer than about 40rem. */
+/* The result: flat yellow, left aligned. One text size (17px), bold for what matters, a hairline above each group,
+   prices under the names on a phone and in a right hand column on wider screens, lines at most 40rem. */
 .mhi-panel {
     display: flex;
     flex-direction: column;
-    gap: 2.25rem;
+    gap: 0;
     width: 100%;
     padding: clamp(1.5rem, 3vw, 2.5rem);
     background: var(--color-accent);
@@ -475,7 +475,8 @@
 .mhi-result__head {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    padding-bottom: 1.75rem;
 }
 
 .mhi-result__head > * {
@@ -487,33 +488,54 @@
 }
 
 .mhi-panel .mhi-result__price {
-    font-size: clamp(2.1rem, 4.4vw, 3.25rem);
+    margin-top: 0.25rem;
+    font-size: clamp(2.25rem, 7vw, 3.25rem);
     font-weight: 800;
     line-height: 1.05;
     font-variant-numeric: tabular-nums;
 }
 
-.mhi-result__change,
-.mhi-result__note {
+.mhi-panel .mhi-result__note {
+    font-size: 1rem;
+}
+
+/* the comparison: the extra cost in bold on its own line, what it is compared with under it */
+.mhi-result__change {
+    margin-top: 0.75rem;
     max-width: 40rem;
 }
 
-.mhi-panel .mhi-result__note {
-    font-size: 0.9375rem;
+.mhi-result__delta,
+.mhi-result__vs {
+    display: block;
+}
+
+.mhi-result__delta {
+    font-weight: 700;
+}
+
+.mhi-result__vs {
+    margin-top: 0.15rem;
 }
 
 .mhi-result__group {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+    padding: 1.5rem 0 1.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.mhi-result__group:last-child {
+    padding-bottom: 0;
 }
 
 .mhi-panel .mhi-label,
 .mhi-label {
     margin: 0;
-    font-size: 12px;
+    font-size: 0.8125rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     line-height: 1.4;
 }
@@ -525,13 +547,11 @@
     margin: 0;
 }
 
-/* name on the left, price on the right, the explanation under both */
+/* phone: name, then the price big under it, then the explanation */
 .mhi-lines__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 1.5rem;
-    row-gap: 0.25rem;
-    align-items: baseline;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .mhi-lines dt {
@@ -542,21 +562,30 @@
     margin: 0;
 }
 
+.mhi-lines__kicker {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
 .mhi-lines__sum {
-    font-weight: 700;
-    text-align: right;
+    font-size: 1.25rem;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
 }
 
-.mhi-lines__text,
-.mhi-lines__note {
-    grid-column: 1 / -1;
-    max-width: 40rem;
+.mhi-lines__text {
+    font-weight: 500;
 }
 
 .mhi-lines__note {
-    font-size: 0.9375rem;
+    max-width: 40rem;
+    font-size: 1rem;
     line-height: 1.55;
+}
+
+.mhi-lines__row > .mhi-lines__note {
+    margin-top: 0.25rem;
 }
 
 .mhi-remarks {
@@ -567,25 +596,47 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.55;
 }
 
 .mhi-remarks li {
     position: relative;
     margin: 0;
-    padding-left: 1.1em;
+    padding-left: 1.25em;
 }
 
 .mhi-remarks li::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 0.58em;
+    top: 0.6em;
     width: 0.4em;
     height: 0.4em;
     background: var(--color-black);
     border-radius: 50%;
+}
+
+/* wider screens: name on the left, price in a right hand column */
+@media (min-width: 641px) {
+    .mhi-lines__row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: 1.5rem;
+        row-gap: 0.25rem;
+        align-items: baseline;
+    }
+
+    .mhi-lines__sum {
+        font-size: 1.0625rem;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .mhi-lines__text,
+    .mhi-lines__note {
+        grid-column: 1 / -1;
+    }
 }
 
 .mhi-below {

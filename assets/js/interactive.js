@@ -240,16 +240,19 @@
       h += '<p class="mhi-result__top">' + r.paketti.nimi + ', ' + r.m2 + NBSP + 'm²</p>';
       h += '<p class="mhi-result__price"><span class="mhi-vh">Hinta-arvio </span><span class="mhi-nw">' + L.summa(r.yhteensa[0], r.yhteensa[1]) + '</span></p>';
 
+      h += '<p class="mhi-result__note">Summa sisältää vain hinnoitellut rivit.</p>';
       if (r.erotus) {
-        h += '<p class="mhi-result__change"><strong>+' + NBSP + '<span class="mhi-nw">' + L.alue(r.erotus[0], r.erotus[1]) + '</span> ' + r.paketti.erotusSana + '</strong> verrattuna samankokoisen asunnon pakettiin ' + r.vertailupaketti.paketti.nimi + ' (<span class="mhi-nw">' + L.alue(r.vertailupaketti.hinta[0], r.vertailupaketti.hinta[1]) + '</span>).</p>';
+        h += '<p class="mhi-result__change"><strong class="mhi-result__delta">+' + NBSP + '<span class="mhi-nw">' + L.alue(r.erotus[0], r.erotus[1]) + '</span> ' + r.paketti.erotusSana + '</strong><span class="mhi-result__vs">verrattuna samankokoisen asunnon pakettiin ' + r.vertailupaketti.paketti.nimi + ' (<span class="mhi-nw">' + L.alue(r.vertailupaketti.hinta[0], r.vertailupaketti.hinta[1]) + '</span>).</span></p>';
       } else {
-        h += '<p class="mhi-result__change">Muita paketteja verrataan tähän hintaan samalle asunnon koolle.</p>';
+        h += '<p class="mhi-result__change"><span class="mhi-result__vs">Muita paketteja verrataan tähän hintaan samalle asunnon koolle.</span></p>';
       }
-      h += '<p class="mhi-result__note">Summa sisältää vain hinnoitellut rivit.</p></div>';
+      h += '</div>';
 
       h += '<div class="mhi-result__group"><p class="mhi-label">Mukana summassa</p><dl class="mhi-lines">';
       r.mukana.forEach(function (rivi) {
-        h += '<div class="mhi-lines__row"><dt>' + rivi.nimi + '</dt><dd class="mhi-lines__sum"><span class="mhi-nw">' + L.alue(rivi.hinta[0], rivi.hinta[1]) + '</span></dd>';
+        var kicker = /^(Valittu paketti): (.*)$/.exec(rivi.nimi);
+        var nimi = kicker ? '<span class="mhi-lines__kicker">' + kicker[1] + '</span>' + kicker[2] : rivi.nimi;
+        h += '<div class="mhi-lines__row"><dt>' + nimi + '</dt><dd class="mhi-lines__sum"><span class="mhi-nw">' + L.alue(rivi.hinta[0], rivi.hinta[1]) + '</span></dd>';
         rivi.selite.forEach(function (s) { h += '<dd class="mhi-lines__note">' + s + '</dd>'; });
         h += '</div>';
       });
