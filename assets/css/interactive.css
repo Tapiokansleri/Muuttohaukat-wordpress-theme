@@ -416,35 +416,10 @@
     border: 3px solid var(--color-black);
 }
 
-.mhi-rental {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
-    padding-top: 0.5rem;
-}
-
-.mhi-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    min-width: 0;
-}
-
-.mhi-field label {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.4;
-}
-
-.mhi-field--wide,
-.mhi-rental > .mhi-hint {
-    grid-column: 1 / -1;
-}
-
-@media (max-width: 400px) {
-    .mhi-rental {
-        grid-template-columns: minmax(0, 1fr);
-    }
+/* The one line under "Vuokraan laatikot erikseen": what the calculator assumes */
+.mhi-hint--rent {
+    padding-left: 2.125rem;
+    margin-top: 0.25rem;
 }
 
 /* The result: flat yellow, left aligned. One text size (17px), bold for what matters, a hairline above each group,

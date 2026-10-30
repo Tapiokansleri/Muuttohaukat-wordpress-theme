@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.29] - 2026-10-30
+
+### Changed
+
+- Calculator, "Vuokraan laatikot erikseen": the visitor is no longer asked for the number of boxes, the rental time or the distance (Tapio 30.10.2026: "emme voi kysyä näitä asioita ihmisiltä"). They are calculated from the apartment size: the number of boxes is the one the Tilaamuutto.fi order flow recommends (20 up to 29 m², 25, 30, 40, 50 and 60 up to 80 m², 0.7 per m² above), the rental time is the 14 days that flow uses, and delivery and pick-up are shown as a range, 2 × 25–40 €. One line under the checkbox tells what is assumed.
+
 ## [1.2.28] - 2026-10-30
 
 ### Changed

@@ -53,18 +53,25 @@
       const s = DATA.siivous;
       return Math.min(s.vahennysKatto, Math.max(0, euroa * s.vahennysProsentti / 100 - s.omavastuu));
     }
-    function laatikkovuokra(maara, paivat, matkaId) {
+    /** laatikoiden suositeltu määrä asunnon koon mukaan (Tilaamuutto.fi:n oma suositus) */
+    function suositusLaatikot(m2) {
       const L = DATA.laatikkovuokra;
-      const matka = L.matkat.find((m) => m.id === matkaId) || L.matkat[0];
+      const rivi = L.suositus.find((r) => m2 <= r.maxM2);
+      return rivi ? rivi.laatikoita : Math.round(m2 * L.suositusKerroin);
+    }
+    /** vuokra kokonaisuudessaan koon mukaan: laatikot x päivät x päivähinta, toimitus ja nouto haarukkana (alle 12 km ... 12-30 km) */
+    function laatikkovuokra(m2) {
+      const L = DATA.laatikkovuokra;
+      const maara = suositusLaatikot(m2), paivat = L.oletusPaivat;
+      const suunnat = L.matkat.filter((x) => !x.laskematon && x.suuntaEuroa > 0).map((x) => sent(x.suuntaEuroa));
       const vuokra = maara * paivat * sent(L.paivaHintaEuroa);
-      const laskematon = !!matka.laskematon;
-      const toimitus = laskematon ? 0 : L.suuntia * sent(matka.suuntaEuroa || 0);
-      return { maara, paivat, matka, vuokra, toimitus, laskematon, yhteensa: vuokra + toimitus };
+      const toimitus = [L.suuntia * Math.min.apply(null, suunnat), L.suuntia * Math.max.apply(null, suunnat)];
+      const suunta = [Math.min.apply(null, suunnat), Math.max.apply(null, suunnat)];
+      return { maara, paivat, vuokra, toimitus, suunta, yhteensa: [vuokra + toimitus[0], vuokra + toimitus[1]] };
     }
 
     /**
-     * t = { m2, paketti, siivous, piano, kaluste, varastointi, vuokra (true/false),
-     *       laatikoita, paivia, matka }
+     * t = { m2, paketti, siivous, piano, kaluste, varastointi, vuokra (true/false) }
      */
     function laske(t) {
       const m2 = Math.round(t.m2);
@@ -110,17 +117,17 @@
 
       // Laatikoiden vuokraus erikseen: vain paketeille ilman laatikoita
       if (t.vuokra && !paketti.laatikot) {
-        const v = laatikkovuokra(t.laatikoita, t.paivia, t.matka);
+        const v = laatikkovuokra(m2);
         vuokraTiedot = v;
         const L = DATA.laatikkovuokra;
-        const peruslause = monikko(v.maara, 'laatikko', 'laatikkoa') + ' × ' + monikko(v.paivat, 'päivä', 'päivää') + ' × ' + eur(sent(L.paivaHintaEuroa)) + NBSP + '€' + NBSP + '=' + NBSP + eur(v.vuokra) + NBSP + '€';
-        let selite;
-        if (v.laskematon) selite = peruslause + '. Toimitus ja nouto tuntiveloituksella, ei mukana summassa.';
-        else if (v.toimitus === 0) selite = peruslause + '. Noudat laatikot itse toimipisteestä, ei toimituskuluja.';
-        else selite = peruslause + ' + toimitus ja nouto ' + L.suuntia + NBSP + '×' + NBSP + eur(sent(v.matka.suuntaEuroa)) + NBSP + '€' + NBSP + '=' + NBSP + eur(v.toimitus) + NBSP + '€.';
-        mukana.push({ id: 'vuokra', nimi: 'Laatikoiden vuokraus', hinta: [v.yhteensa, v.yhteensa], selite: [selite] });
-        if (v.laskematon) eiMukana.push({ id: 'toimitus', nimi: 'Laatikoiden toimitus ja nouto', teksti: 'Yli 30 km: tuntiveloitus, pyydä tarjous' });
-        huomiot.push('Laatikot toimitetaan ja noudetaan tiistaisin ja torstaisin.');
+        mukana.push({
+          id: 'vuokra', nimi: 'Laatikoiden vuokraus', hinta: v.yhteensa,
+          selite: [
+            monikko(v.maara, 'laatikko', 'laatikkoa') + ' × ' + monikko(v.paivat, 'päivä', 'päivää') + ' × ' + eur(sent(L.paivaHintaEuroa)) + NBSP + '€' + NBSP + '=' + NBSP + eur(v.vuokra) + NBSP + '€.',
+            'Toimitus ja nouto ' + L.suuntia + NBSP + '×' + NBSP + nw(alue(v.suunta[0], v.suunta[1])) + ' = ' + nw(alue(v.toimitus[0], v.toimitus[1])) + ', alle 30' + NBSP + 'km:n matkalla. Yli 30' + NBSP + 'km:n matkalta toimitus ja nouto laskutetaan tuntiveloituksella.'
+          ]
+        });
+        huomiot.push('Laatikot toimitetaan ja noudetaan tiistaisin ja torstaisin. Laatikoiden määrä ja vuokra-aika on arvioitu asunnon koon mukaan.');
       }
 
       if (paketti.taysi) huomiot.push('Täyden palvelun muutto sisältää pakkauksen ja purkamisen. Hinnat ovat esimerkkihintoja asunnon koon mukaan, ja lopullinen hinta riippuu tavaramäärästä ja matkasta.');
@@ -140,7 +147,7 @@
       };
     }
 
-    return { laske, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, eur, alue, summa, sent };
+    return { laske, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, eur, alue, summa, sent };
   })();
 
   // ------------------------------------------------------------ Me vs muut filter
@@ -187,8 +194,7 @@
     var el = {
       koko: $('mhi-koko'), liuku: $('mhi-koko-liuku'), vihje: $('mhi-koko-vihje'),
       siivous: $('mhi-lisa-siivous'), piano: $('mhi-lisa-piano'), kaluste: $('mhi-lisa-kaluste'), varastointi: $('mhi-lisa-varastointi'),
-      vuokraRyhma: head.querySelector('[data-mhi-rent-group]'), vuokra: $('mhi-vuokra'), kentat: head.querySelector('[data-mhi-rent-fields]'),
-      maara: $('mhi-vuokra-maara'), paivat: $('mhi-vuokra-paivat'), matka: $('mhi-vuokra-matka'),
+      vuokraRyhma: head.querySelector('[data-mhi-rent-group]'), vuokra: $('mhi-vuokra'), vuokraTeksti: head.querySelector('[data-mhi-rent-note]'),
       tulos: result.querySelector('[data-mhi-panel]'), tilaa: result.querySelector('[data-mhi-order]'), tarjous: result.querySelector('[data-mhi-quote]'),
       palkki: result.querySelector('[data-mhi-bar]')
     };
@@ -199,7 +205,6 @@
     }
     var K = DATA.koko;
     var m2 = K.oletus;
-    var countEdited = false;      // once the visitor edits the box count it no longer follows the size
     var previous = '';
 
     function readInt(input, min, max) {
@@ -219,7 +224,6 @@
       el.liuku.value = v;
       el.liuku.style.setProperty('--mhi-fill', ((v - K.min) / (K.max - K.min) * 100) + '%');
       el.liuku.setAttribute('aria-valuetext', v + ' neliömetriä');
-      if (!countEdited) { el.maara.value = v; }
     }
 
     function readState() {
@@ -228,9 +232,8 @@
         m2: m2, paketti: p.id,
         siivous: el.siivous.checked, piano: el.piano.checked, kaluste: el.kaluste.checked, varastointi: el.varastointi.checked,
         vuokra: el.vuokra.checked && !p.laatikot,
-        laatikoita: readInt(el.maara, 1, 500) || Math.round(m2),
-        paivia: readInt(el.paivat, 1, 90) || DATA.laatikkovuokra.oletusPaivat,
-        matka: el.matka.value
+        laatikoita: Laskenta.suositusLaatikot(m2),
+        paivia: DATA.laatikkovuokra.oletusPaivat
       };
     }
 
@@ -279,7 +282,8 @@
     function update() {
       var p = selectedPackage();
       el.vuokraRyhma.hidden = p.laatikot;        // separate box rental only for packages without boxes
-      el.kentat.hidden = !(el.vuokra.checked && !p.laatikot);
+      var boxes = Laskenta.suositusLaatikot(m2), days = DATA.laatikkovuokra.oletusPaivat;
+      el.vuokraTeksti.textContent = 'Arvio asunnon koon mukaan: ' + boxes + NBSP + 'laatikkoa ' + days + NBSP + 'päivän ajaksi.';
 
       var r = Laskenta.laske(readState());
       var html = draw(r);
@@ -325,7 +329,7 @@
       var extras = ['siivous', 'piano', 'kaluste', 'varastointi'].filter(function (k) { return s[k]; });
       if (extras.length) { p.set('lisa', extras.join(',')); }
       if (r.paketti.laatikot || s.vuokra) { p.set('laatikot', s.laatikoita); }
-      if (s.vuokra) { p.set('paivat', s.paivia); p.set('matka', s.matka); }
+      if (s.vuokra) { p.set('paivat', s.paivia); }
       p.set('arvio', Math.floor(r.yhteensa[0] / 100) + '-' + Math.ceil(r.yhteensa[1] / 100));
       return DATA.linkit.tarjous + (DATA.linkit.tarjous.indexOf('?') === -1 ? '?' : '&') + p.toString();
     }
@@ -349,20 +353,7 @@
       update();
     });
 
-    el.maara.addEventListener('input', function () { countEdited = true; update(); });
-    el.maara.addEventListener('change', function () {
-      var v = readInt(el.maara, 1, 500);
-      el.maara.value = v === null ? clamp(Math.round(parseFloat(el.maara.value)) || m2, 1, 500) : v;
-      update();
-    });
-    el.paivat.addEventListener('input', update);
-    el.paivat.addEventListener('change', function () {
-      var v = readInt(el.paivat, 1, 90);
-      el.paivat.value = v === null ? clamp(Math.round(parseFloat(el.paivat.value)) || DATA.laatikkovuokra.oletusPaivat, 1, 90) : v;
-      update();
-    });
-
-    head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra, #mhi-vuokra-matka').forEach(function (e) { e.addEventListener('change', update); });
+    head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra').forEach(function (e) { e.addEventListener('change', update); });
 
     el.tilaa.setAttribute('href', DATA.linkit.tilaaHeti);
     setSize(K.oletus);

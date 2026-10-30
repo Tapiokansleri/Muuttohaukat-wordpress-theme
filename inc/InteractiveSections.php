@@ -128,7 +128,25 @@ function interactive_calculator_data(): array {
     'piano' => ['teksti' => 'Hinta sovitaan aina erikseen'],
     'kaluste' => ['teksti' => 'Sovitaan tarjouksessa'],
     'varastointi' => ['teksti' => 'Varastointi onnistuu yhteistyökumppanimme Pelican Self Storagen kautta; Pelicanin asiakkaat saavat muutosta jopa 20 % alennuksen'],
-    'laatikkovuokra' => ['paivaHintaEuroa' => $rent, 'oletusPaivat' => 14, 'suuntia' => 2, 'matkat' => $trips],
+    // Box rental is not asked from the visitor, it is calculated from the size: the number of boxes is the one the
+    // Tilaamuutto.fi order flow recommends (its table up to 80 m², 0.7 boxes per m² above), the rental time is the
+    // 14 days that flow picks (a week before and a week after the move), and delivery and pick-up cost 2 x 25 € or
+    // 2 x 40 € (box_delivery()), shown as a range.
+    'laatikkovuokra' => [
+      'paivaHintaEuroa' => $rent,
+      'oletusPaivat' => 14,
+      'suuntia' => 2,
+      'matkat' => $trips,
+      'suositus' => [
+        ['maxM2' => 29, 'laatikoita' => 20],
+        ['maxM2' => 39, 'laatikoita' => 25],
+        ['maxM2' => 49, 'laatikoita' => 30],
+        ['maxM2' => 59, 'laatikoita' => 40],
+        ['maxM2' => 69, 'laatikoita' => 50],
+        ['maxM2' => 80, 'laatikoita' => 60],
+      ],
+      'suositusKerroin' => 0.7,
+    ],
   ];
 
   return apply_filters('mh_interactive_data', $data);
@@ -333,10 +351,6 @@ add_shortcode('hintalaskuri', function ($atts) {
   foreach (['siivous' => 'Muuttosiivous', 'piano' => 'Piano tai kassakaappi', 'kaluste' => 'Kalusteasennus', 'varastointi' => 'Varastointi'] as $value => $label) {
     $extras .= interactive_choice('checkbox', 'mhi-lisa', 'mhi-lisa-' . $value, $value, $label);
   }
-  $trips = '';
-  foreach ($data['laatikkovuokra']['matkat'] as $i => $m) {
-    $trips .= '<option value="' . esc_attr($m['id']) . '"' . ($i === 0 ? ' selected' : '') . '>' . esc_html($m['nimi']) . '</option>';
-  }
   $json = wp_json_encode($data, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
   $head = '<div class="mh-text-sec__head mhi mhi-static" data-mhi="laskuri">'
@@ -359,12 +373,8 @@ add_shortcode('hintalaskuri', function ($atts) {
 
     . '<div class="mhi-group" data-mhi-rent-group>'
     . interactive_choice('checkbox', 'mhi-vuokra', 'mhi-vuokra', 'vuokra', 'Vuokraan laatikot erikseen')
-    . '<div class="mhi-rental" data-mhi-rent-fields hidden>'
-    . '<div class="mhi-field"><label for="mhi-vuokra-maara">Laatikoiden määrä</label><input type="number" id="mhi-vuokra-maara" inputmode="numeric" min="1" max="500" step="1" value="' . (int) $k['oletus'] . '"></div>'
-    . '<div class="mhi-field"><label for="mhi-vuokra-paivat">Vuokra-aika (päivää)</label><input type="number" id="mhi-vuokra-paivat" inputmode="numeric" min="1" max="90" step="1" value="' . (int) $data['laatikkovuokra']['oletusPaivat'] . '"></div>'
-    . '<div class="mhi-field mhi-field--wide"><label for="mhi-vuokra-matka">Etäisyys toimipisteeltä</label><select id="mhi-vuokra-matka">' . $trips . '</select></div>'
-    . '<p class="mhi-hint">Laatikoiden toimitus ja nouto ovat tiistaisin ja torstaisin.</p>'
-    . '</div></div>'
+    . '<p class="mhi-hint mhi-hint--rent" data-mhi-rent-note></p>'
+    . '</div>'
 
     . '</div>'
     . '<script type="application/json" class="mhi-data">' . $json . '</script>'
