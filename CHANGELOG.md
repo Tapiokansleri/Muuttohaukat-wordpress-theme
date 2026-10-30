@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.34] - 2026-10-30
+
+### Changed
+
+- Layout v2 headings on phones: 32/28/22px for a landing page's H1, H2 and H3 (were 32/30/24px), so the levels stand apart.
+- Layout v2 on wide screens: the hero title may be 20ch wide instead of 14ch, three lines instead of five, so both buttons show without scrolling.
+- Layout v2 on phones: the hero's trust badges are three short lines instead of three columns ("4 toimipistettä" ran over the screen edge), and the choice cards' buttons are full width like the hero's.
+- Choice cards: the example prices are three columns (apartment type above its price), and the opening hours do not break inside "8–16".
+
+### Fixed
+
+- Choice cards: `.mh-landing p` and `.mh-landing h3` added bottom margins on top of the flex gap, so the gaps were 16, 24 and 32px; now one 16–20px gap, and the button still sits at the bottom of both cards.
+
 ## [1.2.33] - 2026-10-30
 
 ### Added
