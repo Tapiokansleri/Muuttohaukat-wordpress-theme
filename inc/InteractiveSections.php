@@ -199,10 +199,8 @@ function interactive_comparison_rows(): array {
       'topic' => 'tarjous',
       'title' => 'Tarjous',
       'facts' => [
-        "Alle 60{$nb}m² asunnon muutosta saa tarjouksen välittömästi.",
-        'Suuremmista asunnoista tarjous viimeistään seuraavana arkipäivänä.',
-        "Tilaamuutto.fi-palvelusta voi tilata muuton suoraan, kun asunto on alle 80{$nb}m².",
-        'Tarjouksen voi pyytää suoraan yritykseltä.',
+        "Hinnan saa heti Tilaamuutto.fi-palvelusta, ja sieltä voi tilata muuton suoraan, kun asunto on alle 80{$nb}m².",
+        'Tarjouksen voi pyytää suoraan yritykseltä tarjouspyynnöllä.',
       ],
       'ask' => 'Voiko tarjouksen pyytää suoraan yritykseltä, ja milloin sen saa? Mitä tarjous sisältää, ja tehdäänkö kohteeseen tutustuminen etukäteen?',
     ],
@@ -381,7 +379,14 @@ add_shortcode('hintalaskuri', function ($atts) {
     . '</div>'
     . '<div class="mhi-notes"><p>Hinta-arvio perustuu julkaistuun hinnastoon. Tarkka hinta sovitaan tarjouksessa.</p><p>Kuluttajahinnat sisältävät ALV:n.</p></div>'
     . '<p class="mhi-small">Esimerkkihinnat. Tarkka hinta pyydettäessä.</p>'
-    . '</div></div>';
+    . '</div>'
+    // Floating price on phones and tablets: shown while the controls are in view and the result is not (interactive.js).
+    // It repeats what the result panel says, so screen readers and the keyboard skip it.
+    . '<div class="mhi-bar" data-mhi-bar aria-hidden="true" hidden>'
+    . '<div class="mhi-bar__sum"><span class="mhi-bar__label" data-mhi-bar-label></span><span class="mhi-bar__price" data-mhi-bar-price></span></div>'
+    . '<a class="mh-painike mh-painike--black mhi-bar__btn" data-mhi-bar-quote tabindex="-1" href="' . esc_url($data['linkit']['tarjous']) . '">Pyydä tarjous</a>'
+    . '</div>'
+    . '</div>';
 
   return $head . $body;
 });

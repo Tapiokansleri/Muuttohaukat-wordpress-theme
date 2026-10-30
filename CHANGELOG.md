@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.27] - 2026-10-30
+
+### Changed
+
+- Price calculator on phones and tablets: the price floats at the bottom of the screen with a "Pyydä tarjous" button while the controls are on screen and the result is not (it hides when the result panel is in view, and the site's own floating buttons step aside while it shows). The spacing of the controls follows one rhythm: 2rem between groups, 0.5rem from a title to its rows, 16px text for the rows.
+- The comparison facts no longer promise an instant quote (the automatic quote was switched off on 30.10.2026): the price comes at once from Tilaamuutto.fi, a quote from the quote request.
+
 ## [1.2.26] - 2026-10-29
 
 ### Changed

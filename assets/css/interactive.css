@@ -48,18 +48,28 @@
 .mhi-group {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0;
     width: 100%;
     min-width: 0;
 }
 
 .mhi-group__title {
     display: block;
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.5rem;
     padding: 0;
     font-size: 1rem;
     font-weight: 700;
     line-height: 1.4;
+}
+
+/* The rows keep a comfortable tap area (padding), but the first and last row do not add to the gaps around the group */
+.mhi-group > .mhi-choice:first-child,
+.mhi-group > .mhi-group__title + .mhi-choice {
+    margin-top: -0.5rem;
+}
+
+.mhi-group > .mhi-choice:last-child {
+    margin-bottom: -0.5rem;
 }
 
 .mhi-choice {
@@ -72,6 +82,7 @@
 .mhi-choice label {
     padding: 0.5rem 0;
     cursor: pointer;
+    font-size: 1rem;
     line-height: 1.4;
 }
 
@@ -83,7 +94,7 @@
 .mhi-choice__desc {
     display: block;
     margin-top: 0.1rem;
-    font-size: 0.875em;
+    font-size: 0.875rem;
     opacity: 0.8;
 }
 
@@ -95,7 +106,7 @@
     flex: none;
     width: 1.375rem;
     height: 1.375rem;
-    margin: 0.55rem 0 0;
+    margin: 0.5rem 0 0;
     background: var(--color-white);
     border: 2px solid var(--color-black);
     cursor: pointer;
@@ -312,8 +323,9 @@
 .mhi-fields {
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 2rem;
     width: 100%;
+    padding-top: 0.75rem;   /* the head's 1.25rem gap plus this makes 2rem after the lead, like between the groups */
 }
 
 .mhi-size {
@@ -622,4 +634,64 @@
 .mhi-small {
     font-size: 0.8125rem;
     opacity: 0.8;
+}
+
+/* ---------- Floating price (phones and tablets) ---------- */
+.mhi-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem max(16px, env(safe-area-inset-right, 0px)) calc(0.75rem + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    background: var(--color-accent);
+    color: var(--color-black);
+    box-shadow: 0 -2px 14px rgba(0, 0, 0, 0.2);
+}
+
+.mhi-bar__sum {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.mhi-bar__label {
+    overflow: hidden;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mhi-bar__price {
+    font-size: 1.375rem;
+    font-weight: 800;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.mhi-bar .mhi-bar__btn {
+    flex: none;
+    width: auto;
+    max-width: none;
+    padding: 14px 18px;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+}
+
+/* The site's own floating buttons would sit under the bar: hide them while it shows */
+body.mhi-bar-on .kansleri-floating-cta-banner {
+    display: none;
+}
+
+@media (min-width: 1025px) {
+    .mhi-bar {
+        display: none !important;
+    }
 }

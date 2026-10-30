@@ -189,8 +189,14 @@
       siivous: $('mhi-lisa-siivous'), piano: $('mhi-lisa-piano'), kaluste: $('mhi-lisa-kaluste'), varastointi: $('mhi-lisa-varastointi'),
       vuokraRyhma: head.querySelector('[data-mhi-rent-group]'), vuokra: $('mhi-vuokra'), kentat: head.querySelector('[data-mhi-rent-fields]'),
       maara: $('mhi-vuokra-maara'), paivat: $('mhi-vuokra-paivat'), matka: $('mhi-vuokra-matka'),
-      tulos: result.querySelector('[data-mhi-panel]'), tilaa: result.querySelector('[data-mhi-order]'), tarjous: result.querySelector('[data-mhi-quote]')
+      tulos: result.querySelector('[data-mhi-panel]'), tilaa: result.querySelector('[data-mhi-order]'), tarjous: result.querySelector('[data-mhi-quote]'),
+      palkki: result.querySelector('[data-mhi-bar]')
     };
+    if (el.palkki) {
+      el.palkkiTeksti = el.palkki.querySelector('[data-mhi-bar-label]');
+      el.palkkiHinta = el.palkki.querySelector('[data-mhi-bar-price]');
+      el.palkkiTarjous = el.palkki.querySelector('[data-mhi-bar-quote]');
+    }
     var K = DATA.koko;
     var m2 = K.oletus;
     var countEdited = false;      // once the visitor edits the box count it no longer follows the size
@@ -277,6 +283,34 @@
       if (html !== previous) { el.tulos.innerHTML = html; previous = html; }
       el.tilaa.hidden = !r.tilaaHeti;
       el.tarjous.setAttribute('href', quoteLink(r));
+      if (el.palkki) {
+        el.palkkiTeksti.textContent = 'Hinta-arvio, ' + r.m2 + NBSP + 'm²';
+        el.palkkiHinta.textContent = Laskenta.summa(r.yhteensa[0], r.yhteensa[1]);
+        el.palkkiTarjous.setAttribute('href', quoteLink(r));
+      }
+    }
+
+    // The floating price: on phones and tablets (the stacked layout) it shows while the calculator is on screen
+    // and its own result is not, so the price never needs a scroll to be seen.
+    function watchBar() {
+      if (!el.palkki) { return; }
+      var stacked = window.matchMedia('(max-width: 1024px)');
+      var queued = false;
+      function place() {
+        queued = false;
+        var vh = window.innerHeight;
+        var s = (section.getBoundingClientRect ? section : el.tulos).getBoundingClientRect();
+        var p = el.tulos.getBoundingClientRect();
+        var inView = s.top < vh - 200 && s.bottom > 0;   // the controls are properly on screen, not just peeking in
+        var resultSeen = p.top < vh - 160 && p.bottom > 160;      // the top of the result, with the price, is on screen
+        var show = stacked.matches && inView && !resultSeen;
+        el.palkki.hidden = !show;
+        document.body.classList.toggle('mhi-bar-on', show);
+      }
+      function queue() { if (!queued) { queued = true; window.requestAnimationFrame(place); } }
+      window.addEventListener('scroll', queue, { passive: true });
+      window.addEventListener('resize', queue);
+      queue();
     }
 
     // "Pyydä tarjous" opens the quote form with the choices already filled in (see client.js)
@@ -330,6 +364,7 @@
     el.tilaa.setAttribute('href', DATA.linkit.tilaaHeti);
     setSize(K.oletus);
     update();
+    watchBar();
   }
 
   function start() {
