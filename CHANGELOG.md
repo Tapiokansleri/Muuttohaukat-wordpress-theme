@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.37] - 2026-10-30
+
+### Changed
+
+- The two-choice section in the brand colours instead of the dark colours of the client's mockup (Tapio 30.10.2026: "Käytä muuttohaukkojen brändivärejä. Musta ei ole brändiväri"): a yellow section (landing-why with the yellow background and `mh-choices-section`), white cards without borders or stripes, the line icon on a yellow chip, notes and checks in the text colours. The order button stays yellow on the white card (on a yellow section the theme turns it white), and the quote button is black as everywhere on the site.
+
 ## [1.2.36] - 2026-10-30
 
 ### Changed
