@@ -1376,11 +1376,6 @@ body.mh-v2 .mh-muuttopaivat__month-title {
     text-align: left;
 }
 
-body.mh-v2 .mh-landing-section--bg-yellow .mh-muuttopaivat__month {
-    padding: var(--space-5);
-    background: var(--color-white);
-}
-
 @media (min-width: 641px) {
     body.mh-v2 .mh-icon-item__caption {
         font-size: 0.9375rem;
@@ -1415,6 +1410,74 @@ body.mh-v2 .mh-landing-section--bg-yellow .mh-muuttopaivat__month {
 
     body.mh-v2 .mh-landing-section .mh-painike-wrap .mh-painike:not(.mhi-bar__btn) {
         width: 100%;
+    }
+}
+
+/* No white buttons (Tapio 30.10.2026: "Ei valkoisia nappeja!"): on a yellow section the theme turned the
+   Tilaamuutto.fi button white; here it is black like the quote button. In the white choice cards it stays yellow. */
+body.mh-v2 .mh-landing-section--bg-yellow a.mh-painike[href*="tilaamuutto.fi"] {
+    background: var(--color-black) !important;
+    color: var(--color-white) !important;
+}
+
+body.mh-v2 .mh-landing-section--bg-yellow .mh-choice-card a.mh-painike[href*="tilaamuutto.fi"] {
+    background: var(--color-accent) !important;
+    color: var(--color-black) !important;
+}
+
+/* The review widget's two buttons are yellow, so on a yellow section they vanished ("Napit katoaa") */
+body.mh-v2 .mh-landing-section--bg-yellow .rpi .rpi-review_us {
+    background: var(--color-black) !important;
+}
+
+body.mh-v2 .mh-landing-section--bg-yellow .rpi .rpi-review_us a {
+    color: var(--color-white) !important;
+}
+
+body.mh-v2 .rpi .rpi-review_us a {
+    display: inline-block;
+    font-size: 14px !important;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* the widget writes "arvioi meidät palvelussa" in lower case */
+body.mh-v2 .rpi .rpi-review_us a::first-letter {
+    text-transform: uppercase;
+}
+
+/* "Mitä muuttopalvelumme sisältää?" was cramped ("Liian ahdas osio"): 48px between the four groups and the
+   same 100px column gap as the other two-column sections, 16px from a heading to its list, 12px between items */
+body.mh-v2 .mh-landing .mh-features {
+    gap: var(--space-12) 100px;
+    margin-top: var(--space-10);
+}
+
+body.mh-v2 .mh-landing .mh-features > .wp-block-group {
+    gap: var(--space-4);
+}
+
+body.mh-v2 .mh-landing .mh-features .mh-hero-checklist {
+    gap: var(--space-3);
+}
+
+/* The hero's buttons side by side on desktops ("Napit vierekkäin"): a wider text column and less padding
+   in the buttons, so both fit from about 1100px up */
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn) {
+    --mh-btn-pad-x: 32px;
+    padding-left: var(--mh-btn-pad-x);
+    padding-right: var(--mh-btn-pad-x);
+}
+
+@media (min-width: 1025px) {
+    body.mh-v2 .mh-landing-hero__inner {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    body.mh-v2 .mh-landing .mh-features {
+        gap: var(--space-10);
     }
 }
 

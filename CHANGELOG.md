@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.40] - 2026-10-30
+
+### Changed
+
+- Layout v2, from Tapio's comments on the preview (30.10.2026):
+  - "Ei valkoisia nappeja!": on a yellow section the Tilaamuutto.fi button is black instead of white; in the white choice cards it stays yellow.
+  - "Napit katoaa": the review widget's two yellow buttons are black on a yellow section, in sentence case.
+  - "Liian ahdas osio" ("Mitä muuttopalvelumme sisältää?"): 48px between the groups, a 100px column gap, 16px from a heading to its list and 12px between the items.
+  - "Napit vierekkäin": the hero's text column is wider on desktops (1.2fr to 0.8fr) and the buttons have 32px side padding, so the two buttons sit side by side from about 1100px up.
+
+### Removed
+
+- "Hirvittävä osio!!! Poista valkoiset boksit": the white month cards of the calendar on a yellow section. The preview now keeps the calendar on a white section.
+
 ## [1.2.39] - 2026-10-30
 
 ### Changed
