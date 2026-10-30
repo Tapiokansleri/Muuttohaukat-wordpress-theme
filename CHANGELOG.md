@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.39] - 2026-10-30
+
+### Changed
+
+- Layout v2 on phones: every section's buttons are full width, like the hero's and the cards' (the calculator's price bar keeps its small button).
+- Layout v2 when split sections stack (tablets and phones): the same 40px between the columns, whether the second one is a picture or text. After the video in "Miksi Muuttohaukat?" there was no gap at all.
+
 ## [1.2.38] - 2026-10-30
 
 ### Changed

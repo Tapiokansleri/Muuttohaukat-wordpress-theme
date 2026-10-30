@@ -1407,4 +1407,27 @@ body.mh-v2 .mh-landing-section--bg-yellow .mh-muuttopaivat__month {
     body.mh-v2 .mh-muuttopaivat__month:first-child:has(.is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable) ~ .mh-muuttopaivat__month:nth-child(3) {
         display: none;
     }
+
+    /* full-width buttons in every section, like in the hero and the cards (not the calculator's price bar) */
+    body.mh-v2 .mh-landing-section .wp-block-group:not(.mh-choice-card) > .mh-painike-wrap {
+        align-self: stretch;
+    }
+
+    body.mh-v2 .mh-landing-section .mh-painike-wrap .mh-painike:not(.mhi-bar__btn) {
+        width: 100%;
+    }
+}
+
+/* stacked split sections: the same 40px between the columns, whether the second one is a picture or text
+   (after the video in "Miksi Muuttohaukat?" there was no gap at all) */
+@media (max-width: 1024px) {
+    body.mh-v2 .mh-landing-split {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-10);
+    }
+
+    body.mh-v2 .mh-landing-split > * {
+        margin-top: 0;
+    }
 }
