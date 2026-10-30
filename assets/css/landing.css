@@ -1146,6 +1146,22 @@
    the body text was 13px, H1 and H2 were both 21px, the first quote button was
    3.4 screens down and the floating buttons were 33px high.
    ========================================================================== */
+/* the floating buttons wait until the hero's own buttons have scrolled out of view (inc/LayoutV2.php) */
+body.mh-v2 .kansleri-floating-cta-banner {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+body.mh-v2.mh-hero-cta-in-view .kansleri-floating-cta-banner {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.mh-v2 .kansleri-floating-cta-banner {
+        transition: none;
+    }
+}
+
 @media (min-width: 641px) {
     /* the hero title in three lines instead of five, so both buttons show without scrolling */
     body.mh-v2 .mh-landing-hero__title {

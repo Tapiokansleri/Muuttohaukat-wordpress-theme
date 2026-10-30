@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.35] - 2026-10-30
+
+### Changed
+
+- Layout v2: the floating buttons stay hidden while the hero's own buttons are in view and fade in once they have scrolled away. They offer the same two actions, and on a small phone (375×667) and a laptop (1366×768) they covered the hero's second button. Without JavaScript they show as before.
+
 ## [1.2.34] - 2026-10-30
 
 ### Changed
