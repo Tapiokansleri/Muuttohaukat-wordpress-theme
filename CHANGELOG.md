@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.38] - 2026-10-30
+
+### Changed
+
+- Layout v2 for the whole page (Tapio 30.10.2026: "Poista eyebrowt", "Joka toinen osio tulee olla keltainen", "Korjaa välityksiä, fonttikokoja jne jotta sivusto on miellyttävä lukea"):
+  - no eyebrows (`.mh-landing-kicker`, `.mh-cities__kicker`);
+  - the same air around every section, 56px on phones and about 100px on wide screens;
+  - line height 1.65 on wide screens and text lines of about 70 characters at most;
+  - an H3 right under the H2 reads as the section's lead;
+  - the buttons sit a little apart from the text;
+  - one button style on the page: sentence case with an arrow after the text, as in the two choices (the floating buttons in sentence case too, with a shadow so they show on yellow sections);
+  - the calendar's month names are the size of the other H3s and left-aligned, the months are white cards on a yellow section, and phones show two months, without the current one when fewer than eight bookable days are left in it.
+- The choice cards use the page's text size, and the card title is 24px at most.
+
 ## [1.2.37] - 2026-10-30
 
 ### Changed

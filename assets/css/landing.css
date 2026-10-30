@@ -1011,7 +1011,7 @@
 
 .mh-choices__head > p:not(.mh-landing-kicker),
 .mh-choice-card > p {
-    font-size: 1.0625rem;
+    font-size: var(--body-font-size);
     line-height: 1.6;
 }
 
@@ -1061,7 +1061,7 @@
 
 .mh-choice-card__title {
     max-width: 20ch;
-    font-size: clamp(1.375rem, 2vw, 1.625rem);
+    font-size: clamp(1.375rem, 1.8vw, 1.5rem);
     font-weight: 700;
     line-height: 1.25;
     text-wrap: balance;
@@ -1074,9 +1074,10 @@
 }
 
 .mh-choices .mh-painike {
+    --mh-btn-pad-x: 24px;
     width: 100%;
     gap: 0.625rem;
-    padding: 18px 24px;
+    padding: 18px var(--mh-btn-pad-x);
     font-size: 1rem;
     letter-spacing: 0;
     text-transform: none;
@@ -1085,7 +1086,7 @@
 
 .mh-choices .mh-painike:hover,
 .mh-choices .mh-painike:focus-visible {
-    padding: 18px 24px;
+    padding: 18px var(--mh-btn-pad-x);
 }
 
 /* on a yellow section the theme turns the order button white; on the white card it stays yellow */
@@ -1222,10 +1223,6 @@ body.mh-v2.mh-hero-cta-in-view .kansleri-floating-cta-banner {
         --post-grid-meta-size: 0.875rem;
     }
 
-    body.mh-v2 .mh-landing .mh-painike {
-        font-size: 0.9375rem;
-    }
-
     /* the site's floating buttons: a tap target of about 44px instead of 33px */
     body.mh-v2 .kansleri-floating-cta-banner .mh-painike {
         padding: 13px 18px;
@@ -1285,4 +1282,129 @@ body.mh-v2.mh-hero-cta-in-view .kansleri-floating-cta-banner {
         font-size: 0.9375rem;
     }
 
+}
+
+/* ==========================================================================
+   Layout v2 for the whole page (Tapio 30.10.2026: "Poista eyebrowt", "Joka
+   toinen osio tulee olla keltainen", "Korjaa välityksiä, fonttikokoja jne
+   jotta sivusto on miellyttävä lukea"). The white and yellow order comes from
+   the blocks' backgrounds; here: no eyebrows, the same air around every
+   section, shorter lines, the buttons apart from the text, one button style,
+   and the calendar's sizes in line with the other headings.
+   ========================================================================== */
+body.mh-v2 .mh-landing-kicker,
+body.mh-v2 .mh-cities__kicker {
+    display: none;
+}
+
+/* 56px on phones, about 100px on wide screens */
+body.mh-v2 .mh-landing-section {
+    padding-top: clamp(3.5rem, 7vw, 6.5rem);
+    padding-bottom: clamp(3.5rem, 7vw, 6.5rem);
+}
+
+@media (min-width: 769px) {
+    body.mh-v2 {
+        --leading-relaxed: 1.65;
+        --body-line-height: 1.65;
+        --content-line-height: 1.65;
+    }
+}
+
+/* lines of about 70 characters at most */
+body.mh-v2 .mh-text-sec__head > p,
+body.mh-v2 .mh-landing-split > .wp-block-group > p {
+    max-width: 68ch;
+}
+
+/* an H3 right under the H2 is the section's lead, not a second heading */
+body.mh-v2 .mh-landing-section h2 + h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+/* the buttons a little apart from the text above them (the cards keep theirs at the bottom) */
+body.mh-v2 .mh-landing-section .wp-block-group:not(.mh-choice-card) > .mh-painike-wrap {
+    margin-top: var(--space-3);
+}
+
+/* one button style: sentence case and an arrow after the text, as in the two choices */
+body.mh-v2 .mh-landing .mh-painike,
+body.mh-v2 .kansleri-floating-cta-banner .mh-painike {
+    gap: 0.625rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* (the calculator's floating price bar keeps its small button) */
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn) {
+    font-size: 1rem;
+}
+
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn):hover,
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn):focus-visible {
+    padding-left: var(--mh-btn-pad-x);
+    padding-right: var(--mh-btn-pad-x);
+}
+
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn)::after {
+    position: static;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    opacity: 1;
+    transform: none;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M12 5l7 7-7 7'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M12 5l7 7-7 7'/%3E%3C/svg%3E");
+    transition: transform 0.2s ease;
+}
+
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn):hover::after,
+body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn):focus-visible::after {
+    transform: translateX(3px);
+}
+
+/* the floating buttons stay visible on the yellow sections too */
+body.mh-v2 .kansleri-floating-cta-banner .mh-painike {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* the calendar: month names the size of the other H3s, left-aligned; on a yellow section the months are white cards */
+body.mh-v2 .mh-muuttopaivat__month-title {
+    font-size: var(--heading-3-size);
+    text-align: left;
+}
+
+body.mh-v2 .mh-landing-section--bg-yellow .mh-muuttopaivat__month {
+    padding: var(--space-5);
+    background: var(--color-white);
+}
+
+@media (min-width: 641px) {
+    body.mh-v2 .mh-icon-item__caption {
+        font-size: 0.9375rem;
+    }
+}
+
+@media (max-width: 768px) {
+    body.mh-v2 .mh-landing-section h2 + h3 {
+        font-size: 1.125rem;
+    }
+
+    body.mh-v2 .mh-landing .mh-painike:not(.mhi-bar__btn) {
+        font-size: 0.9375rem;
+    }
+}
+
+/* phones show two months: without the current one when fewer than eight bookable days are left in it,
+   otherwise without the third (browsers without :has() show all three) */
+@media (max-width: 640px) {
+    body.mh-v2 .mh-muuttopaivat__month:first-child:not(:has(.is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable)) {
+        display: none;
+    }
+
+    body.mh-v2 .mh-muuttopaivat__month:first-child:has(.is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable ~ .is-bookable) ~ .mh-muuttopaivat__month:nth-child(3) {
+        display: none;
+    }
 }
