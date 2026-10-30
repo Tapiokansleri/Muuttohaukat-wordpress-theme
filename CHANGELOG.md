@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.31] - 2026-10-30
+
+### Removed
+
+- The calculator's comparison lines ("+ … € täyden palvelun muutolla verrattuna samankokoisen asunnon pakettiin …" and "Muita paketteja verrataan tähän hintaan…") and the "Lue lisää" list under its buttons (Tapio 30.10.2026). The internal links inside the result stay.
+- The unused `[me_vs_muut]` comparison shortcode with its script and styles (`interactive_comparison_rows()`, `interactive_comparison_topics()`).
+
 ## [1.2.30] - 2026-10-30
 
 ### Changed

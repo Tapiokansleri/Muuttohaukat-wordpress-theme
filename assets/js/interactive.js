@@ -1,6 +1,5 @@
 /**
- * Interactive sections (theme 1.2.25): the "Me vs muut" filter and the price
- * calculator. Markup and data come from inc/InteractiveSections.php; the
+ * Interactive section (theme 1.2.25): the price calculator. Markup and data come from inc/InteractiveSections.php; the
  * calculator reads its numbers from the JSON in `.mhi-data`, which the theme
  * builds from its own price table, so nothing is hard coded here.
  *
@@ -84,12 +83,6 @@
       const paketti = DATA.paketit.find((p) => p.id === t.paketti);
       const hinta = pakettihinta(luokka, paketti).map(sent);
 
-      // pienimmän hinnan paketti samalle koolle (vertailukohta), lasketaan datasta
-      const vertailtavat = DATA.paketit.map((p) => ({ p, h: pakettihinta(luokka, p).map(sent) }));
-      vertailtavat.sort((a, b) => (a.h[0] + a.h[1]) - (b.h[0] + b.h[1]));
-      const vertailupaketti = vertailtavat[0];
-      const erotus = vertailupaketti.p.id === paketti.id ? null : [hinta[0] - vertailupaketti.h[0], hinta[1] - vertailupaketti.h[1]];
-
       const mukana = [{
         id: 'paketti', nimi: 'Valittu paketti: ' + paketti.nimi, linkki: paketti.taysi ? 'taysi' : 'kotimuutto', hinta,
         selite: [paketti.kuvaus + '. Kokoluokka ' + nw(luokanNimi(luokka)) + '.']
@@ -144,7 +137,6 @@
 
       return {
         m2, luokka, luokanNimi: luokanNimi(luokka), paketti, hinta,
-        vertailupaketti: { paketti: vertailupaketti.p, hinta: vertailupaketti.h }, erotus,
         mukana, eiMukana, huomiot, yhteensa: [lo, hi],
         siivous: siivousTiedot, vuokra: vuokraTiedot,
         tilaaHeti: m2 <= DATA.tilaaHetiEnintaan
@@ -153,38 +145,6 @@
 
     return { laske, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, linkki, eur, alue, summa, sent };
   })();
-
-  // ------------------------------------------------------------ Me vs muut filter
-  function initCompare(head) {
-    var section = head.closest('.mh-text-sec') || document;
-    var list = section.querySelector('[data-mhi-list]');
-    if (!list) { return; }
-    var boxes = Array.prototype.slice.call(head.querySelectorAll('input[name="mhi-aihe"]'));
-    var rows = Array.prototype.slice.call(list.querySelectorAll('.mhi-compare__row'));
-    var count = head.querySelector('[data-mhi-count]');
-    var reset = head.querySelector('[data-mhi-reset]');
-
-    function update() {
-      var picked = boxes.filter(function (b) { return b.checked; }).map(function (b) { return b.value; });
-      var visible = 0;
-      rows.forEach(function (row) {
-        var show = picked.length === 0 || picked.indexOf(row.getAttribute('data-topic')) !== -1;
-        row.hidden = !show;
-        if (show) { visible++; }
-      });
-      count.textContent = 'Näytetään ' + visible + ' / ' + rows.length + ' asiaa';
-      reset.setAttribute('data-hidden', picked.length === 0 ? 'true' : 'false');
-      reset.tabIndex = picked.length === 0 ? -1 : 0;
-    }
-
-    boxes.forEach(function (b) { b.addEventListener('change', update); });
-    reset.addEventListener('click', function () {
-      boxes.forEach(function (b) { b.checked = false; });
-      update();
-      if (boxes[0]) { boxes[0].focus(); }
-    });
-    update();
-  }
 
   // --------------------------------------------------------------- price calculator
   function initCalculator(head) {
@@ -247,11 +207,6 @@
       h += '<p class="mhi-result__top">' + r.paketti.nimi + ', ' + r.m2 + NBSP + 'm²</p>';
       h += '<p class="mhi-result__price"><span class="mhi-vh">Hinta-arvio </span><span class="mhi-nw">' + L.summa(r.yhteensa[0], r.yhteensa[1]) + '</span></p>';
 
-      if (r.erotus) {
-        h += '<p class="mhi-result__change"><strong class="mhi-result__delta">+' + NBSP + '<span class="mhi-nw">' + L.alue(r.erotus[0], r.erotus[1]) + '</span> ' + r.paketti.erotusSana + '</strong><span class="mhi-result__vs">verrattuna samankokoisen asunnon pakettiin ' + r.vertailupaketti.paketti.nimi + ' (<span class="mhi-nw">' + L.alue(r.vertailupaketti.hinta[0], r.vertailupaketti.hinta[1]) + '</span>).</span></p>';
-      } else {
-        h += '<p class="mhi-result__change"><span class="mhi-result__vs">Muita paketteja verrataan tähän hintaan samalle asunnon koolle.</span></p>';
-      }
       h += '</div>';
 
       h += '<div class="mhi-result__group"><dl class="mhi-lines">';
@@ -367,9 +322,7 @@
   }
 
   function start() {
-    var compare = document.querySelector('[data-mhi="vertailu"]');
     var calculator = document.querySelector('[data-mhi="laskuri"]');
-    if (compare) { initCompare(compare); }
     if (calculator) { initCalculator(calculator); }
   }
 

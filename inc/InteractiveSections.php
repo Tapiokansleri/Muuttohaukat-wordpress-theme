@@ -1,15 +1,13 @@
 <?php
 /**
- * Interactive sections: the "Me vs muut" comparison and the price calculator
- * (Tapio 26.10.2026: "Luo luonnos interaktiivisesta osioista: 'Me vs muut' ja
- * hintataulukko jossa voi itse tsekata miten hinta muuttuu eri m2 tai muita
- * palveluita ostaessa").
+ * Interactive section: the price calculator (Tapio 26.10.2026: "hintataulukko jossa
+ * voi itse tsekata miten hinta muuttuu eri m2 tai muita palveluita ostaessa").
+ * A "Me vs muut" comparison was built too and removed on 30.10.2026, since it
+ * was not going to be used.
  *
- *   [me_vs_muut]      filterable comparison: Muuttohaukat's facts and the
- *                     questions to ask any moving company.
  *   [hintalaskuri]    price estimate by size, package and extra services.
  *
- * Each shortcode prints the two columns of a `.mh-text-sec` (head on the left,
+ * The shortcode prints the two columns of a `.mh-text-sec` (head on the left,
  * body on the right), so a page wraps it like the other text sections:
  *
  *   <!-- wp:muuttohaukat/landing-why {"background":"white","anchor":"hintalaskuri"} -->
@@ -22,8 +20,7 @@
  * Every number comes from the theme's own tables: price_rows() (price page),
  * box_rental_products() and box_delivery() (box hub), so a price change in the
  * theme updates the calculator too. The full service multiplier is the 2.15
- * the price table uses. Facts in the comparison are quoted from the site's
- * pages (price page, delivery terms, environment page, front page).
+ * the price table uses.
  *
  * @package Muuttohaukat
  */
@@ -93,7 +90,6 @@ function interactive_page_links(): array {
     'piano' => ['Piano- ja kassakaappikuljetus', 'kassakaappikuljetus'],
     'kaluste' => ['Kalusteasennus', 'yritysmuutto/kalusteasennus'],
     'varastointi' => ['Varastointi (Pelican Self Storage)', 'varastointi'],
-    'ukk' => ['Usein kysyttyä', 'usein-kysyttyja-kysymyksia'],
   ];
   $links = [];
   foreach ($pages as $key => [$label, $path]) {
@@ -143,10 +139,10 @@ function interactive_calculator_data(): array {
     'pyoristysEuroa' => 5,
     'hintaluokat' => $classes,
     'paketit' => [
-      ['id' => 'perus', 'nimi' => 'Muuttopalvelu', 'kuvaus' => 'Perusmuutto ilman laatikoita', 'laatikot' => false, 'taysi' => false, 'erotusSana' => null],
-      ['id' => 'laatikot', 'nimi' => 'Muutto ja laatikot', 'kuvaus' => 'Perusmuutto ja muuttolaatikot', 'laatikot' => true, 'taysi' => false, 'erotusSana' => 'laatikoilla'],
-      ['id' => 'taysi', 'nimi' => 'Täyden palvelun muutto', 'kuvaus' => 'Pakkaus, kuljetus ja purku', 'laatikot' => false, 'taysi' => true, 'erotusSana' => 'täyden palvelun muutolla'],
-      ['id' => 'taysi-laatikot', 'nimi' => 'Täyden palvelun muutto ja laatikot', 'kuvaus' => 'Pakkaus, kuljetus ja purku sekä laatikot', 'laatikot' => true, 'taysi' => true, 'erotusSana' => 'täyden palvelun muutolla ja laatikoilla'],
+      ['id' => 'perus', 'nimi' => 'Muuttopalvelu', 'kuvaus' => 'Perusmuutto ilman laatikoita', 'laatikot' => false, 'taysi' => false],
+      ['id' => 'laatikot', 'nimi' => 'Muutto ja laatikot', 'kuvaus' => 'Perusmuutto ja muuttolaatikot', 'laatikot' => true, 'taysi' => false],
+      ['id' => 'taysi', 'nimi' => 'Täyden palvelun muutto', 'kuvaus' => 'Pakkaus, kuljetus ja purku', 'laatikot' => false, 'taysi' => true],
+      ['id' => 'taysi-laatikot', 'nimi' => 'Täyden palvelun muutto ja laatikot', 'kuvaus' => 'Pakkaus, kuljetus ja purku sekä laatikot', 'laatikot' => true, 'taysi' => true],
     ],
     // Only "keskimäärin 200–400 € yksiössä tai kaksiossa" is published for cleaning.
     // Kotitalousvähennys 2026–27: 40 %, deductible 150 €, at most 2 100 € per person.
@@ -186,119 +182,13 @@ function interactive_calculator_data(): array {
   return apply_filters('mh_interactive_data', $data);
 }
 
-/**
- * Rows of the comparison. Facts are quoted from the site; the questions are
- * neutral and make no claim about other companies.
- *
- * @return array<int, array{topic:string,title:string,facts:string[],ask:string,link?:array{0:string,1:string}}>
- */
-function interactive_comparison_rows(): array {
-  $nb = "\u{00A0}";
-  $rent = box_rental_products()[0]['price'] ?? '0,19 €';
-  $hours = office_hours()['short'] ?? 'Ma–to 8–16, pe 9–15';
-
-  return apply_filters('mh_interactive_comparison_rows', [
-    [
-      'topic' => 'hinta',
-      'title' => 'Hinnan muodostuminen',
-      'facts' => [
-        "Julkaistu hinnasto kokoluokittain. Hinnat ovat esimerkkihintoja, ja kuluttajahinnat sisältävät ALV:n.",
-        'Muutto tehdään kiinteällä kokonaishinnalla tai tuntiveloituksella, ja peruste sovitaan tarjouksessa.',
-        'Täyden palvelun muutolla (pakkaus, kuljetus, purku) on oma hinnastonsa.',
-      ],
-      'ask' => 'Onko hinta kiinteä vai tuntiveloitus, ja onko minimiveloitusta? Sisältääkö hinta ALV:n? Mitä hintaan kuuluu, ja mitkä työt veloitetaan erikseen?',
-      'link' => ['Katso hinnasto', home_url('/kotimuutto/muuttopalvelun-hinta/')],
-    ],
-    [
-      'topic' => 'vakuutus',
-      'title' => 'Vakuutukset',
-      'facts' => [
-        "Tiekuljetusvakuutus: korvaus tiekuljetussopimuslain mukaan, enintään 20{$nb}euroa puuttuvaa kiloa kohden.",
-        'Toiminnanvastuuvakuutus kolmannelle osapuolelle aiheutuvien henkilö- ja esinevahinkojen varalta.',
-      ],
-      'ask' => 'Mitkä vakuutukset yrityksellä on, ja mikä on korvauksen yläraja? Voiko vakuutusehdot nähdä etukäteen?',
-    ],
-    [
-      'topic' => 'vakuutus',
-      'title' => 'Vahingot ja pakkaaminen',
-      'facts' => [
-        'Arvoesineille voi ottaa oman muuttovakuutuksen omalla kustannuksella.',
-        'Jos pakkaaminen on asiakkaan vastuulla, muuttofirma ei vastaa puutteellisesta pakkaamisesta aiheutuneista vahingoista.',
-      ],
-      'ask' => 'Mitä tapahtuu, jos tavara vahingoittuu, ja miten vahinko ilmoitetaan? Mitä jää asiakkaan vastuulle, jos pakkaat itse?',
-    ],
-    [
-      'topic' => 'palvelualue',
-      'title' => 'Palvelualue',
-      'facts' => [
-        "Toimipisteet Hyvinkäällä, Vantaalla, Tampereella ja Turussa, avoinna " . mb_strtolower($hours) . ".",
-        'Toimimme koko Suomen alueella. Lopullinen hinta riippuu muun muassa matkasta.',
-      ],
-      'ask' => 'Toimiiko yritys alueellasi, ja miten matka vaikuttaa hintaan?',
-    ],
-    [
-      'topic' => 'ymparisto',
-      'title' => 'Ympäristö',
-      'facts' => [
-        'Ekokompassi-ympäristösertifikaatti vuodesta 2013.',
-        'Muuttoautoissa käytetään uusiutuvaa dieseliä (MY Diesel).',
-        "Vuokralaatikot ovat uudelleenkäytettäviä, vuokra " . str_replace(' ', $nb, $rent) . " laatikolta päivässä.",
-        'Toimipisteissä käytetään fossiilivapaata sähköä.',
-      ],
-      'ask' => 'Miten yritys voi osoittaa ympäristöväitteensä, esimerkiksi sertifikaatilla? Mitä polttoainetta muuttoautoissa käytetään?',
-    ],
-    [
-      'topic' => 'tarjous',
-      'title' => 'Tarjous',
-      'facts' => [
-        "Hinnan saa heti Tilaamuutto.fi-palvelusta, ja sieltä voi tilata muuton suoraan, kun asunto on alle 80{$nb}m².",
-        'Tarjouksen voi pyytää suoraan yritykseltä tarjouspyynnöllä.',
-      ],
-      'ask' => 'Voiko tarjouksen pyytää suoraan yritykseltä, ja milloin sen saa? Mitä tarjous sisältää, ja tehdäänkö kohteeseen tutustuminen etukäteen?',
-    ],
-    [
-      'topic' => 'tarjous',
-      'title' => 'Peruutus',
-      'facts' => [
-        'Kotimuuton voi perua maksutta viimeistään viisi arkipäivää ennen muuttoa.',
-        'Myöhemmin peruttaessa veloitetaan muuttoon varatun kapasiteetin viiden tunnin työ.',
-      ],
-      'ask' => 'Milloin muuton voi perua, ja mitä peruutus maksaa?',
-    ],
-    [
-      'topic' => 'palvelut',
-      'title' => 'Palvelut ja kokemus',
-      'facts' => [
-        "Perheyritys vuodesta 1992, yli 100{$nb}000 muuttoa, joista yli 10{$nb}000 vuonna 2025.",
-        'Kotimuutto (Helppo muutto, Kevyt muutto, Oma muutto ja Pakkausmuutto eli täyden palvelun muutto), yritys- ja toimistomuutto sekä piano- ja kassakaappikuljetus.',
-        'Muuttosiivous (vain siivouspaikkakuntien lähellä), kalusteasennus, muuttolaatikoiden vuokraus ja muuttotarvikkeet.',
-        "Varastointi yhteistyökumppani Pelican Self Storagen kautta. Pelicanin asiakkaat saavat muutosta jopa 20{$nb}% alennuksen.",
-        'Julkisen sektorin muutot Hanselin dynaamisen hankintajärjestelmän kautta.',
-      ],
-      'ask' => 'Kuka muuton tekee? Mitkä palvelut yritys tekee itse ja mitkä yhteistyökumppanin kautta? Onko yritys ennakkoperintärekisterissä (tärkeää kotitalousvähennyksen kannalta)?',
-    ],
-  ]);
-}
-
-/** Topics shown as filter checkboxes: value => label. */
-function interactive_comparison_topics(): array {
-  return apply_filters('mh_interactive_comparison_topics', [
-    'hinta' => 'Hinta',
-    'vakuutus' => 'Vakuutus',
-    'palvelualue' => 'Palvelualue',
-    'ymparisto' => 'Ympäristö',
-    'tarjous' => 'Tarjous ja aikataulu',
-    'palvelut' => 'Palvelut',
-  ]);
-}
-
-/** Loads the stylesheet and script on pages that use either shortcode. */
+/** Loads the stylesheet and script on pages that use the calculator. */
 add_action('wp_enqueue_scripts', function () {
   $post = is_singular() ? get_queried_object() : null;
   if (!$post instanceof \WP_Post) {
     return;
   }
-  if (!has_shortcode($post->post_content, 'me_vs_muut') && !has_shortcode($post->post_content, 'hintalaskuri')) {
+  if (!has_shortcode($post->post_content, 'hintalaskuri')) {
     return;
   }
   $uri = get_stylesheet_directory_uri();
@@ -315,51 +205,6 @@ function interactive_choice(string $type, string $name, string $id, string $valu
     . '<input type="' . esc_attr($type) . '" id="' . esc_attr($id) . '" name="' . esc_attr($name) . '" value="' . esc_attr($value) . '"' . ($checked ? ' checked' : '') . '>'
     . '<label for="' . esc_attr($id) . '">' . $text . '</label></div>';
 }
-
-add_shortcode('me_vs_muut', function ($atts) {
-  $a = shortcode_atts([
-    'kicker' => 'Vertailu',
-    'otsikko' => 'Me vs muut: mitä kannattaa verrata muuttofirmaa valitessa',
-    'johdanto' => 'Valitse alta sinulle tärkeät aiheet tai lue kaikki. Oikealla ovat Muuttohaukkojen omat tiedot ja kysymykset, jotka kannattaa esittää mille tahansa muuttofirmalle.',
-  ], $atts, 'me_vs_muut');
-
-  $rows = interactive_comparison_rows();
-  $topics = '';
-  foreach (interactive_comparison_topics() as $value => $label) {
-    $topics .= interactive_choice('checkbox', 'mhi-aihe', 'mhi-aihe-' . $value, $value, $label);
-  }
-
-  $head = '<div class="mh-text-sec__head mhi" data-mhi="vertailu">'
-    . '<p class="mh-landing-kicker">' . esc_html($a['kicker']) . '</p>'
-    . '<h2 class="wp-block-heading">' . esc_html($a['otsikko']) . '</h2>'
-    . '<p class="mhi-lead">' . esc_html($a['johdanto']) . '</p>'
-    . '<fieldset class="mhi-group"><legend class="mhi-group__title">Mikä sinulle on tärkeää?</legend>'
-    . '<div class="mhi-topics">' . $topics . '</div></fieldset>'
-    . '<div class="mhi-status"><p role="status" aria-live="polite" data-mhi-count>Näytetään ' . count($rows) . ' / ' . count($rows) . ' asiaa</p>'
-    . '<button type="button" class="mhi-textbtn" data-mhi-reset data-hidden="true">Näytä kaikki</button></div>'
-    . '</div>';
-
-  $list = '';
-  foreach ($rows as $row) {
-    $facts = '';
-    foreach ($row['facts'] as $fact) {
-      $facts .= '<li>' . esc_html($fact) . '</li>';
-    }
-    $more = !empty($row['link'])
-      ? '<p class="mhi-more"><a href="' . esc_url($row['link'][1]) . '">' . esc_html($row['link'][0]) . '</a></p>'
-      : '';
-    $list .= '<li class="mhi-compare__row" data-topic="' . esc_attr($row['topic']) . '">'
-      . '<h3>' . esc_html($row['title']) . '</h3>'
-      . '<dl class="mhi-parts">'
-      . '<div class="mhi-part mhi-part--us"><dt>Muuttohaukat</dt><dd><ul class="mhi-facts">' . $facts . '</ul>' . $more . '</dd></div>'
-      . '<div class="mhi-part mhi-part--ask"><dt>Kysy muulta yritykseltä</dt><dd>' . esc_html($row['ask']) . '</dd></div>'
-      . '</dl></li>';
-  }
-
-  $body = '<div class="mh-text-sec__body mhi" data-mhi-list><ul class="mhi-compare">' . $list . '</ul></div>';
-
-  return $head . $body;
-});
 
 add_shortcode('hintalaskuri', function ($atts) {
   $data = interactive_calculator_data();
@@ -421,7 +266,6 @@ add_shortcode('hintalaskuri', function ($atts) {
     . '<a class="mh-painike mh-painike--black" data-mhi-quote href="' . esc_url($data['linkit']['tarjous']) . '">Pyydä tarjous</a>'
     . '<a class="mh-painike mh-painike--yellow" data-mhi-order href="' . esc_url($data['linkit']['tilaaHeti']) . '" target="_blank" rel="noopener noreferrer">Tilaa heti</a>'
     . '</div>'
-    . interactive_more_links_html()
     . '<p class="mhi-small">Esimerkkihinnat. Tarkka hinta pyydettäessä.</p>'
     . '</div>'
     // Floating price on phones and tablets: shown while the controls are in view and the result is not (interactive.js).
@@ -434,16 +278,3 @@ add_shortcode('hintalaskuri', function ($atts) {
 
   return $head . $body;
 });
-
-/** The "Lue lisää" list under the calculator's buttons. */
-function interactive_more_links_html(): string {
-  $links = interactive_page_links();
-  $show = ['hinnasto', 'taysi', 'laatikot', 'siivous', 'piano', 'varastointi', 'ukk'];
-  $items = '';
-  foreach ($show as $key) {
-    if (isset($links[$key])) {
-      $items .= '<li><a href="' . esc_url($links[$key][1]) . '">' . esc_html($links[$key][0]) . '</a></li>';
-    }
-  }
-  return $items === '' ? '' : '<nav class="mhi-readmore" aria-label="Lue lisää"><p class="mhi-label">Lue lisää</p><ul>' . $items . '</ul></nav>';
-}
