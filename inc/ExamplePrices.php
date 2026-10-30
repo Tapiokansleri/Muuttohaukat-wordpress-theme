@@ -68,3 +68,19 @@ function example_prices_html(): string {
 }
 
 add_shortcode('esimerkkihinnat', fn() => example_prices_html());
+
+/**
+ * One price range from the price table, for running text: [hintahaarukka tyyppi="kaksio"] -> "450–600 €",
+ * laatikot="1" gives the price with boxes. Follows price_rows(), so a price change updates the text too.
+ */
+add_shortcode('hintahaarukka', function ($atts) {
+  $a = shortcode_atts(['tyyppi' => '', 'laatikot' => ''], $atts, 'hintahaarukka');
+  $want = mb_strtolower(trim((string) $a['tyyppi']));
+  foreach (price_rows() as $row) {
+    if (mb_strtolower((string) ($row['type'] ?? '')) === $want) {
+      $range = $a['laatikot'] ? (string) ($row['boxes'] ?? '') : (string) ($row['basic'] ?? '');
+      return $range !== '' ? esc_html(example_price($range, 1.0)) : '';
+    }
+  }
+  return '';
+});

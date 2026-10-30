@@ -997,11 +997,6 @@
     margin: 0;
 }
 
-.mh-choices__title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.15;
-}
-
 .mh-choices__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1070,5 +1065,136 @@
 
     .mh-choice-card > .wp-block-muuttohaukat-buttons .mh-painike {
         width: 100%;
+    }
+}
+
+/* Inside the price card: three example prices from the price table ([hintahaarukka]) */
+.mh-choice-card__prices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 600;
+}
+
+.mh-choice-card__prices li {
+    margin: 0;
+    padding: 0;
+}
+
+.mh-choice-card__prices li::before,
+.mh-choice-card__prices li::marker {
+    content: none;
+}
+
+.mh-choice-card a:not(.mh-painike) {
+    color: var(--color-black);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+/* Business customers: one line under the two cards */
+.mh-choices__business {
+    margin: 0;
+    font-size: 1.0625rem;
+}
+
+.mh-choices__business a {
+    color: var(--color-black);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ==========================================================================
+   Layout v2 (opt-in per page: post meta _mh_v2 -> body.mh-v2, inc/LayoutV2.php).
+   From the front page review of 30.10.2026: in GA4 (2.-29.10.) the front page
+   converted 5.0 % of phone sessions against 12.4 % on desktops, and on a phone
+   the body text was 13px, H1 and H2 were both 21px, the first quote button was
+   3.4 screens down and the floating buttons were 33px high.
+   ========================================================================== */
+@media (max-width: 768px) {
+    body.mh-v2 {
+        --text-xs: 0.75rem;
+        --text-sm: 0.875rem;
+        --text-base: 1rem;
+        --text-md: 1.0625rem;
+        --text-lg: 1.0625rem;
+        --text-xl: 1.25rem;
+        --text-2xl: 1.5rem;
+        --text-3xl: 1.875rem;
+        --text-4xl: 2rem;
+        --leading-normal: 1.5;
+        --leading-relaxed: 1.6;
+        --body-font-size: 1.0625rem;
+        --body-line-height: 1.6;
+        --content-font-size: 1.0625rem;
+        --content-line-height: 1.6;
+        --heading-1-size: 1.875rem;
+        --heading-2-size: 1.5rem;
+        --heading-3-size: 1.25rem;
+        --heading-4-size: 1.0625rem;
+        --heading-5-size: 1.0625rem;
+        --heading-6-size: 1rem;
+        --button-font-size: 0.875rem;
+        --content-button-font-size: 0.875rem;
+        --content-button-padding-y: 0.75rem;
+        --nav-mobile-font-size: 1rem;
+        --nav-mobile-submenu-font-size: 0.9375rem;
+        --post-grid-title-size: 1.25rem;
+        --post-grid-meta-size: 0.875rem;
+    }
+
+    body.mh-v2 .mh-landing .mh-painike {
+        font-size: 0.9375rem;
+    }
+
+    /* the site's floating buttons: a tap target of about 44px instead of 33px */
+    body.mh-v2 .kansleri-floating-cta-banner .mh-painike {
+        padding: 13px 18px;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 640px) {
+    /* phones: the title, the text and both buttons fit on the first screen; the mascot shows from tablets up */
+    body.mh-v2 .mh-landing-hero {
+        padding-top: var(--space-8);
+    }
+
+    body.mh-v2 .mh-landing-hero__media {
+        display: none;
+    }
+
+    body.mh-v2 .mh-landing-hero .mh-painike-wrap {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    body.mh-v2 .mh-landing-hero .mh-painike {
+        width: 100%;
+    }
+
+    body.mh-v2 .mh-landing-hero__trust {
+        margin-top: var(--space-6);
+    }
+
+    body.mh-v2 .mh-icon-item__caption {
+        font-size: 0.875rem;
+    }
+
+    body.mh-v2 .mh-choice-card {
+        gap: var(--space-4);
+        padding: var(--space-6) var(--space-5);
+    }
+
+    body.mh-v2 .mh-choice-card__icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.0625rem;
     }
 }

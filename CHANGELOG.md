@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.33] - 2026-10-30
+
+### Added
+
+- Opt-in "v2" layout for one page (`inc/LayoutV2.php`): post meta `_mh_v2` = 1 adds the body class `mh-v2`. On phones and tablets that page then uses a larger type scale (body text 17px instead of 13px, H1 30px, H2 24px, H3 20px, mobile menu 16px) and taller floating buttons. On phones the landing hero hides the mascot and stacks full-width buttons, so the title and both actions fit on the first screen. From the front page review of 30.10.2026: in GA4 (2.–29.10.) the front page converted 5.0 % of phone sessions against 12.4 % on desktops. Used first on the password protected front page preview, before the whole site.
+- `[hintahaarukka tyyppi="kaksio"]` prints one price range from the price table for running text ("450–600 €"); `laatikot="1"` gives the price with boxes.
+- Choice cards: a row of example prices, underlined links inside a card and a business line under the cards (`.mh-choice-card__prices`, `.mh-choices__business`).
+
+### Changed
+
+- The choice section's title follows the theme's H2 size, since it now comes after the hero instead of being the page's H1.
+
 ## [1.2.32] - 2026-10-30
 
 ### Added
