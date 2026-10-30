@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.32] - 2026-10-30
+
+### Added
+
+- Styles for a two-choice start on a landing page (`.mh-choices`, `.mh-choice-card`): two equal flat cards under the title, side by side on wide screens and stacked on phones, a yellow icon chip, and the button at the bottom of each card. From the client's proposal for the front page (30.10.2026): "Haluan tietää muuton hinnan" (yellow button to Tilaamuutto.fi) and "Haluan asiantuntijan apua muuttooni" (black button to the quote form). Used first on a password protected copy of the front page.
+
 ## [1.2.31] - 2026-10-30
 
 ### Removed

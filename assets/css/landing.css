@@ -972,3 +972,103 @@
 @media (max-width: 640px) {
     .mh-examples { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ==========================================================================
+   Two choices at the start of the front page (client proposal 30.10.2026):
+   "Haluan tietää muuton hinnan" (to Tilaamuutto.fi) and "Haluan asiantuntijan
+   apua muuttooni" (to the quote form). Side by side on wide screens, stacked
+   on phones; flat panels, nothing centred.
+   ========================================================================== */
+.mh-choices {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.mh-choices__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    max-width: 52rem;
+}
+
+.mh-choices__head > * {
+    margin: 0;
+}
+
+.mh-choices__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15;
+}
+
+.mh-choices__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+}
+
+@media (max-width: 760px) {
+    .mh-choices__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.mh-choice-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    padding: var(--space-8);
+    background: #f4f4f1;
+    color: var(--color-black);
+}
+
+.mh-choice-card > * {
+    margin: 0;
+}
+
+.mh-choice-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: var(--color-accent);
+    border-radius: 4px;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.mh-choice-card__title {
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+/* the button sits at the bottom of both cards, whatever the length of the text above it */
+.mh-choice-card > .wp-block-muuttohaukat-buttons {
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+/* the theme sets its own (smaller on phones) paragraph size: the cards keep one size, the note a little smaller */
+.mh-choices__head > p:not(.mh-landing-kicker),
+.mh-choice-card > p:not(.mh-choice-card__icon) {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+}
+
+.mh-choice-card > .mh-choice-card__note {
+    font-size: 0.9375rem;
+}
+
+@media (max-width: 640px) {
+    .mh-choice-card {
+        padding: var(--space-6);
+    }
+
+    .mh-choice-card > .wp-block-muuttohaukat-buttons .mh-painike {
+        width: 100%;
+    }
+}
