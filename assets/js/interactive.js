@@ -298,13 +298,16 @@
     }
 
     // Measurement: the choices and the price range the visitor sees go to the dataLayer, and Google Tag Manager
-    // forwards them to Google Analytics 4 (trigger "Custom Event - calculator", tag "GA4 Event - calculator").
-    // Nothing the visitor types is sent as such, only the size, package, extras and the price range of the result.
+    // forwards them to Google Analytics 4 (one trigger and one tag per event, named "Custom Event - calculator_…" and
+    // "GA4 Event - calculator_…"). Nothing the visitor types is sent as such, only the size, package, extras and the
+    // price range of the result.
     //   calculator_view       the size slider has been fully on screen for 0.8 s (once per page view)
     //   calculator_start      the first choice made (once); calc_control: size | package | extras | box_rental
     //   calculator_estimate   the choices have settled for 1.5 s and the result differs from the last one sent (max 10)
     //   calculator_over_limit the bigger-than-150 m² notice was shown (once)
     //   calculator_cta_click  a quote or order link was clicked; calc_cta: quote | quote_bar | order_now | quote_over_limit
+    // calculator_estimate and calculator_cta_click carry calc_m2, calc_size_class, calc_package, calc_extras,
+    // calc_price_low and calc_price_high.
     var track = (function () {
       var sentOnce = {}, lastEstimate = '', estimates = 0, timer = null;
 
@@ -351,9 +354,9 @@
         },
         cta: function (name) {
           if (timer !== null) { estimate(); }                // the last choices count before the click
-          var data = { calc_cta: name };
-          if (name !== 'quote_over_limit') { data = Object.assign(data, snapshot()); }
-          push('calculator_cta_click', data);
+          // Always with the result data: Tag Manager keeps the last value of every data layer key, so a message
+          // that left some keys out would carry the values of an earlier message into Analytics.
+          push('calculator_cta_click', Object.assign({ calc_cta: name }, snapshot()));
         },
         watchView: function () {
           if (!('IntersectionObserver' in window)) { return; }

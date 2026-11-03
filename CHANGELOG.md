@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.45] - 2026-11-03
+
+### Changed
+
+- Calculator measurement (added in 1.2.44, which was never installed on the live site): `calculator_cta_click` now always carries the result data, also for `quote_over_limit`. Tag Manager keeps the last value of every data layer key, so a message with keys left out would have carried the values of an earlier message to Analytics. Tag Manager gets one trigger and one tag per calculator event (`Custom Event - calculator_…`, `GA4 Event - calculator_…`).
+
 ## [1.2.44] - 2026-11-03
 
 ### Added
