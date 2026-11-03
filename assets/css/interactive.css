@@ -274,6 +274,13 @@
     border: 3px solid var(--color-black);
 }
 
+/* The end of the size slider: homes bigger than the calculator takes get a quote */
+.mhi-hint--limit {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
 /* The one line under "Vuokraan laatikot erikseen": what the calculator assumes */
 .mhi-hint--rent {
     padding-left: 2.125rem;
@@ -479,8 +486,9 @@
     }
 }
 
-/* Links in the result keep the text colour and are underlined */
-.mhi-panel a {
+/* Links in the result and in the size notice keep the text colour and are underlined */
+.mhi-panel a,
+.mhi-hint--limit a {
     color: inherit;
     text-decoration: underline;
     text-decoration-thickness: 1px;
@@ -488,7 +496,9 @@
 }
 
 .mhi-panel a:hover,
-.mhi-panel a:focus-visible {
+.mhi-panel a:focus-visible,
+.mhi-hint--limit a:hover,
+.mhi-hint--limit a:focus-visible {
     text-decoration-thickness: 2px;
 }
 

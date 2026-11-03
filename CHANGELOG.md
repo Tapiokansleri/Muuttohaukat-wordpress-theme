@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.42] - 2026-11-03
+
+### Added
+
+- Price calculator, from Tapio's comment "Kun m2 range sliderin vierittää loppuun sen tulee ilmoittaa, että isommista pyydä tarjous" (3.11.2026): when the size reaches the end of the slider (150 m²), a line under the slider says "Yli 150 m² asunnoista pyydä tarjous." The link goes to the plain quote form (`/tarjouspyynto/kotimuutto/`), without the 150 m² estimate.
+  - The line also shows when 150 is typed, when a typed size is clamped to 150 and while a number above 150 is being typed (it replaces the "Syötä asunnon koko väliltä 20–150 m²" hint then). It hides when the size drops below 150.
+
 ## [1.2.41] - 2026-11-03
 
 ### Changed

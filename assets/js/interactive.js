@@ -156,7 +156,7 @@
 
     var $ = function (id) { return document.getElementById(id); };
     var el = {
-      koko: $('mhi-koko'), liuku: $('mhi-koko-liuku'), vihje: $('mhi-koko-vihje'),
+      koko: $('mhi-koko'), liuku: $('mhi-koko-liuku'), vihje: $('mhi-koko-vihje'), raja: $('mhi-koko-raja'),
       siivous: $('mhi-lisa-siivous'), piano: $('mhi-lisa-piano'), kaluste: $('mhi-lisa-kaluste'), varastointi: $('mhi-lisa-varastointi'),
       vuokraRyhma: head.querySelector('[data-mhi-rent-group]'), vuokra: $('mhi-vuokra'), vuokraTeksti: head.querySelector('[data-mhi-rent-note]'),
       tulos: result.querySelector('[data-mhi-panel]'), tilaa: result.querySelector('[data-mhi-order]'), tarjous: result.querySelector('[data-mhi-quote]'),
@@ -188,6 +188,7 @@
       el.liuku.value = v;
       el.liuku.style.setProperty('--mhi-fill', ((v - K.min) / (K.max - K.min) * 100) + '%');
       el.liuku.setAttribute('aria-valuetext', v + ' neliömetriä');
+      el.raja.hidden = v < K.max;                // the end of the slider: bigger homes get a quote
     }
 
     function readState() {
@@ -296,7 +297,13 @@
 
     el.koko.addEventListener('input', function () {
       var v = readInt(el.koko, K.min, K.max);
-      if (v === null) { el.vihje.hidden = false; return; }   // a half typed value: keep the previous result
+      if (v === null) {                                      // a half typed value: keep the previous result
+        var typed = parseFloat(String(el.koko.value).replace(',', '.'));
+        var tooBig = isFinite(typed) && typed > K.max;       // a bigger home gets the quote advice instead of the range hint
+        el.vihje.hidden = tooBig;
+        el.raja.hidden = !tooBig;
+        return;
+      }
       el.vihje.hidden = true;
       setSize(v);
       update();

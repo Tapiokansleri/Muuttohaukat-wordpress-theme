@@ -287,6 +287,8 @@ add_shortcode('hintalaskuri', function ($atts) {
     . '<input type="range" id="mhi-koko-liuku" min="' . (int) $k['min'] . '" max="' . (int) $k['max'] . '" step="1" value="' . (int) $k['oletus'] . '">'
     . '<div class="mhi-size__limits" aria-hidden="true"><span>' . (int) $k['min'] . "\u{00A0}m²</span><span>" . (int) $k['max'] . "\u{00A0}m²</span></div></div>"
     . '</div>'
+    // The end of the slider (and a typed size above it): homes bigger than the calculator takes get a quote, not an estimate (interactive.js).
+    . '<p class="mhi-hint mhi-hint--limit" id="mhi-koko-raja" role="status" hidden>Yli ' . (int) $k['max'] . "\u{00A0}m² asunnoista " . '<a href="' . esc_url($data['linkit']['tarjous']) . '">pyydä tarjous</a>.</p>'
     . '<p class="mhi-hint" id="mhi-koko-vihje" role="status" hidden>Syötä asunnon koko väliltä ' . (int) $k['min'] . '–' . (int) $k['max'] . "\u{00A0}m².</p></div>"
 
     . '<fieldset class="mhi-group"><legend class="mhi-group__title">Paketti</legend>' . $packages . '</fieldset>'
