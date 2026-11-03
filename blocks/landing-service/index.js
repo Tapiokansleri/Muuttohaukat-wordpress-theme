@@ -26,7 +26,7 @@
 		[ 'core/group', { className: 'mh-landing__inner' }, [
 			[ 'core/group', { className: 'mh-landing-sec-head' }, [
 				[ 'core/heading', { level: 2, content: 'Haluatko tarjouksen asiantuntijalta?' } ],
-				[ 'core/paragraph', { content: 'Saat tarjouksen alle 60 m² asuntosi muutosta välittömästi! Suuremmat asunnot viimeistään seuraavana arkipäivänä. Voit myös tilata alle 80 m² kokoisen asunnon muuton suoraan osoitteessa: tilaamuutto.fi' } ],
+				[ 'core/paragraph', { content: 'Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m². Tarjouspyyntöön vastaamme viimeistään seuraavana arkipäivänä. Voit myös tilata alle 80 m² kokoisen asunnon muuton suoraan osoitteessa: tilaamuutto.fi' } ],
 				[ 'core/paragraph', { content: 'Olet tekemässä erinomaisen valinnan. Valitse sinulle parhaiten sopiva vaihtoehto alta!' } ]
 			] ],
 			[ 'core/group', { className: 'mh-landing-features' }, [

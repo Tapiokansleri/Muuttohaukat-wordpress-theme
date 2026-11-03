@@ -162,7 +162,7 @@ function article_footer_html(\WP_Post $post): string {
       <div class="mh-article-cta__text">
         <p class="mh-article-kicker">Muutto edessä?</p>
         <h2 id="mh-article-cta-title">Pyydä tarjous muutosta</h2>
-        <p>Kerro asunnon koko ja muuttopäivä, niin saat hinnan. Alle 60 neliön asunnon muutosta tarjous tulee heti.</p>
+        <p>Kerro asunnon koko ja muuttopäivä, niin saat hinnan. Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m².</p>
       </div>
       <div class="mh-article-cta__actions">
         <a class="mh-painike mh-painike--yellow" href="<?php echo esc_url(home_url('/tarjouspyynto/kotimuutto/')); ?>">Pyydä tarjous</a>
