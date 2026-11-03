@@ -235,6 +235,12 @@ add_action('wp_head', function () {
     if ($faq) {
       print_json_ld($faq);
     }
+  } elseif (strpos((string) $post->post_content, 'mh-faq') !== false) {
+    // Any page with a FAQ section (open/close items from the section builders) prints its questions as FAQPage markup.
+    $faq = faq_schema($post);
+    if ($faq) {
+      print_json_ld($faq);
+    }
   }
 }, 20);
 
