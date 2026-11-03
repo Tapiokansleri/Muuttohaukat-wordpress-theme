@@ -170,6 +170,7 @@
     var K = DATA.koko;
     var m2 = K.oletus;
     var previous = '';
+    var current = null;                          // the result on screen, for the measurement below
 
     function readInt(input, min, max) {
       var v = Math.round(parseFloat(String(input.value).replace(',', '.')));
@@ -247,6 +248,7 @@
       el.vuokraTeksti.textContent = 'Arvio asunnon koon mukaan: ' + boxes + NBSP + 'laatikkoa ' + days + NBSP + 'päivän ajaksi.';
 
       var r = Laskenta.laske(readState());
+      current = r;
       var html = draw(r);
       if (html !== previous) { el.tulos.innerHTML = html; previous = html; }
       el.tilaa.hidden = !r.tilaaHeti;
@@ -295,6 +297,95 @@
       return DATA.linkit.tarjous + (DATA.linkit.tarjous.indexOf('?') === -1 ? '?' : '&') + p.toString();
     }
 
+    // Measurement: the choices and the price range the visitor sees go to the dataLayer, and Google Tag Manager
+    // forwards them to Google Analytics 4 (trigger "Custom Event - calculator", tag "GA4 Event - calculator").
+    // Nothing the visitor types is sent as such, only the size, package, extras and the price range of the result.
+    //   calculator_view       the size slider has been fully on screen for 0.8 s (once per page view)
+    //   calculator_start      the first choice made (once); calc_control: size | package | extras | box_rental
+    //   calculator_estimate   the choices have settled for 1.5 s and the result differs from the last one sent (max 10)
+    //   calculator_over_limit the bigger-than-150 m² notice was shown (once)
+    //   calculator_cta_click  a quote or order link was clicked; calc_cta: quote | quote_bar | order_now | quote_over_limit
+    var track = (function () {
+      var sentOnce = {}, lastEstimate = '', estimates = 0, timer = null;
+
+      function push(name, data) {
+        var message = { event: name }, key;
+        for (key in data) { if (Object.prototype.hasOwnProperty.call(data, key)) { message[key] = data[key]; } }
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(message);
+      }
+      function once(name, data) {
+        if (!sentOnce[name]) { sentOnce[name] = true; push(name, data); }
+      }
+      function snapshot() {
+        var s = readState(), c = current.luokka;
+        var extras = ['siivous', 'piano', 'kaluste', 'varastointi'].filter(function (k) { return s[k]; });
+        if (s.vuokra) { extras.push('vuokra'); }
+        return {
+          calc_m2: current.m2,
+          calc_size_class: c.min + '-' + (c.max === null ? 'plus' : c.max),
+          calc_package: current.paketti.id,
+          calc_extras: extras.length ? extras.join(',') : 'none',
+          calc_price_low: Math.floor(current.yhteensa[0] / 100),
+          calc_price_high: Math.ceil(current.yhteensa[1] / 100)
+        };
+      }
+      function estimate() {
+        window.clearTimeout(timer);
+        timer = null;
+        var data = snapshot(), key = JSON.stringify(data);
+        if (key === lastEstimate || estimates >= 10) { return; }
+        lastEstimate = key;
+        estimates += 1;
+        push('calculator_estimate', data);
+      }
+
+      return {
+        /** a choice was made; withoutEstimate: the result did not change (a size above the limit was typed) */
+        touch: function (control, withoutEstimate) {
+          once('calculator_start', { calc_control: control });
+          if (!el.raja.hidden) { once('calculator_over_limit'); }
+          if (withoutEstimate) { return; }
+          window.clearTimeout(timer);
+          timer = window.setTimeout(estimate, 1500);
+        },
+        cta: function (name) {
+          if (timer !== null) { estimate(); }                // the last choices count before the click
+          var data = { calc_cta: name };
+          if (name !== 'quote_over_limit') { data = Object.assign(data, snapshot()); }
+          push('calculator_cta_click', data);
+        },
+        watchView: function () {
+          if (!('IntersectionObserver' in window)) { return; }
+          var dwell = null;
+          var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              window.clearTimeout(dwell);
+              if (entry.isIntersecting) {
+                dwell = window.setTimeout(function () { once('calculator_view'); observer.disconnect(); }, 800);
+              }
+            });
+          }, { threshold: 1 });
+          observer.observe(el.liuku);
+        }
+      };
+    })();
+
+    function ctaName(target) {
+      var a = target && target.closest ? target.closest('a') : null;
+      if (!a) { return null; }
+      if (a.hasAttribute('data-mhi-quote')) { return 'quote'; }
+      if (a.hasAttribute('data-mhi-bar-quote')) { return 'quote_bar'; }
+      if (a.hasAttribute('data-mhi-order')) { return 'order_now'; }
+      return el.raja.contains(a) ? 'quote_over_limit' : null;
+    }
+    function onClick(e) {
+      var name = ctaName(e.target);
+      if (name) { track.cta(name); }
+    }
+    section.addEventListener('click', onClick);
+    section.addEventListener('auxclick', function (e) { if (e.button === 1) { onClick(e); } });
+
     el.koko.addEventListener('input', function () {
       var v = readInt(el.koko, K.min, K.max);
       if (v === null) {                                      // a half typed value: keep the previous result
@@ -302,30 +393,40 @@
         var tooBig = isFinite(typed) && typed > K.max;       // a bigger home gets the quote advice instead of the range hint
         el.vihje.hidden = tooBig;
         el.raja.hidden = !tooBig;
+        if (tooBig) { track.touch('size', true); }
         return;
       }
       el.vihje.hidden = true;
       setSize(v);
       update();
+      track.touch('size');
     });
     el.koko.addEventListener('change', function () {         // leaving the field: clamp to the allowed range
       var raw = Math.round(parseFloat(String(el.koko.value).replace(',', '.')));
       setSize(isFinite(raw) ? clamp(raw, K.min, K.max) : m2);
       el.vihje.hidden = true;
       update();
+      track.touch('size');
     });
     el.liuku.addEventListener('input', function () {
       el.vihje.hidden = true;
       setSize(parseInt(el.liuku.value, 10));
       update();
+      track.touch('size');
     });
 
-    head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra').forEach(function (e) { e.addEventListener('change', update); });
+    head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra').forEach(function (e) {
+      e.addEventListener('change', function () {
+        update();
+        track.touch(e.id === 'mhi-vuokra' ? 'box_rental' : (e.name === 'mhi-paketti' ? 'package' : 'extras'));
+      });
+    });
 
     el.tilaa.setAttribute('href', DATA.linkit.tilaaHeti);
     setSize(K.oletus);
     update();
     watchBar();
+    track.watchView();
   }
 
   function start() {

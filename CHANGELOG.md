@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.44] - 2026-11-03
+
+### Added
+
+- Price calculator measurement, from Tapio's request to see how many use the calculator and whether it helps conversions (3.11.2026). `assets/js/interactive.js` pushes five events to the dataLayer; Google Tag Manager (trigger "Custom Event - calculator", tag "GA4 Event - calculator") forwards them to Google Analytics 4. Nothing the visitor types is sent as such, only the size, package, extras and the price range of the result.
+  - `calculator_view`: the size slider has been fully on screen for 0.8 s (once per page view).
+  - `calculator_start`: the first choice made (once per page view); `calc_control` is `size`, `package`, `extras` or `box_rental`.
+  - `calculator_estimate`: the choices have settled for 1.5 s and the result differs from the last one sent (at most 10 per page view); carries `calc_m2`, `calc_size_class`, `calc_package`, `calc_extras`, `calc_price_low` and `calc_price_high`.
+  - `calculator_over_limit`: the "Yli 150 m² asunnoista pyydä tarjous" notice was shown (once per page view).
+  - `calculator_cta_click`: a quote or order link was clicked; `calc_cta` is `quote`, `quote_bar`, `order_now` or `quote_over_limit`, with the same result data (not for `quote_over_limit`). A pending estimate is sent first.
+- The quote form already receives the calculator's choices in the address (`?pa=…&pkt=…&arvio=…`), so a `form_submit` whose page address holds `arvio=` is a lead that came through the calculator.
+
 ## [1.2.43] - 2026-11-03
 
 ### Fixed
