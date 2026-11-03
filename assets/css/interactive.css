@@ -274,9 +274,13 @@
     border: 3px solid var(--color-black);
 }
 
-/* The end of the size slider: homes bigger than the calculator takes get a quote */
+/* The lines under the size slider: the range hint and, at the end of the slider, the quote line for homes bigger than
+   the calculator takes. The theme's paragraph rule (.mh-landing p) would zero the top margin and add one below. */
+.mhi-group > .mhi-size ~ .mhi-hint {
+    margin: 0.5rem 0 0;
+}
+
 .mhi-hint--limit {
-    margin-top: 0.5rem;
     font-size: 1rem;
     font-weight: 600;
 }

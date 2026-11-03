@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.43] - 2026-11-03
+
+### Fixed
+
+- The size notice added in 1.2.42 sat flush against the slider's "20 m² / 150 m²" row and carried the theme's 16px paragraph margin below it (`.mh-landing p` beat the one-class rule). The lines under the size slider, the range hint included, now have 8px above and none below, so the gap to the next group stays 32px.
+
 ## [1.2.42] - 2026-11-03
 
 ### Added
