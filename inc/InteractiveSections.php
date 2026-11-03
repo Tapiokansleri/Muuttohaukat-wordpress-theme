@@ -20,7 +20,8 @@
  * Every number comes from the theme's own tables: price_rows() (price page),
  * box_rental_products() and box_delivery() (box hub), so a price change in the
  * theme updates the calculator too. The full service multiplier is the 2.15
- * the price table uses.
+ * the price table uses. The table's last row (over 100 m²) is shown in steps,
+ * see INTERACTIVE_LARGE_HOME_STEPS.
  *
  * @package Muuttohaukat
  */
@@ -32,6 +33,23 @@ if (!defined('ABSPATH')) {
 
 /** Full service = this multiple of the base price, rounded to 5 € (tayden-palvelun-muutto page). */
 const INTERACTIVE_FULL_SERVICE_MULTIPLIER = 2.15;
+
+/** The largest size the calculator takes (the end of the size slider), in m². */
+const INTERACTIVE_SIZE_MAX = 150;
+
+/**
+ * The price table's last row ("yli 100 m²") is one wide range, which the size slider would show unchanged from 101 to
+ * 150 m² (Tapio 3.11.2026: "Hintalaskuriin 100m2+ joku tarkennus"; he approved these steps the same day). A step is
+ * [from m², to m², where its low end sits, where its high end sits], the last two as shares of the row's range, so the
+ * outer ends stay the published ones. With the row 1000–2000 € this gives 101–115 m² 1000–1400 €, 116–130 m² 1200–1700 €
+ * and 131–150 m² 1400–2000 €. The price with boxes keeps the row's own difference to the basic price (+100 € at the low
+ * end, +200 € at the high end). The price page and the city pages are not touched: they say "1 000–2 000 € tai enemmän".
+ */
+const INTERACTIVE_LARGE_HOME_STEPS = [
+  [101, 115, 0.0, 0.4],
+  [116, 130, 0.2, 0.7],
+  [131, INTERACTIVE_SIZE_MAX, 0.4, 1.0],
+];
 
 /** "300-500 €" -> [300, 500]; null when the text holds no range. */
 function interactive_parse_range($text): ?array {
@@ -47,6 +65,25 @@ function interactive_parse_euros($text): ?float {
     return null;
   }
   return (float) str_replace(',', '.', $m[0]);
+}
+
+/**
+ * The steps of the price table's open-ended last row, from its two ranges (INTERACTIVE_LARGE_HOME_STEPS), rounded to
+ * 50 € like the table's own prices.
+ *
+ * @param int[] $basic [low, high] without boxes.
+ * @param int[] $boxes [low, high] with boxes.
+ */
+function interactive_large_home_steps(array $basic, array $boxes): array {
+  $span = $basic[1] - $basic[0];
+  $extra = [$boxes[0] - $basic[0], $boxes[1] - $basic[1]];
+  $at = fn(float $share): int => (int) (round(($basic[0] + $share * $span) / 50) * 50);
+  $steps = [];
+  foreach (INTERACTIVE_LARGE_HOME_STEPS as [$from, $to, $low, $high]) {
+    $perus = [$at($low), $at($high)];
+    $steps[] = ['min' => $from, 'max' => $to, 'perus' => $perus, 'laatikot' => [$perus[0] + $extra[0], $perus[1] + $extra[1]]];
+  }
+  return $steps;
 }
 
 /**
@@ -70,6 +107,11 @@ function interactive_price_classes(): array {
     $boxes = interactive_parse_range($row['boxes'] ?? null);
     if (!$basic || !$boxes) {
       return [];
+    }
+    if ($max === null && $min === INTERACTIVE_LARGE_HOME_STEPS[0][0]) {
+      // The open-ended last row ("yli 100 m²") is shown in steps. A row that starts elsewhere stays one class.
+      $classes = array_merge($classes, interactive_large_home_steps($basic, $boxes));
+      continue;
     }
     $classes[] = ['min' => $min, 'max' => $max, 'perus' => $basic, 'laatikot' => $boxes];
   }
@@ -132,7 +174,7 @@ function interactive_calculator_data(): array {
       'tilaaHeti' => 'https://tilaamuutto.fi/',
       'sivut' => array_map(fn($l) => $l[1], interactive_page_links()),
     ],
-    'koko' => ['min' => 20, 'max' => 150, 'oletus' => 50],
+    'koko' => ['min' => 20, 'max' => INTERACTIVE_SIZE_MAX, 'oletus' => 50],
     // The site says "alle 80 m²" for ordering directly at tilaamuutto.fi.
     'tilaaHetiEnintaan' => 79,
     'taydenPalvelunKerroin' => INTERACTIVE_FULL_SERVICE_MULTIPLIER,

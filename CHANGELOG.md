@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.41] - 2026-11-03
+
+### Changed
+
+- Price calculator, from Tapio's comment "Hintalaskuriin 100m2+ joku tarkennus" (3.11.2026): the price table's last row ("yli 100 m²") showed one price from 101 to 150 m². The calculator now shows it in three steps:
+  - 101–115 m² 1 000–1 400 €, 116–130 m² 1 200–1 700 € and 131–150 m² 1 400–2 000 €; with boxes 1 100–1 600 €, 1 300–1 900 € and 1 500–2 200 €. Full service stays 2.15 times the basic price.
+  - The outer ends are the published ones. The steps are shares of the row's range (`INTERACTIVE_LARGE_HOME_STEPS`), so a change to the row moves them too. The price page, the example prices and the city pages are unchanged and still say "1 000–2 000 € tai enemmän".
+
 ## [1.2.40] - 2026-10-30
 
 ### Changed
