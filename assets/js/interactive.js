@@ -284,8 +284,8 @@
     }
 
     // "Pyydä tarjous" opens the quote form with the choices already filled in (see client.js)
-    function quoteLink(r) {
-      var s = readState();
+    function quoteLink(r) { return quoteLinkFor(r, readState()); }
+    function quoteLinkFor(r, s) {
       var p = new URLSearchParams();
       p.set('pa', r.m2);
       p.set('pkt', r.paketti.id);
@@ -425,11 +425,95 @@
       });
     });
 
+    // WebMCP: an agent working in a browser can ask for the calculator's estimate and open the quote form with the
+    // choices filled in. The form is never sent from here; a person checks it, adds the contact details and sends it.
+    function registerWebMcp() {
+      var mc = document.modelContext || navigator.modelContext;      // older Chrome builds: navigator.modelContext
+      if (!mc || typeof mc.registerTool !== 'function') { return; }
+
+      var packageIds = DATA.paketit.map(function (p) { return p.id; });
+      var inputSchema = {
+        type: 'object',
+        properties: {
+          size_m2: { type: 'integer', minimum: K.min, maximum: K.max, description: 'Apartment size in square metres, ' + K.min + '–' + K.max + '. Bigger homes need a quote.' },
+          package: { type: 'string', enum: packageIds, description: 'perus = move without boxes (default), laatikot = move and moving boxes, taysi = full service (packing, transport, unpacking), taysi-laatikot = full service and boxes.' },
+          extras: { type: 'array', items: { type: 'string', enum: ['siivous', 'piano', 'kaluste', 'varastointi'] }, description: 'siivous = move-out cleaning, piano = piano or safe, kaluste = furniture assembly, varastointi = storage.' },
+          box_rental: { type: 'boolean', description: 'Rent moving boxes separately. Only for packages without boxes.' }
+        },
+        required: ['size_m2']
+      };
+
+      function absolute(url) { return new URL(url, window.location.href).href; }
+      function plain(html) { return (new DOMParser().parseFromString(String(html), 'text/html').body.textContent || '').replace(/\s+/g, ' ').trim(); }
+      function reply(data) { return { content: [{ type: 'text', text: JSON.stringify(data) }] }; }
+      function euros(pair) { return { low: Math.floor(pair[0] / 100), high: Math.ceil(pair[1] / 100) }; }
+      function stateFrom(args) {
+        args = args || {};
+        var size = Math.round(Number(args.size_m2));
+        if (!isFinite(size) || size < K.min || size > K.max) { return null; }
+        var id = packageIds.indexOf(args.package) !== -1 ? args.package : packageIds[0];
+        var pkg = DATA.paketit.filter(function (p) { return p.id === id; })[0];
+        var extras = Array.isArray(args.extras) ? args.extras : [];
+        return {
+          m2: size, paketti: id,
+          siivous: extras.indexOf('siivous') !== -1, piano: extras.indexOf('piano') !== -1,
+          kaluste: extras.indexOf('kaluste') !== -1, varastointi: extras.indexOf('varastointi') !== -1,
+          vuokra: args.box_rental === true && !pkg.laatikot,
+          laatikoita: Laskenta.suositusLaatikot(size),
+          paivia: DATA.laatikkovuokra.oletusPaivat
+        };
+      }
+      var badSize = { error: 'size_m2 must be a whole number from ' + K.min + ' to ' + K.max + '. For bigger homes, request a quote.', quote_request_url: absolute(DATA.linkit.tarjous) };
+
+      var tools = [{
+        name: 'estimate_moving_price',
+        description: 'Estimate the price of a home move in Finland with Muuttohaukat\'s own calculator (its published price list). Returns a price range in euros for the apartment size, package and extras, with notes. An estimate, not a binding offer.',
+        inputSchema: inputSchema,
+        annotations: { readOnlyHint: true },
+        execute: function (args) {
+          var s = stateFrom(args);
+          if (!s) { return reply(badSize); }
+          var r = Laskenta.laske(s);
+          return reply({
+            size_m2: r.m2,
+            size_class: plain(Laskenta.luokanNimi(r.luokka)),
+            package: r.paketti.id,
+            estimate_eur: euros(r.yhteensa),
+            included: r.mukana.map(function (x) { return { item: plain(x.nimi), eur: euros(x.hinta) }; }),
+            not_included: r.eiMukana.map(function (x) { return { item: plain(x.nimi), note: plain(x.teksti) }; }),
+            notes: r.huomiot.map(plain),
+            tilaamuutto_order_possible: r.tilaaHeti,
+            tilaamuutto_url: r.tilaaHeti ? DATA.linkit.tilaaHeti : null,
+            quote_request_url: absolute(quoteLinkFor(r, s)),
+            disclaimer: 'Estimate from Muuttohaukat\'s published price list. The final price is confirmed in the offer.'
+          });
+        }
+      }, {
+        name: 'open_prefilled_quote_request',
+        description: 'Open Muuttohaukat\'s home move quote form with the size, package and extras already filled in. It does NOT send the form: the person must enter the move date, the addresses and the contact details, check everything and send it themselves.',
+        inputSchema: inputSchema,
+        execute: function (args) {
+          var s = stateFrom(args);
+          var url = absolute(s ? quoteLinkFor(Laskenta.laske(s), s) : DATA.linkit.tarjous);
+          window.setTimeout(function () { window.location.assign(url); }, 150);
+          return reply({ opened: url, sent: false, note: 'The form opens for the person to complete and send. Do not send it without their confirmation of the details.' });
+        }
+      }];
+
+      tools.forEach(function (tool) {
+        try {
+          var registered = mc.registerTool(tool);
+          if (registered && typeof registered.catch === 'function') { registered.catch(function () {}); }
+        } catch (e) { /* the API is optional */ }
+      });
+    }
+
     el.tilaa.setAttribute('href', DATA.linkit.tilaaHeti);
     setSize(K.oletus);
     update();
     watchBar();
     track.watchView();
+    registerWebMcp();
   }
 
   function start() {

@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
 
 function robots_rules(): array {
   return apply_filters('mh_robots_rules', [
+    '# AI content usage (contentsignals.org): search and AI answers yes, training no (Tapio 5.11.2026)',
+    'Content-Signal: search=yes, ai-input=yes, ai-train=no',
     '# Feeds, author archives and search result paths',
     'Disallow: */feed/',
     'Disallow: /arkistot/?feed=',

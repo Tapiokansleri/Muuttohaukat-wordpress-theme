@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.46] - 2026-11-05
+
+### Added
+
+- Agent readiness, from the isitagentready.com scan Tapio pasted on 5.11.2026 (approved plan: only what the site can honestly offer).
+  - `robots.txt` carries `Content-Signal: search=yes, ai-input=yes, ai-train=no` (`inc/Robots.php`).
+  - `inc/AgentDiscovery.php` serves `/.well-known/agent-skills/index.json` (Agent Skills Discovery RFC v0.2.0, sha256 digests computed from the files served), two skills from `agent-skills/` (`estimate-moving-price`, `request-moving-quote`; no prices, no promises about answer times) and the ARD manifest `/.well-known/ai-catalog.json` (`Access-Control-Allow-Origin: *`). Every page's `<head>` has `<link rel="ai-catalog">`.
+  - `inc/AgentMarkdown.php`: a request with `Accept: text/markdown` for a published page or post gets the page text as markdown (`Content-Type: text/markdown`, `x-markdown-tokens`). Password protected content, drafts, noindex pages and logged in users stay HTML; forms, scripts, the calculator and the moving-day calendar are left out. HTML responses say `Vary: Accept`, the markdown response is `private, no-store`, and any error falls back to HTML. Kill switch: `wp option update mh_agent_markdown off`.
+  - WebMCP in `assets/js/interactive.js`, on pages with the calculator: the tool `estimate_moving_price` (the calculator's own result as JSON) and `open_prefilled_quote_request` (opens the quote form with the choices filled in; never sends it). `document.modelContext` is used when present, `navigator.modelContext` as the fallback; nothing happens without the API.
+
 ## [1.2.45] - 2026-11-03
 
 ### Changed
