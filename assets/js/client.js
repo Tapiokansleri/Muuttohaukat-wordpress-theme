@@ -25,7 +25,8 @@
     document.documentElement.classList.remove('mobile-menu-open');
     document.body.classList.remove('mobile-menu-open');
     document.body.style.top = '';
-    window.scrollTo(0, mobileMenuScrollY);
+    // Back to where the page was, at once: the page scrolls smoothly (02-base.css), and this is not a scroll to watch.
+    window.scrollTo({ top: mobileMenuScrollY, left: 0, behavior: 'instant' });
   }
 
   function openMobileMenu() {

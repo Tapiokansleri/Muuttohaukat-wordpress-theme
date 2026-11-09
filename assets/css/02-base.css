@@ -12,6 +12,15 @@ html {
        behind it. Reserving the header height as scroll padding pushes
        targets down so they're never hidden behind the header. */
     scroll-padding-top: var(--header-height, 80px);
+    /* Anchor links (the front page buttons, "Laske hinta", the table of contents of a guide) scroll instead of jumping
+       (Tapio 9.11.2026: "Etusivun tulisi scrollata smootisti. Nyt se hyppää"). */
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 /* When the WP admin bar is visible the sticky header itself shifts down

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.50] - 2026-11-09
+
+### Changed
+
+- Smooth scrolling (Tapio 9.11.2026: "Etusivun tulisi scrollata smootisti. Nyt se hyppää"): `html { scroll-behavior: smooth }` in `assets/css/02-base.css`, so the front page buttons ("Kuluttajat", "Yrityksille", "Laske hinta") and every other anchor link scroll to their place instead of jumping. Off for visitors who ask for less motion (`prefers-reduced-motion`). Closing the mobile menu still restores the scroll position at once (`assets/js/client.js`).
+
 ## [1.2.49] - 2026-11-09
 
 ### Changed
