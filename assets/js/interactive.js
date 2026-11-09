@@ -124,11 +124,12 @@
       if (t.siirto) {
         const S = t.siirto, C = DATA.kaupunkimatka;
         if (S.tila === 'ok' && S.km > C.rajaKm) {
-          const euroa = Math.round(S.km * C.euroaKm);
-          siirtoTiedot = { lahto: S.lahto, kohde: S.kohde, km: S.km, euroa };
+          const kmYhteensa = S.km * C.suuntia;                           // the trucks drive there and back
+          const euroa = Math.round(kmYhteensa * C.euroaKm);
+          siirtoTiedot = { lahto: S.lahto, kohde: S.kohde, km: S.km, kmYhteensa, euroa };
           mukana.push({
             id: 'siirto', nimi: 'Muutto toiseen kaupunkiin', hinta: [sent(euroa), sent(euroa)],
-            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + ', noin ' + S.km + NBSP + 'km × ' + eur(sent(C.euroaKm)) + NBSP + '€/km. Matka on arvio.']
+            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + ', noin ' + S.km + NBSP + 'km, edestakaisin ' + eur(sent(kmYhteensa)) + NBSP + 'km × ' + eur(sent(C.euroaKm)) + NBSP + '€/km. Matka on arvio.']
           });
         } else if (S.tila === 'ok' || S.tila === 'sama') {
           huomiot.push('Matkalisä lasketaan vain yli ' + C.rajaKm + NBSP + 'km matkoille.');
@@ -259,7 +260,7 @@
       if (S.tila === 'tuntematon') { return 'Valitse kaupunki ehdotuksista.'; }
       if (S.tila === 'puuttuu') { return 'Valitse sekä lähtö- että kohdekaupunki.'; }
       if (S.tila === 'sama') { return 'Lähtö- ja kohdekaupunki ovat samat.'; }
-      if (r.siirto) { return 'Matka noin ' + S.km + NBSP + 'km, matkalisä ' + Laskenta.eur(Laskenta.sent(r.siirto.euroa)) + NBSP + '€.'; }
+      if (r.siirto) { return 'Matka noin ' + S.km + NBSP + 'km, edestakaisin ' + Laskenta.eur(Laskenta.sent(r.siirto.kmYhteensa)) + NBSP + 'km, matkalisä ' + Laskenta.eur(Laskenta.sent(r.siirto.euroa)) + NBSP + '€.'; }
       return 'Matka noin ' + S.km + NBSP + 'km. Matkalisä lasketaan vain yli ' + DATA.kaupunkimatka.rajaKm + NBSP + 'km matkoille.';
     }
     function fillCities() {
@@ -531,7 +532,7 @@
           package: { type: 'string', enum: packageIds, description: 'perus = move without boxes (default), laatikot = move and moving boxes, taysi = full service (packing, transport, unpacking), taysi-laatikot = full service and boxes.' },
           extras: { type: 'array', items: { type: 'string', enum: ['siivous', 'piano', 'kaluste', 'varastointi'] }, description: 'siivous = move-out cleaning, piano = piano or safe, kaluste = furniture assembly, varastointi = storage.' },
           box_rental: { type: 'boolean', description: 'Rent moving boxes separately. Only for packages without boxes.' },
-          from_city: { type: 'string', description: 'Only when moving to another city: the Finnish municipality moved from, e.g. Helsinki. Give both from_city and to_city; moves of more than 50 km get a distance fee of ' + String(DATA.kaupunkimatka.euroaKm).replace('.', ',') + ' euros per kilometre.' },
+          from_city: { type: 'string', description: 'Only when moving to another city: the Finnish municipality moved from, e.g. Helsinki. Give both from_city and to_city; moves of more than 50 km get a distance fee of ' + String(DATA.kaupunkimatka.euroaKm).replace('.', ',') + ' euros per kilometre, counted both ways (the trucks drive there and back).' },
           to_city: { type: 'string', description: 'Only when moving to another city: the Finnish municipality moved to, e.g. Tampere.' }
         },
         required: ['size_m2']
@@ -574,7 +575,7 @@
             size_class: plain(Laskenta.luokanNimi(r.luokka)),
             package: r.paketti.id,
             estimate_eur: euros(r.yhteensa),
-            inter_city: s.siirto ? { status: ({ ok: 'ok', sama: 'same', puuttuu: 'missing', tuntematon: 'unknown' })[s.siirto.tila], from: s.siirto.lahto || null, to: s.siirto.kohde || null, km: s.siirto.km || null, fee_eur: r.siirto ? r.siirto.euroa : 0 } : null,
+            inter_city: s.siirto ? { status: ({ ok: 'ok', sama: 'same', puuttuu: 'missing', tuntematon: 'unknown' })[s.siirto.tila], from: s.siirto.lahto || null, to: s.siirto.kohde || null, km: s.siirto.km || null, km_both_ways: r.siirto ? r.siirto.kmYhteensa : null, fee_eur: r.siirto ? r.siirto.euroa : 0 } : null,
             included: r.mukana.map(function (x) { return { item: plain(x.nimi), eur: euros(x.hinta) }; }),
             not_included: r.eiMukana.map(function (x) { return { item: plain(x.nimi), note: plain(x.teksti) }; }),
             notes: r.huomiot.map(plain),

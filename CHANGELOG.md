@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.49] - 2026-11-09
+
+### Changed
+
+- Price calculator, "Muutan toiseen kaupunkiin": the distance fee is counted both ways, because the trucks drive there and back (Tapio 9.11.2026: "Laskuriin km tuplana koska autot menee edestakaisin"). Helsinki–Tampere, about 185 km, now adds 370 km × 0,80 € = 296 € (was 148 €). The 50 km limit still applies to the distance between the cities. The result line, the note under the city fields, the WebMCP tool (`km_both_ways`) and the agent skill say so. Constant `INTERACTIVE_CITY_TRIPS` in `inc/InteractiveSections.php`.
+
 ## [1.2.48] - 2026-11-09
 
 ### Changed

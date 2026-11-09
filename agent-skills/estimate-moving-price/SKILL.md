@@ -18,7 +18,7 @@ Muuttohaukat Oy (https://muuttohaukat.com) is a Finnish moving company. This ski
 - **Package** (`package`): `perus` = move without boxes, `laatikot` = move and moving boxes, `taysi` = full service (packing, transport, unpacking), `taysi-laatikot` = full service and boxes.
 - **Extras** (`extras`): `siivous` = move-out cleaning, `piano` = piano or safe, `kaluste` = furniture assembly, `varastointi` = storage. Some of these are only quoted, not priced; the tool says which.
 - **Box rental** (`box_rental`): moving boxes rented separately, for packages that do not include boxes.
-- **Moving to another city** (`from_city`, `to_city`): names of Finnish municipalities. When the cities are more than 50 km apart, the estimate gets 0.80 euros for every kilometre between them (an estimated road distance); for shorter distances there is no distance fee.
+- **Moving to another city** (`from_city`, `to_city`): names of Finnish municipalities. When the cities are more than 50 km apart, the estimate gets 0.80 euros for every kilometre between them, counted both ways because the trucks drive there and back (an estimated road distance); for shorter distances there is no distance fee.
 
 ## Good to know when you answer
 

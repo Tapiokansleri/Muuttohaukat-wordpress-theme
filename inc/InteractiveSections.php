@@ -39,7 +39,8 @@ const INTERACTIVE_SIZE_MAX = 150;
 
 /**
  * "Muutan toiseen kaupunkiin" (Tapio 9.11.2026): when the two cities are more than 50 km apart, the estimate gets
- * 0.80 € for every kilometre between them (the whole distance, not only the part over 50 km). The distance is
+ * 0.80 € for every kilometre between them (the whole distance, not only the part over 50 km), counted both ways because
+ * the trucks drive there and back ("Laskuriin km tuplana koska autot menee edestakaisin", same day). The distance is
  * estimated, not routed: straight line between the municipalities' centre points (assets/data/kunnat.json, the 308
  * municipalities of Finland from Wikidata) times 1.15, which is what real road distances between Finnish cities
  * average (1.05–1.19 for Helsinki–Tampere, Turku, Oulu, Rovaniemi and others).
@@ -47,6 +48,8 @@ const INTERACTIVE_SIZE_MAX = 150;
 const INTERACTIVE_CITY_MIN_KM = 50;
 const INTERACTIVE_CITY_EUROS_PER_KM = 0.8;
 const INTERACTIVE_ROAD_FACTOR = 1.15;
+/** The distance is charged for the way there and back. */
+const INTERACTIVE_CITY_TRIPS = 2;
 
 /** [name, latitude, longitude] of every Finnish municipality, for the city fields. */
 function interactive_municipalities(): array {
@@ -201,6 +204,7 @@ function interactive_calculator_data(): array {
     'kaupunkimatka' => [
       'rajaKm' => INTERACTIVE_CITY_MIN_KM,
       'euroaKm' => INTERACTIVE_CITY_EUROS_PER_KM,
+      'suuntia' => INTERACTIVE_CITY_TRIPS,
       'tieKerroin' => INTERACTIVE_ROAD_FACTOR,
       'kaupungit' => interactive_municipalities(),
     ],
