@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.48] - 2026-11-09
+
+### Changed
+
+- Price calculator: the "Muutan toiseen kaupunkiin" checkbox and its two city fields moved up, right under the size and before the package choice (Tapio 9.11.2026: "Lisää täppä ylemmäs").
+
 ## [1.2.47] - 2026-11-09
 
 ### Added
