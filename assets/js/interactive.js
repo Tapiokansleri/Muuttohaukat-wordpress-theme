@@ -190,7 +190,7 @@
       };
     }
 
-    return { laske, siirto, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, linkki, eur, alue, summa, sent };
+    return { laske, siirto, avain, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, linkki, eur, alue, summa, sent };
   })();
 
   // --------------------------------------------------------------- price calculator
@@ -209,9 +209,9 @@
       tulos: result.querySelector('[data-mhi-panel]'), tilaa: result.querySelector('[data-mhi-order]'), tarjous: result.querySelector('[data-mhi-quote]'),
       palkki: result.querySelector('[data-mhi-bar]'),
       kaupunki: $('mhi-kaupunki'), kaupunkiKentat: head.querySelector('[data-mhi-city-fields]'), lahto: $('mhi-lahto'), kohde: $('mhi-kohde'),
-      kaupunkiVihje: head.querySelector('[data-mhi-city-note]'), kaupungit: $('mhi-kaupungit')
+      kaupunkiVihje: head.querySelector('[data-mhi-city-note]')
     };
-    var hasCity = !!(el.kaupunki && el.kaupunkiKentat && el.lahto && el.kohde && el.kaupunkiVihje && el.kaupungit && DATA.kaupunkimatka);
+    var hasCity = !!(el.kaupunki && el.kaupunkiKentat && el.lahto && el.kohde && el.kaupunkiVihje && DATA.kaupunkimatka);
     if (el.palkki) {
       el.palkkiTeksti = el.palkki.querySelector('[data-mhi-bar-label]');
       el.palkkiHinta = el.palkki.querySelector('[data-mhi-bar-price]');
@@ -263,15 +263,93 @@
       if (r.siirto) { return 'Matka noin ' + S.km + NBSP + 'km, edestakaisin ' + Laskenta.eur(Laskenta.sent(r.siirto.kmYhteensa)) + NBSP + 'km, matkalisä ' + Laskenta.eur(Laskenta.sent(r.siirto.euroa)) + NBSP + '€.'; }
       return 'Matka noin ' + S.km + NBSP + 'km. Matkalisä lasketaan vain yli ' + DATA.kaupunkimatka.rajaKm + NBSP + 'km matkoille.';
     }
-    function fillCities() {
-      if (el.kaupungit.children.length) { return; }
-      var options = document.createDocumentFragment();
+    // City suggestions: "tam" lists Tampere. The beginning of a name matches first, then any part of it (from two letters
+    // on), without caring about capitals, ä or ö; the bigger cities come first and an empty field offers them. Keys: arrows,
+    // Enter and Esc; a click or a tap chooses. The field stays a plain text field if this does not run.
+    function suggestions(text) {
+      var key = Laskenta.avain(text);
+      var popular = DATA.kaupunkimatka.suositut || [];
+      var hits = [];
       DATA.kaupunkimatka.kaupungit.forEach(function (k) {
-        var option = document.createElement('option');
-        option.value = k[0];
-        options.appendChild(option);
+        var rank = popular.indexOf(k[0]);
+        if (key === '') {
+          if (rank !== -1) { hits.push({ name: k[0], at: -1, group: 0, rank: rank }); }
+          return;
+        }
+        var at = Laskenta.avain(k[0]).indexOf(key);
+        if (at === -1 || (at > 0 && key.length < 2)) { return; }
+        hits.push({ name: k[0], at: at, group: at === 0 ? 0 : 1, rank: rank === -1 ? 999 : rank });
       });
-      el.kaupungit.appendChild(options);
+      hits.sort(function (a, b) { return a.group - b.group || a.rank - b.rank || a.name.localeCompare(b.name, 'fi'); });
+      return hits.slice(0, 7);
+    }
+    function attachSuggest(field) {
+      var box = document.getElementById(field.id + '-lista');
+      if (!box) { return; }
+      var items = [], active = -1;
+      function setActive(n) {
+        active = n;
+        Array.prototype.forEach.call(box.children, function (li, i) {
+          li.classList.toggle('is-active', i === n);
+          li.setAttribute('aria-selected', i === n ? 'true' : 'false');
+        });
+        if (n >= 0) { field.setAttribute('aria-activedescendant', box.children[n].id); } else { field.removeAttribute('aria-activedescendant'); }
+      }
+      function close() {
+        box.hidden = true;
+        field.setAttribute('aria-expanded', 'false');
+        setActive(-1);
+      }
+      function choose(name) {
+        field.value = name;
+        close();
+        update();
+        track.touch('city');
+      }
+      function open() {
+        var key = Laskenta.avain(field.value);
+        items = suggestions(field.value);
+        if (!items.length || (items.length === 1 && Laskenta.avain(items[0].name) === key)) { close(); return; }   // nothing to add
+        box.textContent = '';
+        items.forEach(function (hit, n) {
+          var li = document.createElement('li');
+          li.id = field.id + '-o' + n;
+          li.className = 'mhi-suggest__item';
+          li.setAttribute('role', 'option');
+          if (hit.at >= 0 && key !== '') {                   // the matching part in bold
+            li.appendChild(document.createTextNode(hit.name.slice(0, hit.at)));
+            var bold = document.createElement('strong');
+            bold.textContent = hit.name.slice(hit.at, hit.at + key.length);
+            li.appendChild(bold);
+            li.appendChild(document.createTextNode(hit.name.slice(hit.at + key.length)));
+          } else { li.textContent = hit.name; }
+          li.addEventListener('mousedown', function (e) { e.preventDefault(); });   // the field keeps its focus
+          li.addEventListener('click', function () { choose(hit.name); });
+          box.appendChild(li);
+        });
+        box.hidden = false;
+        field.setAttribute('aria-expanded', 'true');
+        setActive(-1);
+      }
+      field.addEventListener('input', open);
+      field.addEventListener('focus', open);
+      field.addEventListener('blur', close);
+      field.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          if (box.hidden) { open(); }
+          if (!items.length || box.hidden) { return; }
+          e.preventDefault();
+          var last = items.length - 1;
+          setActive(e.key === 'ArrowDown' ? (active >= last ? 0 : active + 1) : (active <= 0 ? last : active - 1));
+        } else if (e.key === 'Enter' && !box.hidden && active >= 0) {
+          e.preventDefault();
+          choose(items[active].name);
+        } else if (e.key === 'Escape' && !box.hidden) {
+          e.preventDefault();
+          close();
+        }
+      });
+      return close;
     }
 
     function draw(r) {
@@ -500,15 +578,14 @@
     if (hasCity) {
       el.kaupunki.addEventListener('change', function () {
         el.kaupunkiKentat.hidden = !el.kaupunki.checked;
-        if (el.kaupunki.checked) { fillCities(); }
         update();
         track.touch('city');
       });
       [el.lahto, el.kohde].forEach(function (field) {
         field.addEventListener('input', function () { update(); track.touch('city'); });
+        attachSuggest(field);
       });
       el.kaupunkiKentat.hidden = !el.kaupunki.checked;       // a browser may restore the checkbox as ticked
-      if (el.kaupunki.checked) { fillCities(); }
     }
 
     head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra').forEach(function (e) {

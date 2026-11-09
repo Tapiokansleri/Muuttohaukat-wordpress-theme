@@ -207,6 +207,8 @@ function interactive_calculator_data(): array {
       'suuntia' => INTERACTIVE_CITY_TRIPS,
       'tieKerroin' => INTERACTIVE_ROAD_FACTOR,
       'kaupungit' => interactive_municipalities(),
+      // The bigger cities come first in the suggestions (and are what an empty field offers).
+      'suositut' => ['Helsinki', 'Espoo', 'Tampere', 'Vantaa', 'Oulu', 'Turku', 'Jyväskylä', 'Lahti', 'Kuopio', 'Pori', 'Kouvola', 'Joensuu', 'Lappeenranta', 'Hämeenlinna', 'Vaasa', 'Seinäjoki', 'Rovaniemi', 'Mikkeli', 'Kotka', 'Salo', 'Porvoo', 'Kokkola', 'Hyvinkää', 'Lohja', 'Järvenpää', 'Rauma', 'Kajaani', 'Kerava', 'Savonlinna', 'Nokia', 'Kirkkonummi', 'Tuusula', 'Kemi', 'Imatra', 'Riihimäki', 'Raasepori', 'Kangasala', 'Ylöjärvi', 'Nurmijärvi', 'Sipoo', 'Vihti', 'Raisio', 'Naantali', 'Kaarina', 'Hollola', 'Iisalmi', 'Tornio'],
     ],
     'paketit' => [
       ['id' => 'perus', 'nimi' => 'Muuttopalvelu', 'kuvaus' => 'Perusmuutto ilman laatikoita', 'laatikot' => false, 'taysi' => false],
@@ -325,11 +327,12 @@ add_shortcode('hintalaskuri', function ($atts) {
     . interactive_choice('checkbox', 'mhi-kaupunki', 'mhi-kaupunki', 'kaupunki', 'Muutan toiseen kaupunkiin')
     . '<div class="mhi-city" data-mhi-city-fields hidden>'
     . '<div class="mhi-city__field"><label for="mhi-lahto">Lähtökaupunki</label>'
-    . '<input type="text" id="mhi-lahto" list="mhi-kaupungit" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Esim. Helsinki"></div>'
+    . '<input type="text" id="mhi-lahto" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="mhi-lahto-lista" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Esim. Helsinki">'
+    . '<ul class="mhi-suggest" id="mhi-lahto-lista" role="listbox" aria-label="Kaupunkiehdotukset" hidden></ul></div>'
     . '<div class="mhi-city__field"><label for="mhi-kohde">Kohdekaupunki</label>'
-    . '<input type="text" id="mhi-kohde" list="mhi-kaupungit" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Esim. Tampere"></div>'
+    . '<input type="text" id="mhi-kohde" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="mhi-kohde-lista" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Esim. Tampere">'
+    . '<ul class="mhi-suggest" id="mhi-kohde-lista" role="listbox" aria-label="Kaupunkiehdotukset" hidden></ul></div>'
     . '<p class="mhi-hint mhi-city__note" data-mhi-city-note role="status"></p>'
-    . '<datalist id="mhi-kaupungit"></datalist>'
     . '</div></div>'
 
     . '<fieldset class="mhi-group"><legend class="mhi-group__title">Paketti</legend>' . $packages . '</fieldset>'

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.51] - 2026-11-09
+
+### Added
+
+- Price calculator, "Muutan toiseen kaupunkiin": the departure and destination city fields suggest cities as you type (Tapio 9.11.2026: typing "Tam" suggests Tampere). A custom list replaces the browser's own datalist: cities that start with the typed letters come first, then cities that contain them (from two letters), popular cities before the rest, at most seven, the matched letters in bold. An empty field offers the biggest cities. Works without regard to capital letters and scandinavian letters ("hyvinkaa" finds Hyvinkää), with the arrow keys, Enter and Escape, or a tap or click. The field is a proper combobox for screen readers (`role="combobox"`, `aria-expanded`, listbox with options). Free typing still works as before. Files `inc/InteractiveSections.php`, `assets/js/interactive.js`, `assets/css/interactive.css`.
+
 ## [1.2.50] - 2026-11-09
 
 ### Changed
