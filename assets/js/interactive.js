@@ -42,6 +42,35 @@
       return lk.find((k) => n >= k.min && (k.max === null || n <= k.max)) || lk[lk.length - 1];
     }
     function luokanNimi(k) { return k.max === null ? 'yli' + NBSP + (k.min - 1) + NBSP + 'm²' : k.min + '–' + k.max + NBSP + 'm²'; }
+    function esc(teksti) { return String(teksti).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    // "Muutan toiseen kaupunkiin": a municipality by name (also without ä and ö), and the estimated road distance
+    // between two of them: the straight line between their centre points times the road factor (see the theme's
+    // INTERACTIVE_ROAD_FACTOR), in whole kilometres.
+    let kaupunkiHaku = null;
+    function avain(teksti) { return String(teksti).trim().toLocaleLowerCase('fi').normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+    function kaupunki(teksti) {
+      if (!kaupunkiHaku) {
+        kaupunkiHaku = {};
+        DATA.kaupunkimatka.kaupungit.forEach((k) => { kaupunkiHaku[avain(k[0])] = k; });
+      }
+      return kaupunkiHaku[avain(teksti)] || null;
+    }
+    function kaupunkienMatka(a, b) {
+      const rad = Math.PI / 180;
+      const dLat = (b[1] - a[1]) * rad, dLon = (b[2] - a[2]) * rad;
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * rad) * Math.cos(b[1] * rad) * Math.sin(dLon / 2) ** 2;
+      return Math.round(2 * 6371.0088 * Math.asin(Math.sqrt(h)) * DATA.kaupunkimatka.tieKerroin);
+    }
+    /** what the two city fields say: { tila: ok | puuttuu | tuntematon | sama, lahto, kohde, km } */
+    function siirto(lahtoTeksti, kohdeTeksti) {
+      const t1 = String(lahtoTeksti).trim(), t2 = String(kohdeTeksti).trim();
+      const a = t1 ? kaupunki(t1) : null, b = t2 ? kaupunki(t2) : null;
+      if ((t1 && !a) || (t2 && !b)) { return { tila: 'tuntematon' }; }
+      if (!a || !b) { return { tila: 'puuttuu' }; }
+      if (a === b) { return { tila: 'sama', lahto: a[0], kohde: b[0], km: 0 }; }
+      return { tila: 'ok', lahto: a[0], kohde: b[0], km: kaupunkienMatka(a, b) };
+    }
 
     /** täyden palvelun hinta: 2,15 x, pyöristys lähimpään 5 euroon (puolikas ylös) */
     function taysi(euroa) {
@@ -89,7 +118,24 @@
       }];
       const eiMukana = [];
       const huomiot = [];
-      let siivousTiedot = null, vuokraTiedot = null;
+      let siivousTiedot = null, vuokraTiedot = null, siirtoTiedot = null;
+
+      // Between two cities more than rajaKm apart: euroaKm for every kilometre between them (the whole distance)
+      if (t.siirto) {
+        const S = t.siirto, C = DATA.kaupunkimatka;
+        if (S.tila === 'ok' && S.km > C.rajaKm) {
+          const euroa = Math.round(S.km * C.euroaKm);
+          siirtoTiedot = { lahto: S.lahto, kohde: S.kohde, km: S.km, euroa };
+          mukana.push({
+            id: 'siirto', nimi: 'Muutto toiseen kaupunkiin', hinta: [sent(euroa), sent(euroa)],
+            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + ', noin ' + S.km + NBSP + 'km × ' + eur(sent(C.euroaKm)) + NBSP + '€/km. Matka on arvio.']
+          });
+        } else if (S.tila === 'ok' || S.tila === 'sama') {
+          huomiot.push('Matkalisä lasketaan vain yli ' + C.rajaKm + NBSP + 'km matkoille.');
+        } else {
+          huomiot.push('Valitse lähtö- ja kohdekaupunki, niin matkalisä lasketaan arvioon.');
+        }
+      }
 
       if (t.siivous) {
         const S = DATA.siivous;
@@ -138,12 +184,12 @@
       return {
         m2, luokka, luokanNimi: luokanNimi(luokka), paketti, hinta,
         mukana, eiMukana, huomiot, yhteensa: [lo, hi],
-        siivous: siivousTiedot, vuokra: vuokraTiedot,
+        siivous: siivousTiedot, vuokra: vuokraTiedot, siirto: siirtoTiedot,
         tilaaHeti: m2 <= DATA.tilaaHetiEnintaan
       };
     }
 
-    return { laske, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, linkki, eur, alue, summa, sent };
+    return { laske, siirto, kokoluokka, luokanNimi, pakettihinta, taysi, kotitalousvahennys, laatikkovuokra, suositusLaatikot, linkki, eur, alue, summa, sent };
   })();
 
   // --------------------------------------------------------------- price calculator
@@ -160,8 +206,11 @@
       siivous: $('mhi-lisa-siivous'), piano: $('mhi-lisa-piano'), kaluste: $('mhi-lisa-kaluste'), varastointi: $('mhi-lisa-varastointi'),
       vuokraRyhma: head.querySelector('[data-mhi-rent-group]'), vuokra: $('mhi-vuokra'), vuokraTeksti: head.querySelector('[data-mhi-rent-note]'),
       tulos: result.querySelector('[data-mhi-panel]'), tilaa: result.querySelector('[data-mhi-order]'), tarjous: result.querySelector('[data-mhi-quote]'),
-      palkki: result.querySelector('[data-mhi-bar]')
+      palkki: result.querySelector('[data-mhi-bar]'),
+      kaupunki: $('mhi-kaupunki'), kaupunkiKentat: head.querySelector('[data-mhi-city-fields]'), lahto: $('mhi-lahto'), kohde: $('mhi-kohde'),
+      kaupunkiVihje: head.querySelector('[data-mhi-city-note]'), kaupungit: $('mhi-kaupungit')
     };
+    var hasCity = !!(el.kaupunki && el.kaupunkiKentat && el.lahto && el.kohde && el.kaupunkiVihje && el.kaupungit && DATA.kaupunkimatka);
     if (el.palkki) {
       el.palkkiTeksti = el.palkki.querySelector('[data-mhi-bar-label]');
       el.palkkiHinta = el.palkki.querySelector('[data-mhi-bar-price]');
@@ -199,8 +248,29 @@
         siivous: el.siivous.checked, piano: el.piano.checked, kaluste: el.kaluste.checked, varastointi: el.varastointi.checked,
         vuokra: el.vuokra.checked && !p.laatikot,
         laatikoita: Laskenta.suositusLaatikot(m2),
-        paivia: DATA.laatikkovuokra.oletusPaivat
+        paivia: DATA.laatikkovuokra.oletusPaivat,
+        siirto: hasCity && el.kaupunki.checked ? Laskenta.siirto(el.lahto.value, el.kohde.value) : null
       };
+    }
+
+    /** the line under the two city fields */
+    function cityNote(S, r) {
+      if (!S) { return ''; }
+      if (S.tila === 'tuntematon') { return 'Valitse kaupunki ehdotuksista.'; }
+      if (S.tila === 'puuttuu') { return 'Valitse sekä lähtö- että kohdekaupunki.'; }
+      if (S.tila === 'sama') { return 'Lähtö- ja kohdekaupunki ovat samat.'; }
+      if (r.siirto) { return 'Matka noin ' + S.km + NBSP + 'km, matkalisä ' + Laskenta.eur(Laskenta.sent(r.siirto.euroa)) + NBSP + '€.'; }
+      return 'Matka noin ' + S.km + NBSP + 'km. Matkalisä lasketaan vain yli ' + DATA.kaupunkimatka.rajaKm + NBSP + 'km matkoille.';
+    }
+    function fillCities() {
+      if (el.kaupungit.children.length) { return; }
+      var options = document.createDocumentFragment();
+      DATA.kaupunkimatka.kaupungit.forEach(function (k) {
+        var option = document.createElement('option');
+        option.value = k[0];
+        options.appendChild(option);
+      });
+      el.kaupungit.appendChild(options);
     }
 
     function draw(r) {
@@ -247,8 +317,10 @@
       var boxes = Laskenta.suositusLaatikot(m2), days = DATA.laatikkovuokra.oletusPaivat;
       el.vuokraTeksti.textContent = 'Arvio asunnon koon mukaan: ' + boxes + NBSP + 'laatikkoa ' + days + NBSP + 'päivän ajaksi.';
 
-      var r = Laskenta.laske(readState());
+      var state = readState();
+      var r = Laskenta.laske(state);
       current = r;
+      if (hasCity) { el.kaupunkiVihje.textContent = cityNote(state.siirto, r); }
       var html = draw(r);
       if (html !== previous) { el.tulos.innerHTML = html; previous = html; }
       el.tilaa.hidden = !r.tilaaHeti;
@@ -294,6 +366,11 @@
       if (r.paketti.laatikot || s.vuokra) { p.set('laatikot', s.laatikoita); }
       if (s.vuokra) { p.set('paivat', s.paivia); }
       p.set('arvio', Math.floor(r.yhteensa[0] / 100) + '-' + Math.ceil(r.yhteensa[1] / 100));
+      if (s.siirto && (s.siirto.tila === 'ok' || s.siirto.tila === 'sama')) {      // the cities go to the form's town fields
+        p.set('lahto', s.siirto.lahto);
+        p.set('kohde', s.siirto.kohde);
+        if (s.siirto.km) { p.set('km', s.siirto.km); }
+      }
       return DATA.linkit.tarjous + (DATA.linkit.tarjous.indexOf('?') === -1 ? '?' : '&') + p.toString();
     }
 
@@ -324,6 +401,7 @@
         var s = readState(), c = current.luokka;
         var extras = ['siivous', 'piano', 'kaluste', 'varastointi'].filter(function (k) { return s[k]; });
         if (s.vuokra) { extras.push('vuokra'); }
+        if (current.siirto) { extras.push('toinen_kaupunki'); }       // the distance fee applies (more than 50 km)
         return {
           calc_m2: current.m2,
           calc_size_class: c.min + '-' + (c.max === null ? 'plus' : c.max),
@@ -418,6 +496,20 @@
       track.touch('size');
     });
 
+    if (hasCity) {
+      el.kaupunki.addEventListener('change', function () {
+        el.kaupunkiKentat.hidden = !el.kaupunki.checked;
+        if (el.kaupunki.checked) { fillCities(); }
+        update();
+        track.touch('city');
+      });
+      [el.lahto, el.kohde].forEach(function (field) {
+        field.addEventListener('input', function () { update(); track.touch('city'); });
+      });
+      el.kaupunkiKentat.hidden = !el.kaupunki.checked;       // a browser may restore the checkbox as ticked
+      if (el.kaupunki.checked) { fillCities(); }
+    }
+
     head.querySelectorAll('input[name="mhi-paketti"], input[name="mhi-lisa"], #mhi-vuokra').forEach(function (e) {
       e.addEventListener('change', function () {
         update();
@@ -438,7 +530,9 @@
           size_m2: { type: 'integer', minimum: K.min, maximum: K.max, description: 'Apartment size in square metres, ' + K.min + '–' + K.max + '. Bigger homes need a quote.' },
           package: { type: 'string', enum: packageIds, description: 'perus = move without boxes (default), laatikot = move and moving boxes, taysi = full service (packing, transport, unpacking), taysi-laatikot = full service and boxes.' },
           extras: { type: 'array', items: { type: 'string', enum: ['siivous', 'piano', 'kaluste', 'varastointi'] }, description: 'siivous = move-out cleaning, piano = piano or safe, kaluste = furniture assembly, varastointi = storage.' },
-          box_rental: { type: 'boolean', description: 'Rent moving boxes separately. Only for packages without boxes.' }
+          box_rental: { type: 'boolean', description: 'Rent moving boxes separately. Only for packages without boxes.' },
+          from_city: { type: 'string', description: 'Only when moving to another city: the Finnish municipality moved from, e.g. Helsinki. Give both from_city and to_city; moves of more than 50 km get a distance fee of ' + String(DATA.kaupunkimatka.euroaKm).replace('.', ',') + ' euros per kilometre.' },
+          to_city: { type: 'string', description: 'Only when moving to another city: the Finnish municipality moved to, e.g. Tampere.' }
         },
         required: ['size_m2']
       };
@@ -460,7 +554,8 @@
           kaluste: extras.indexOf('kaluste') !== -1, varastointi: extras.indexOf('varastointi') !== -1,
           vuokra: args.box_rental === true && !pkg.laatikot,
           laatikoita: Laskenta.suositusLaatikot(size),
-          paivia: DATA.laatikkovuokra.oletusPaivat
+          paivia: DATA.laatikkovuokra.oletusPaivat,
+          siirto: args.from_city || args.to_city ? Laskenta.siirto(args.from_city || '', args.to_city || '') : null
         };
       }
       var badSize = { error: 'size_m2 must be a whole number from ' + K.min + ' to ' + K.max + '. For bigger homes, request a quote.', quote_request_url: absolute(DATA.linkit.tarjous) };
@@ -479,6 +574,7 @@
             size_class: plain(Laskenta.luokanNimi(r.luokka)),
             package: r.paketti.id,
             estimate_eur: euros(r.yhteensa),
+            inter_city: s.siirto ? { status: ({ ok: 'ok', sama: 'same', puuttuu: 'missing', tuntematon: 'unknown' })[s.siirto.tila], from: s.siirto.lahto || null, to: s.siirto.kohde || null, km: s.siirto.km || null, fee_eur: r.siirto ? r.siirto.euroa : 0 } : null,
             included: r.mukana.map(function (x) { return { item: plain(x.nimi), eur: euros(x.hinta) }; }),
             not_included: r.eiMukana.map(function (x) { return { item: plain(x.nimi), note: plain(x.teksti) }; }),
             notes: r.huomiot.map(plain),

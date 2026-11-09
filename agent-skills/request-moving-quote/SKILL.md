@@ -25,6 +25,8 @@ In a browser that supports WebMCP, the tool `open_prefilled_quote_request` on ht
 | `paivat` | box rental days | whole number 1–90 |
 | `matka` | box delivery distance | `alle-12-km`, `12-30-km`, `yli-30-km`, `nouto` |
 | `arvio` | the price range you showed, in euros | `low-high`, e.g. `970-1290` |
+| `lahto`, `kohde` | the cities, when moving to another city | municipality names, e.g. `Helsinki` and `Tampere` |
+| `km` | the distance between them that the estimate used | whole number |
 
 Example: `https://muuttohaukat.com/tarjouspyynto/kotimuutto/?pa=60&pkt=laatikot&lisa=siivous`
 

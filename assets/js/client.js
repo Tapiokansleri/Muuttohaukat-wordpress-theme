@@ -269,6 +269,11 @@
     var trip = Object.prototype.hasOwnProperty.call(TRIPS, q.get('matka')) ? q.get('matka') : null;
     var estimate = /^\d{1,5}-\d{1,5}$/.test(q.get('arvio') || '') ? q.get('arvio').split('-') : null;
     var rental = q.has('paivat');
+    // "Muutan toiseen kaupunkiin": two municipality names (letters, spaces and hyphens only) and the distance in km
+    var cityName = /^[A-Za-zÅÄÖåäö][A-Za-zÅÄÖåäö -]{1,39}$/;
+    var fromCity = cityName.test(q.get('lahto') || '') ? q.get('lahto') : null;
+    var toCity = cityName.test(q.get('kohde') || '') ? q.get('kohde') : null;
+    var distance = whole(q.get('km'), 1, 2000);
 
     var areaInput = field('LähtöPA');
     if (size !== null && areaInput && !areaInput.value) {
@@ -283,6 +288,16 @@
       var box = field(EXTRAS[key][0]);
       if (box) { box.checked = true; changed(box); }
     });
+    var fromInput = field('Lähtökunta');
+    if (fromCity && fromInput && !fromInput.value) {
+      fromInput.value = fromCity;
+      changed(fromInput);
+    }
+    var toInput = field('KohdeKunta');
+    if (toCity && toInput && !toInput.value) {
+      toInput.value = toCity;
+      changed(toInput);
+    }
     var boxInput = field('Muuttolaatikkoja');
     if (boxes !== null && boxInput && (pkt === 'laatikot' || pkt === 'taysi-laatikot' || rental) && Number(boxInput.value) === 0) {
       boxInput.value = boxes;
@@ -296,6 +311,9 @@
       if (pkt) { lines.push('- Paketti: ' + PACKAGES[pkt] + (size !== null ? ', ' + size + NBSP + 'm²' : '')); }
       else if (size !== null) { lines.push('- Asunnon koko: ' + size + NBSP + 'm²'); }
       if (extras.length) { lines.push('- Lisäpalvelut: ' + extras.map(function (k) { return EXTRAS[k][1]; }).join(', ')); }
+      if (fromCity && toCity) {
+        lines.push('- Muutto toiseen kaupunkiin: ' + fromCity + ' → ' + toCity + (distance !== null ? ', noin ' + distance + NBSP + 'km' : ''));
+      }
       if (rental && boxes !== null) {
         lines.push('- Laatikoiden vuokra: ' + boxes + ' kpl' + (days !== null ? ', ' + days + ' päivää' : '') + (trip ? ', toimitus ' + TRIPS[trip] : ''));
       }

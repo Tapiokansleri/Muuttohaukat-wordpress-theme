@@ -38,6 +38,24 @@ const INTERACTIVE_FULL_SERVICE_MULTIPLIER = 2.15;
 const INTERACTIVE_SIZE_MAX = 150;
 
 /**
+ * "Muutan toiseen kaupunkiin" (Tapio 9.11.2026): when the two cities are more than 50 km apart, the estimate gets
+ * 0.80 € for every kilometre between them (the whole distance, not only the part over 50 km). The distance is
+ * estimated, not routed: straight line between the municipalities' centre points (assets/data/kunnat.json, the 308
+ * municipalities of Finland from Wikidata) times 1.15, which is what real road distances between Finnish cities
+ * average (1.05–1.19 for Helsinki–Tampere, Turku, Oulu, Rovaniemi and others).
+ */
+const INTERACTIVE_CITY_MIN_KM = 50;
+const INTERACTIVE_CITY_EUROS_PER_KM = 0.8;
+const INTERACTIVE_ROAD_FACTOR = 1.15;
+
+/** [name, latitude, longitude] of every Finnish municipality, for the city fields. */
+function interactive_municipalities(): array {
+  $file = get_template_directory() . '/assets/data/kunnat.json';
+  $rows = is_readable($file) ? json_decode((string) file_get_contents($file), true) : null;
+  return is_array($rows) ? $rows : [];
+}
+
+/**
  * The price table's last row ("yli 100 m²") is one wide range, which the size slider would show unchanged from 101 to
  * 150 m² (Tapio 3.11.2026: "Hintalaskuriin 100m2+ joku tarkennus"; he approved these steps the same day). A step is
  * [from m², to m², where its low end sits, where its high end sits], the last two as shares of the row's range, so the
@@ -180,6 +198,12 @@ function interactive_calculator_data(): array {
     'taydenPalvelunKerroin' => INTERACTIVE_FULL_SERVICE_MULTIPLIER,
     'pyoristysEuroa' => 5,
     'hintaluokat' => $classes,
+    'kaupunkimatka' => [
+      'rajaKm' => INTERACTIVE_CITY_MIN_KM,
+      'euroaKm' => INTERACTIVE_CITY_EUROS_PER_KM,
+      'tieKerroin' => INTERACTIVE_ROAD_FACTOR,
+      'kaupungit' => interactive_municipalities(),
+    ],
     'paketit' => [
       ['id' => 'perus', 'nimi' => 'Muuttopalvelu', 'kuvaus' => 'Perusmuutto ilman laatikoita', 'laatikot' => false, 'taysi' => false],
       ['id' => 'laatikot', 'nimi' => 'Muutto ja laatikot', 'kuvaus' => 'Perusmuutto ja muuttolaatikot', 'laatikot' => true, 'taysi' => false],
@@ -293,6 +317,18 @@ add_shortcode('hintalaskuri', function ($atts) {
 
     . '<fieldset class="mhi-group"><legend class="mhi-group__title">Paketti</legend>' . $packages . '</fieldset>'
     . '<fieldset class="mhi-group"><legend class="mhi-group__title">Lisäpalvelut</legend>' . $extras . '</fieldset>'
+
+    // "Muutan toiseen kaupunkiin": two city fields that fill the distance fee in (interactive.js, INTERACTIVE_CITY_MIN_KM).
+    . '<div class="mhi-group" data-mhi-city-group>'
+    . interactive_choice('checkbox', 'mhi-kaupunki', 'mhi-kaupunki', 'kaupunki', 'Muutan toiseen kaupunkiin')
+    . '<div class="mhi-city" data-mhi-city-fields hidden>'
+    . '<div class="mhi-city__field"><label for="mhi-lahto">Lähtökaupunki</label>'
+    . '<input type="text" id="mhi-lahto" list="mhi-kaupungit" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Esim. Helsinki"></div>'
+    . '<div class="mhi-city__field"><label for="mhi-kohde">Kohdekaupunki</label>'
+    . '<input type="text" id="mhi-kohde" list="mhi-kaupungit" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Esim. Tampere"></div>'
+    . '<p class="mhi-hint mhi-city__note" data-mhi-city-note role="status"></p>'
+    . '<datalist id="mhi-kaupungit"></datalist>'
+    . '</div></div>'
 
     . '<div class="mhi-group" data-mhi-rent-group>'
     . interactive_choice('checkbox', 'mhi-vuokra', 'mhi-vuokra', 'vuokra', 'Vuokraan laatikot erikseen')

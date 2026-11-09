@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.47] - 2026-11-09
+
+### Added
+
+- Price calculator, from Tapio's request "Muutan toiseen kaupunkiin" (9.11.2026): a checkbox that shows two fields, the city moved from and the city moved to (a list of Finland's 308 municipalities, `assets/data/kunnat.json` from Wikidata; ä and ö may be left out when typing). When the two cities are more than 50 km apart ("Vain yli 50km matkoille"), the estimate gets 0.80 € for every kilometre between them, the whole distance, shown as its own line "Muutto toiseen kaupunkiin". For 50 km or less, an unknown city or the same city the calculator says why there is no fee.
+  - The distance is an estimate, not a routed one: the straight line between the municipalities' centre points times 1.15 (real road distances between Finnish cities are 1.05–1.19 times the straight line), in whole kilometres. Constants in `inc/InteractiveSections.php`: `INTERACTIVE_CITY_MIN_KM`, `INTERACTIVE_CITY_EUROS_PER_KM`, `INTERACTIVE_ROAD_FACTOR`. For the whole distance beyond the first 50 km only, change `S.km * C.euroaKm` in `interactive.js` to `(S.km - C.rajaKm) * C.euroaKm`.
+  - "Pyydä tarjous" passes `lahto`, `kohde` and `km` to the quote form, which fills the `Lähtökunta` and `KohdeKunta` fields (letters, spaces and hyphens only) and adds a line to the staff summary in `Lisätiedot` (`client.js`).
+  - The WebMCP tool `estimate_moving_price` takes `from_city` and `to_city`; the agent skills describe them. Analytics: `calc_extras` carries `toinen_kaupunki` when the fee applies.
+
 ## [1.2.46] - 2026-11-05
 
 ### Added
