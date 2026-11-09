@@ -126,9 +126,12 @@ function office_staff_html(array $office): string {
  * business moves, office by office. Used on /yritysmuutto/ (audit action 7:
  * who is responsible).
  */
-function business_staff_html(): string {
+function business_staff_html(string $only = ''): string {
   $html = '';
   foreach (offices() as $office) {
+    if ($only !== '' && $office['key'] !== $only) {
+      continue;
+    }
     $staff = office_staff($office);
     if (!$staff) {
       continue;
@@ -143,7 +146,8 @@ function business_staff_html(): string {
   return $html === '' ? '' : '<div class="mh-business-staff">' . $html . '</div>';
 }
 
-add_shortcode('yritysmuutto_yhteyshenkilot', __NAMESPACE__ . '\\business_staff_html');
+// office="turku" (hyvinkaa, vantaa, tampere, turku) limits the list to one office, for the business move pages of a city.
+add_shortcode('yritysmuutto_yhteyshenkilot', fn($atts) => business_staff_html((string) (is_array($atts) ? ($atts['office'] ?? '') : '')));
 
 /**
  * The Henkilöstö stylesheet (the old Beaver Builder module's, now in assets/css).

@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.52] - 2026-11-09
+
+### Added
+
+- `[yritysmuutto_yhteyshenkilot office="turku"]` lists the business contacts of one office only (hyvinkaa, vantaa, tampere, turku), for the business move pages of a city. Without `office` the shortcode lists every office as before. `inc/LandingLocal.php`.
+- A FAQ inside an article: `core/details` items directly in a group with the `mh-faq` class are styled like the FAQ sections of the landing pages. `assets/css/content.css`.
+- `.mh-quote--row`, the quote section of the rebuilt big city pages (Tapio 9.11.2026: "CTA painikkeet on allekain, lyhennä tekstiä"): the buttons sit side by side, each as wide as its short text, black on the yellow section, and stack below 640 px. `assets/css/content.css`.
+
+### Changed
+
+- The cleaning offer on a city page ("Muuttosiivous samalla tarjouksella") takes the colour opposite to the price section when that section is white, so the page alternates white and yellow (Tapio 9.11.2026: "joka toinen palikka ei ole keltainen"): yellow with a black price and a black button. After a yellow price section, which every page had until now, it stays black as before. `inc/CleaningCrossSell.php`, `assets/css/landing.css`.
+- The closing call on a yellow section has no white button: the phone button is a black outline. `assets/css/landing.css`.
+
 ## [1.2.51] - 2026-11-09
 
 ### Added

@@ -984,6 +984,51 @@ body.bb-page .mh-bb-content h3 {
     bottom: auto !important;
 }
 
+/* A FAQ inside an article: core/details items directly in a group with the mh-faq class (no text section around them),
+   styled like the FAQ sections of the landing pages */
+.wp-block-group.mh-faq > .wp-block-details {
+    margin: 0;
+    padding: var(--space-4, 1rem) 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.wp-block-group.mh-faq > .wp-block-details > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5, 1.25rem);
+    font-weight: var(--font-bold, 700);
+    line-height: 1.4;
+    cursor: pointer;
+    list-style: none;
+}
+
+.wp-block-group.mh-faq > .wp-block-details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.wp-block-group.mh-faq > .wp-block-details > summary::after {
+    content: "+";
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-black);
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.wp-block-group.mh-faq > .wp-block-details[open] > summary::after {
+    content: "–";
+}
+
+.wp-block-group.mh-faq > .wp-block-details > :not(summary) {
+    margin: var(--space-3, 0.75rem) 0 0;
+}
+
 /* --------------------------------------------------------------------------
    Google review widget (Business Reviews Bundle, .rpi) — keep it inside the
    content container instead of running the full width of the window.
@@ -1905,6 +1950,35 @@ body :is(p, ul, ol):is(.has-normal-font-size, .has-medium-font-size, .has-large-
 
 .mh-landing .mh-quote ~ .rpi {
     margin-top: clamp(5rem, 10vw, 8.75rem);
+}
+
+/* The quote section of the rebuilt city pages (mh-quote--row): short button texts side by side, each button as wide as
+   its text, not stacked in one 24rem column (Tapio 9.11.2026). Below 640px they stack again. */
+.mh-landing .mh-quote--row .mh-painike-wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    width: auto;
+    max-width: none;
+}
+
+.mh-landing .mh-quote--row .mh-painike {
+    width: auto;
+    white-space: nowrap;
+}
+
+/* no white buttons on yellow: the theme turns the Tilaamuutto.fi button white there outside the v2 pages */
+.mh-landing .mh-quote--row a.mh-painike[href*="tilaamuutto.fi"] {
+    background: var(--color-black) !important;
+    color: var(--color-white) !important;
+}
+
+@media (max-width: 640px) {
+    .mh-landing .mh-quote--row .mh-painike-wrap {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
 }
 
 @media (max-width: 1024px) {

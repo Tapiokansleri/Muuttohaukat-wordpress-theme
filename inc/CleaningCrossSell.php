@@ -121,7 +121,7 @@ function cleaning_reaches(int $post_id, string $city): bool {
   return false;
 }
 
-function cleaning_cross_sell_html(string $city, string $iness): string {
+function cleaning_cross_sell_html(string $city, string $iness, string $bg = 'black'): string {
   $page  = cleaning_page_for($city);
   $place = $iness !== '' ? $iness : $city;
 
@@ -132,7 +132,7 @@ function cleaning_cross_sell_html(string $city, string $iness): string {
 
   ob_start();
   ?>
-  <section class="mh-landing-section mh-landing-section--bg-black mh-landing-cleaning" id="muuttosiivous" aria-labelledby="mh-landing-cleaning-title">
+  <section class="mh-landing-section mh-landing-section--bg-<?php echo esc_attr($bg); ?> mh-landing-cleaning" id="muuttosiivous" aria-labelledby="mh-landing-cleaning-title">
     <div class="mh-landing__inner mh-landing-cleaning__inner">
       <div class="mh-landing-cleaning__text">
         <p class="mh-landing-kicker">Muuttosiivous</p>
@@ -170,5 +170,9 @@ add_filter('render_block', function ($html, $block) {
     return $html;
   }
 
-  return $html . cleaning_cross_sell_html($city, trim((string) get_post_meta($post_id, '_mh_iness', true)));
+  // The offer takes the colour opposite to the price section when that is white (the rebuilt big city pages alternate
+  // white and yellow); after a yellow price section it stays black as before.
+  $bg = ($block['attrs']['background'] ?? '') === 'white' ? 'yellow' : 'black';
+
+  return $html . cleaning_cross_sell_html($city, trim((string) get_post_meta($post_id, '_mh_iness', true)), $bg);
 }, 10, 2);

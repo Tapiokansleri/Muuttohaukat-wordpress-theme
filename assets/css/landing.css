@@ -406,6 +406,20 @@
     color: var(--color-black) !important;
 }
 
+/* The closing call on a yellow section (rebuilt big city pages): no white button, the phone button is a black outline */
+.mh-landing-section--bg-yellow .mh-landing-final .mh-landing__button--ghost .wp-block-button__link,
+.mh-landing-section--bg-yellow .mh-landing-final .wp-block-button.mh-landing__button--ghost .wp-block-button__link.wp-element-button {
+    background: transparent !important;
+    color: var(--color-black) !important;
+    border: 2px solid var(--color-black) !important;
+}
+
+.mh-landing-section--bg-yellow .mh-landing-final .mh-landing__button--ghost .wp-block-button__link:hover,
+.mh-landing-section--bg-yellow .mh-landing-final .mh-landing__button--ghost .wp-block-button__link:focus {
+    background: var(--color-black) !important;
+    color: var(--color-white) !important;
+}
+
 .mh-landing-section--bg-black .mh-landing__button--primary .wp-block-button__link,
 .mh-landing-section--bg-black .wp-block-button.mh-landing__button--primary .wp-block-button__link.wp-element-button {
     background: var(--color-accent) !important;
@@ -676,6 +690,11 @@
     font-weight: 800;
     line-height: 1;
     color: var(--color-accent) !important;
+}
+
+/* the offer on a yellow section (rebuilt big city pages): the price is black, not yellow on yellow */
+.mh-landing-section--bg-yellow .mh-landing-cleaning__price {
+    color: var(--color-black) !important;
 }
 
 @media (max-width: 1024px) {
