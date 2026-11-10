@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.54] - 2026-11-10
+
+### Changed
+
+- Cleaning offer on the city pages ("Muuttosiivous samalla tarjouksella"): the price is now the real one Muuttohaukat gave (Totte 10.11.2026): about 130 € for a studio under 40 m², about 370 € for 100 m² and about 600 € for 150 m², instead of "200-400 €" for a studio or two-room flat. `inc/CleaningCrossSell.php`.
+- The cleaning town list ("Muuttosiivous sinun paikkakunnallasi") says the cleaning is done within 50 kilometres of the offices instead of "in these towns and their neighbouring municipalities" (Totte: the cleaning radius is 50 km from the office). `inc/CityDirectory.php`.
+
 ## [1.2.53] - 2026-11-10
 
 ### Changed

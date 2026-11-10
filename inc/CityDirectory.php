@@ -42,7 +42,7 @@ function city_directory_services(): array {
       'prefix'       => '/^Muuttosiivous\s+/iu',
       'kicker'       => 'Paikkakunnat',
       'title'        => 'Muuttosiivous paikkakunnittain',
-      'text'         => 'Teemme muuttosiivouksia näissä kaupungeissa ja niiden lähikunnissa. Valitse oma paikkakuntasi.',
+      'text'         => 'Teemme muuttosiivouksen enintään 50 kilometrin säteellä toimipisteistämme. Valitse oma paikkakuntasi.',
       'office_links' => false,
       'areas'        => 'Muut paikkakunnat',
     ],

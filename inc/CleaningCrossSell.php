@@ -146,8 +146,8 @@ function cleaning_cross_sell_html(string $city, string $iness, string $bg = 'bla
       </div>
       <div class="mh-landing-cleaning__offer">
         <p class="mh-landing-kicker">Hinta</p>
-        <p class="mh-landing-cleaning__price">200-400 €</p>
-        <p>on muuttosiivouksen keskimääräinen hinta yksiössä tai kaksiossa. Suuremmassa asunnossa hinta nousee koon mukaan, ja saat hinnan tarjouksesta ennen siivousta.</p>
+        <p class="mh-landing-cleaning__price">n. 130 €</p>
+        <p>on muuttosiivouksen hinta alle 40 m² yksiössä. 100 m² asunnossa hinta on noin 370 € ja 150 m² asunnossa noin 600 €. Tarkan hinnan saat tarjouksesta ennen siivousta.</p>
         <div class="mh-painike-wrap">
           <a class="mh-painike mh-painike--yellow" href="<?php echo esc_url($page['url']); ?>"><?php echo esc_html($button); ?></a>
         </div>
