@@ -43,7 +43,7 @@ function calendar_section_texts(): array {
       'Kuukauden vaihteet ja viikonloput ovat suosituimpia muuttopäiviä, koska vuokrasopimukset päättyvät silloin. Ne myös varataan meiltä ensimmäisenä.',
       'Jos toivomasi päivä on jo varattu, ehdotamme lähintä vapaata aamua ja kerromme, mitkä päivät sen ympärillä ovat auki. Yhteydenotto ei sido sinua mihinkään.',
     ],
-    'highlight' => 'Hinnan saat heti <a href="https://tilaamuutto.fi">Tilaamuutto.fi</a>-palvelusta, kun asunto on alle 80 m². Tarjouspyyntöön vastaamme viimeistään seuraavana arkipäivänä.',
+    'highlight' => 'Hinnan saat heti <a href="https://tilaamuutto.fi">Tilaamuutto.fi</a>-palvelusta, kun asunto on alle 80 m². Tarjouspyyntöön vastaamme mahdollisimman pian.',
   ]);
 }
 

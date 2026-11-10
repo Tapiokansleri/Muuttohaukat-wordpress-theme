@@ -103,7 +103,7 @@ $theme_uri = esc_url(get_template_directory_uri());
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Kerro asunnon koko ja muuttopäivä, niin saat hinnan. Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m². Tarjouspyyntöön vastaamme viimeistään seuraavana arkipäivänä.</p>
+<p>Kerro asunnon koko ja muuttopäivä, niin saat hinnan. Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m². Tarjouspyyntöön vastaamme mahdollisimman pian.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:buttons {"className":"mh-landing-final__actions"} -->
