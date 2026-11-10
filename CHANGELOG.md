@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.53] - 2026-11-10
+
+### Changed
+
+- The footer line "Yksi Suomen suurimmista koti- ja yritysmuuttojen tekijöistä" links to /yritystiedot/ instead of /yritysmuutto/ (Totte 10.11.2026: it spoke of home moves too and led to the business move page). `footer.php`.
+
 ## [1.2.52] - 2026-11-09
 
 ### Added

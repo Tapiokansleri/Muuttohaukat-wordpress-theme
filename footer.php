@@ -97,7 +97,7 @@ foreach ($widget_columns as $sidebar_id) {
           <?php endforeach; ?>
         </ul>
         <p class="site-footer__eeat-claim">
-          <a href="<?php echo esc_url( home_url( '/yritysmuutto/' ) ); ?>">
+          <a href="<?php echo esc_url( home_url( '/yritystiedot/' ) ); ?>">
             <?php esc_html_e( 'Yksi Suomen suurimmista koti- ja yritysmuuttojen tekijöistä', 'muuttohaukat' ); ?>
           </a>
         </p>
