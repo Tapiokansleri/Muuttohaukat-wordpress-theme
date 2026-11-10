@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.55] - 2026-11-10
+
+### Changed
+
+- Cleaning offer on the city pages: "Hinnat sisältävät arvonlisäveron." (Totte 10.11.2026: the cleaning prices include VAT). `inc/CleaningCrossSell.php`.
+
 ## [1.2.54] - 2026-11-10
 
 ### Changed
