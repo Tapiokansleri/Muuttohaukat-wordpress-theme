@@ -169,7 +169,7 @@
 }
 
 /* Brand colours (painike.css): the quote button is black, which would vanish here */
-.mh-article-cta a.mh-painike:is([href*="/tarjouspyynto"], [href^="#tarjous"]) {
+.mh-article-cta a.mh-painike:is([href*="/tarjouspyynto"], [href*="/en/quote-request"], [href^="#tarjous"]) {
     background-color: var(--color-white, #fff);
     color: var(--color-black, #000) !important;
 }

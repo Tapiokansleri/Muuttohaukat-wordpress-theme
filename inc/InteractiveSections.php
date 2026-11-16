@@ -377,6 +377,12 @@ add_shortcode('hintalaskuri', function ($atts) {
  */
 function interactive_english(array $d) {
   $d['lang'] = 'en';
+  // the quote link goes to the English quote form page
+  if (function_exists('pll_get_post')) {
+    $fi_quote = url_to_postid(home_url('/tarjouspyynto/kotimuutto/'));
+    $en_quote = $fi_quote ? pll_get_post($fi_quote, 'en') : 0;
+    if ($en_quote) { $d['linkit']['tarjous'] = get_permalink($en_quote); }
+  }
   $d['t'] = [
     'laatikko' => 'box',
     'laatikkoa' => 'boxes',

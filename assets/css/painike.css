@@ -67,7 +67,7 @@ a.mh-painike[href*="tilaamuutto.fi"] {
 	color: #000 !important;
 }
 
-a.mh-painike:is([href*="/tarjouspyynto"], [href^="#tarjous"]) {
+a.mh-painike:is([href*="/tarjouspyynto"], [href*="/en/quote-request"], [href^="#tarjous"]) {
 	background-color: #000;
 	color: #fff !important;
 }

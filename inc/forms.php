@@ -421,7 +421,8 @@ add_action( 'init', function () {
  * Map form slugs to template partials.
  */
 add_filter('wplfImportFormTemplate', function ($template, \WPLF\Form $form) {
-  switch ($form->slug) {
+  // the English copies (slug + "-en") render the same templates; the mu-plugin kansleri-i18n-ui translates the texts
+  switch (preg_replace('/-en$/', '', (string) $form->slug)) {
     case 'tarjouspyynto-kotimuutto':
       return capture('\Muuttohaukat\Templates\FormHomeMove');
 

@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.61] - 2026-11-16
+
+### Fixed
+
+- English quote forms: the copies (slug ending in "-en") now render the same form templates as the Finnish forms. Before, they used an old stored markup whose field names did not match the form fields, so submissions could not reach Dynamics.
+- The black quote-request button turned white on yellow sections on the English pages (its colour is decided by the link address, which did not know `/en/quote-request`). It is black again.
+- English calculator: the quote link goes to the English quote form page.
+
 ## [1.2.60] - 2026-11-16
 
 ### Fixed
