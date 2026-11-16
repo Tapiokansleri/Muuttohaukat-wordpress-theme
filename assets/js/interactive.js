@@ -82,6 +82,17 @@
       const lahde = paketti.laatikot ? luokka.laatikot : luokka.perus;
       return paketti.taysi ? lahde.map(taysi) : lahde.slice();
     }
+    /** cleaning price for a size: Totte's points (m², €), straight line between them, rounded to 10 € ("noin") */
+    function siivousHinta(m2, p) {
+      if (m2 <= p[0][0]) { return p[0][1]; }
+      for (let i = 1; i < p.length; i++) {
+        if (m2 <= p[i][0]) {
+          const a = p[i - 1], b = p[i];
+          return Math.round((a[1] + (b[1] - a[1]) * (m2 - a[0]) / (b[0] - a[0])) / 10) * 10;
+        }
+      }
+      return p[p.length - 1][1];
+    }
     function kotitalousvahennys(euroa) {
       const s = DATA.siivous;
       return Math.min(s.vahennysKatto, Math.max(0, euroa * s.vahennysProsentti / 100 - s.omavastuu));
@@ -129,7 +140,7 @@
           siirtoTiedot = { lahto: S.lahto, kohde: S.kohde, km: S.km, kmYhteensa, euroa };
           mukana.push({
             id: 'siirto', nimi: 'Muutto toiseen kaupunkiin', hinta: [sent(euroa), sent(euroa)],
-            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + ', noin ' + S.km + NBSP + 'km, edestakaisin ' + eur(sent(kmYhteensa)) + NBSP + 'km × ' + eur(sent(C.euroaKm)) + NBSP + '€/km. Matka on arvio.']
+            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + ', edestakaisin noin ' + eur(sent(kmYhteensa)) + NBSP + 'km. Matka on arvio.']
           });
         } else if (S.tila === 'ok' || S.tila === 'sama') {
           huomiot.push('Matkalisä lasketaan vain yli ' + C.rajaKm + NBSP + 'km matkoille.');
@@ -141,7 +152,7 @@
       if (t.siivous) {
         const S = DATA.siivous;
         if (m2 <= S.hintaAlle) {
-          const lo = S.hinta[0], hi = S.hinta[1];
+          const lo = siivousHinta(m2, S.pisteet), hi = lo;
           const v = [kotitalousvahennys(lo), kotitalousvahennys(hi)];
           const jalkeen = [lo - v[0], hi - v[1]];
           siivousTiedot = { hinta: [sent(lo), sent(hi)], vahennys: v.map(sent), jalkeen: jalkeen.map(sent) };
@@ -155,7 +166,7 @@
           eiMukana.push({ id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', teksti: S.iso, selite: S.isoSelite });
             }
       }
-      if (t.piano)  eiMukana.push({ id: 'piano',  nimi: 'Piano tai kassakaappi', linkki: 'piano', teksti: DATA.piano.teksti });
+      if (t.piano)  mukana.push({ id: 'piano', nimi: 'Pianon kuljetus', linkki: 'piano', hinta: [sent(DATA.piano.hinta[0]), sent(DATA.piano.hinta[1])], selite: [DATA.piano.selite] });
       if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: 'Kalusteasennus', linkki: 'kaluste', teksti: DATA.kaluste.teksti });
       if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: 'Varastointi', teksti: DATA.varastointi.teksti.replace('Pelican Self Storagen', linkki('varastointi', 'Pelican Self Storagen')) });
 

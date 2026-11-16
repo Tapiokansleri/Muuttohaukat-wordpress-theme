@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.57] - 2026-11-16
+
+### Changed
+
+- Price calculator, from Totte's answers of 16.11.2026: the move between cities shows the distance there and back and the price, without the €/km formula ("Espoo → Tampere, edestakaisin noin 348 km"); the cleaning estimate uses Totte's prices (about 130 € under 40 m², 370 € for 100 m², 600 € for 150 m², straight line in between, rounded to 10 €; over 150 m² "pyydä tarjous") instead of the old 200–400 €; a piano is in the estimate at 250–350 € ("Pianon kuljetus tyypillisesti on 250-350 €"). `assets/js/interactive.js`, `inc/InteractiveSections.php`.
+
+### Added
+
+- FAQPage markup on any page with a FAQ section (`mh-faq`), for the new price, size and city pages. `inc/StructuredData.php`.
+
 ## [1.2.56] - 2026-11-16
 
 ### Changed

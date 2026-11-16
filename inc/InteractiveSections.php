@@ -216,18 +216,21 @@ function interactive_calculator_data(): array {
       ['id' => 'taysi', 'nimi' => 'Täyden palvelun muutto', 'kuvaus' => 'Pakkaus, kuljetus ja purku', 'laatikot' => false, 'taysi' => true],
       ['id' => 'taysi-laatikot', 'nimi' => 'Täyden palvelun muutto ja laatikot', 'kuvaus' => 'Pakkaus, kuljetus ja purku sekä laatikot', 'laatikot' => true, 'taysi' => true],
     ],
-    // Only "keskimäärin 200–400 € yksiössä tai kaksiossa" is published for cleaning.
+    // Cleaning prices from Totte (10.11.2026): about 130 € under 40 m², 370 € for 100 m², 600 € for 150 m², VAT included;
+    // between the points a straight line (16.11.2026: "60-80m2 siivous on jotain puolesta välistä. Arvioi itse.").
     // Kotitalousvähennys 2026–27: 40 %, deductible 150 €, at most 2 100 € per person.
     'siivous' => [
-      'hintaAlle' => 59,
-      'hinta' => [200, 400],
+      'hintaAlle' => 150,
+      'pisteet' => [[40, 130], [100, 370], [150, 600]],
+      'hinta' => [130, 600],
       'vahennysProsentti' => 40,
       'omavastuu' => 150,
       'vahennysKatto' => 2100,
-      'iso' => 'Hinta nousee koon mukaan, pyydä tarjous',
-      'isoSelite' => "Keskimäärin 200–400\u{00A0}€ yksiössä tai kaksiossa. Isot asunnot ja omakotitalot voivat olla yli 1\u{00A0}000\u{00A0}€.",
+      'iso' => "Yli 150\u{00A0}m²: pyydä tarjous",
+      'isoSelite' => "Muuttosiivous maksaa noin 130\u{00A0}€ alle 40\u{00A0}m² yksiössä, noin 370\u{00A0}€ 100\u{00A0}m² asunnossa ja noin 600\u{00A0}€ 150\u{00A0}m² asunnossa. Hinnat sisältävät arvonlisäveron.",
     ],
-    'piano' => ['teksti' => 'Hinta sovitaan aina erikseen'],
+    // Totte 16.11.2026: "Pianon kuljetus tyypillisesti on 250-350€. Laitetaan laskuri tänne."
+    'piano' => ['hinta' => [250, 350], 'selite' => "Pianon kuljetus maksaa tyypillisesti 250–350\u{00A0}€. Kassakaapin siirrosta sovitaan erikseen.", 'teksti' => 'Hinta sovitaan aina erikseen'],
     'kaluste' => ['teksti' => 'Sovitaan tarjouksessa'],
     'varastointi' => ['teksti' => 'Varastointi onnistuu yhteistyökumppanimme Pelican Self Storagen kautta; Pelicanin asiakkaat saavat muutosta jopa 20 % alennuksen'],
     // Box rental is not asked from the visitor, it is calculated from the size: the number of boxes is the one the
