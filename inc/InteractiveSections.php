@@ -419,6 +419,12 @@ function interactive_english(array $d) {
     'päivän ajaksi.' => 'days.',
     'Hinta-arvio ' => 'Price estimate ',
     'Hinta-arvio, ' => 'Price estimate, ',
+    'Muuttosiivous' => 'Move-out cleaning',
+    'Kalusteasennus' => 'Furniture assembly',
+    'Varastointi' => 'Storage',
+    'Valittu paketti' => 'Selected package',
+    'Ei mukana summassa' => 'Not included in the total',
+    'Huomioitavaa' => 'Please note',
   ];
   $names = [
     ['Muuttopalvelu', 'Basic move without boxes'], ['Muutto ja laatikot', 'Basic move and moving boxes'],

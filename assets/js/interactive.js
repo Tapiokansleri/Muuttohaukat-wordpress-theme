@@ -160,18 +160,18 @@
           const jalkeen = [lo - v[0], hi - v[1]];
           siivousTiedot = { hinta: [sent(lo), sent(hi)], vahennys: v.map(sent), jalkeen: jalkeen.map(sent) };
           mukana.push({
-            id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', hinta: siivousTiedot.hinta,
+            id: 'siivous', nimi: T('Muuttosiivous'), linkki: 'siivous', hinta: siivousTiedot.hinta,
             selite: [
               T('Kotitalousvähennyksen jälkeen noin ') + nw(alue(siivousTiedot.jalkeen[0], siivousTiedot.jalkeen[1])) + T(' (arvio).')
             ]
           });
         } else {
-          eiMukana.push({ id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', teksti: S.iso, selite: S.isoSelite });
+          eiMukana.push({ id: 'siivous', nimi: T('Muuttosiivous'), linkki: 'siivous', teksti: S.iso, selite: S.isoSelite });
             }
       }
       if (t.piano)  mukana.push({ id: 'piano', nimi: T('Pianon kuljetus'), linkki: 'piano', hinta: [sent(DATA.piano.hinta[0]), sent(DATA.piano.hinta[1])], selite: [DATA.piano.selite] });
-      if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: 'Kalusteasennus', linkki: 'kaluste', teksti: DATA.kaluste.teksti });
-      if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: 'Varastointi', teksti: DATA.varastointi.teksti.replace('Pelican Self Storagen', linkki('varastointi', 'Pelican Self Storagen')) });
+      if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: T('Kalusteasennus'), linkki: 'kaluste', teksti: DATA.kaluste.teksti });
+      if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: T('Varastointi'), teksti: DATA.varastointi.teksti.replace(ENG() ? 'Pelican Self Storage' : 'Pelican Self Storagen', linkki('varastointi', ENG() ? 'Pelican Self Storage' : 'Pelican Self Storagen')) });
 
       // Laatikoiden vuokraus erikseen: vain paketeille ilman laatikoita
       if (t.vuokra && !paketti.laatikot) {
@@ -376,7 +376,7 @@
 
       h += '<div class="mhi-result__group"><dl class="mhi-lines">';
       r.mukana.forEach(function (rivi) {
-        var kicker = /^(Valittu paketti): (.*)$/.exec(rivi.nimi);
+        var kicker = new RegExp('^(' + T('Valittu paketti').replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '): (.*)$').exec(rivi.nimi);
         var nimiTeksti = kicker ? kicker[2] : rivi.nimi;
         var linkitetty = rivi.linkki ? L.linkki(rivi.linkki, nimiTeksti) : nimiTeksti;
         var nimi = kicker ? '<span class="mhi-lines__kicker">' + kicker[1] + '</span>' + linkitetty : linkitetty;
@@ -387,7 +387,7 @@
       h += '</dl></div>';
 
       if (r.eiMukana.length) {
-        h += '<div class="mhi-result__group"><p class="mhi-label">Ei mukana summassa</p><dl class="mhi-lines">';
+        h += '<div class="mhi-result__group"><p class="mhi-label">' + T('Ei mukana summassa') + '</p><dl class="mhi-lines">';
         r.eiMukana.forEach(function (rivi) {
           h += '<div class="mhi-lines__row"><dt>' + (rivi.linkki ? L.linkki(rivi.linkki, rivi.nimi) : rivi.nimi) + '</dt><dd class="mhi-lines__text">' + rivi.teksti + '</dd>';
           if (rivi.selite) { h += '<dd class="mhi-lines__note">' + rivi.selite + '</dd>'; }
@@ -397,7 +397,7 @@
       }
 
       if (r.huomiot.length) {
-        h += '<div class="mhi-result__group"><p class="mhi-label">Huomioitavaa</p><ul class="mhi-remarks">';
+        h += '<div class="mhi-result__group"><p class="mhi-label">' + T('Huomioitavaa') + '</p><ul class="mhi-remarks">';
         r.huomiot.forEach(function (n) { h += '<li>' + n + '</li>'; });
         h += '</ul></div>';
       }

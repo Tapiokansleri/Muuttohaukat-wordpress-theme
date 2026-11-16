@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.60] - 2026-11-16
+
+### Fixed
+
+- English price calculator: the names of the extra services, the result headings ("Not included in the total", "Please note") and the "Selected package" line are translated, and the line keeps its styled kicker.
+
 ## [1.2.59] - 2026-11-16
 
 ### Added
