@@ -11,19 +11,22 @@
 
   var DATA = null;
   var NBSP = String.fromCharCode(160);
+  // English version (16.11.2026): DATA.lang === 'en' and DATA.t (Finnish text -> English text) are filled by inc/InteractiveSections.php
+  function T(s) { return (DATA && DATA.t && DATA.t[s]) || s; }
+  function ENG() { return !!(DATA && DATA.lang === 'en'); }
 
   // ---------------------------------------------------------------- calculation
   const Laskenta = (function () {
     const NBSP = String.fromCharCode(160);   // kovo välilyönti
     const sent = (e) => Math.round(e * 100);
 
-    function tuhat(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, NBSP); }
+    function tuhat(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ENG() ? ',' : NBSP); }
     /** senttejä -> "1 075" tai "98,42" (desimaalit vain jos tarvitaan) */
     function eur(sentit) {
       const neg = sentit < 0;
       const c = Math.abs(Math.round(sentit));
       const e = Math.floor(c / 100), s = c % 100;
-      return (neg ? '−' : '') + tuhat(e) + (s ? ',' + String(s).padStart(2, '0') : '');
+      return (neg ? '−' : '') + tuhat(e) + (s ? (ENG() ? '.' : ',') + String(s).padStart(2, '0') : '');
     }
     /** [min, max] senttejä -> "450–600 €" (en-viiva, kovo välilyönti ennen €) */
     function alue(lo, hi) { return lo === hi ? eur(lo) + NBSP + '€' : eur(lo) + '–' + eur(hi) + NBSP + '€'; }
@@ -34,14 +37,14 @@
       const u = (DATA.linkit.sivut || {})[avain];
       return u ? '<a href="' + String(u).replace(/"/g, '%22') + '">' + teksti + '</a>' : teksti;
     }   // pitää alueen samalla rivillä
-    function monikko(n, yksikko, monta) { return n + NBSP + (n === 1 ? yksikko : monta); }
+    function monikko(n, yksikko, monta) { return n + NBSP + (n === 1 ? T(yksikko) : T(monta)); }
 
     function kokoluokka(m2) {
       const n = Math.round(m2), lk = DATA.hintaluokat;
       if (n < lk[0].min) return lk[0];                                   // alle 20 m²: ensimmäinen rivi
       return lk.find((k) => n >= k.min && (k.max === null || n <= k.max)) || lk[lk.length - 1];
     }
-    function luokanNimi(k) { return k.max === null ? 'yli' + NBSP + (k.min - 1) + NBSP + 'm²' : k.min + '–' + k.max + NBSP + 'm²'; }
+    function luokanNimi(k) { return k.max === null ? T('yli') + NBSP + (k.min - 1) + NBSP + 'm²' : k.min + '–' + k.max + NBSP + 'm²'; }
     function esc(teksti) { return String(teksti).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
     // "Muutan toiseen kaupunkiin": a municipality by name (also without ä and ö), and the estimated road distance
@@ -124,8 +127,8 @@
       const hinta = pakettihinta(luokka, paketti).map(sent);
 
       const mukana = [{
-        id: 'paketti', nimi: 'Valittu paketti: ' + paketti.nimi, linkki: paketti.taysi ? 'taysi' : 'kotimuutto', hinta,
-        selite: [paketti.kuvaus + '. Kokoluokka ' + nw(luokanNimi(luokka)) + '.']
+        id: 'paketti', nimi: T('Valittu paketti: ') + paketti.nimi, linkki: paketti.taysi ? 'taysi' : 'kotimuutto', hinta,
+        selite: [paketti.kuvaus + T('. Kokoluokka ') + nw(luokanNimi(luokka)) + '.']
       }];
       const eiMukana = [];
       const huomiot = [];
@@ -139,13 +142,13 @@
           const euroa = Math.round(kmYhteensa * C.euroaKm);
           siirtoTiedot = { lahto: S.lahto, kohde: S.kohde, km: S.km, kmYhteensa, euroa };
           mukana.push({
-            id: 'siirto', nimi: 'Muutto toiseen kaupunkiin', hinta: [sent(euroa), sent(euroa)],
-            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + ', edestakaisin noin ' + eur(sent(kmYhteensa)) + NBSP + 'km. Matka on arvio.']
+            id: 'siirto', nimi: T('Muutto toiseen kaupunkiin'), hinta: [sent(euroa), sent(euroa)],
+            selite: [esc(S.lahto) + ' → ' + esc(S.kohde) + T(', edestakaisin noin ') + eur(sent(kmYhteensa)) + NBSP + T('km. Matka on arvio.')]
           });
         } else if (S.tila === 'ok' || S.tila === 'sama') {
-          huomiot.push('Matkalisä lasketaan vain yli ' + C.rajaKm + NBSP + 'km matkoille.');
+          huomiot.push(T('Matkalisä lasketaan vain yli ') + C.rajaKm + NBSP + T('km matkoille.'));
         } else {
-          huomiot.push('Valitse lähtö- ja kohdekaupunki, niin matkalisä lasketaan arvioon.');
+          huomiot.push(T('Valitse lähtö- ja kohdekaupunki, niin matkalisä lasketaan arvioon.'));
         }
       }
 
@@ -159,14 +162,14 @@
           mukana.push({
             id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', hinta: siivousTiedot.hinta,
             selite: [
-              'Kotitalousvähennyksen jälkeen noin ' + nw(alue(siivousTiedot.jalkeen[0], siivousTiedot.jalkeen[1])) + ' (arvio).'
+              T('Kotitalousvähennyksen jälkeen noin ') + nw(alue(siivousTiedot.jalkeen[0], siivousTiedot.jalkeen[1])) + T(' (arvio).')
             ]
           });
         } else {
           eiMukana.push({ id: 'siivous', nimi: 'Muuttosiivous', linkki: 'siivous', teksti: S.iso, selite: S.isoSelite });
             }
       }
-      if (t.piano)  mukana.push({ id: 'piano', nimi: 'Pianon kuljetus', linkki: 'piano', hinta: [sent(DATA.piano.hinta[0]), sent(DATA.piano.hinta[1])], selite: [DATA.piano.selite] });
+      if (t.piano)  mukana.push({ id: 'piano', nimi: T('Pianon kuljetus'), linkki: 'piano', hinta: [sent(DATA.piano.hinta[0]), sent(DATA.piano.hinta[1])], selite: [DATA.piano.selite] });
       if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: 'Kalusteasennus', linkki: 'kaluste', teksti: DATA.kaluste.teksti });
       if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: 'Varastointi', teksti: DATA.varastointi.teksti.replace('Pelican Self Storagen', linkki('varastointi', 'Pelican Self Storagen')) });
 
@@ -176,19 +179,19 @@
         vuokraTiedot = v;
         const L = DATA.laatikkovuokra;
         mukana.push({
-          id: 'vuokra', nimi: 'Laatikoiden vuokraus', linkki: 'laatikot', hinta: v.yhteensa,
+          id: 'vuokra', nimi: T('Laatikoiden vuokraus'), linkki: 'laatikot', hinta: v.yhteensa,
           selite: [
             monikko(v.maara, 'laatikko', 'laatikkoa') + ' × ' + monikko(v.paivat, 'päivä', 'päivää') + ' × ' + eur(sent(L.paivaHintaEuroa)) + NBSP + '€' + NBSP + '=' + NBSP + eur(v.vuokra) + NBSP + '€.',
-            'Toimitus ja nouto ' + L.suuntia + NBSP + '×' + NBSP + nw(alue(v.suunta[0], v.suunta[1])) + ' = ' + nw(alue(v.toimitus[0], v.toimitus[1])) + ', alle 30' + NBSP + 'km:n matkalla. Yli 30' + NBSP + 'km:n matkalta toimitus ja nouto laskutetaan tuntiveloituksella.'
+            T('Toimitus ja nouto ') + L.suuntia + NBSP + '×' + NBSP + nw(alue(v.suunta[0], v.suunta[1])) + ' = ' + nw(alue(v.toimitus[0], v.toimitus[1])) + ', ' + T(', alle 30') + NBSP + T('km:n matkalla. Yli 30') + NBSP + T('km:n matkalta toimitus ja nouto laskutetaan tuntiveloituksella.')
           ]
         });
-        huomiot.push('Laatikot toimitetaan ja noudetaan tiistaisin ja torstaisin. Laatikoiden määrä ja vuokra-aika on arvioitu asunnon koon mukaan.');
+        huomiot.push(T('Laatikot toimitetaan ja noudetaan tiistaisin ja torstaisin. Laatikoiden määrä ja vuokra-aika on arvioitu asunnon koon mukaan.'));
       }
 
-      if (paketti.taysi) huomiot.push('Täyden palvelun muutto sisältää pakkauksen ja purkamisen. Hinnat ovat esimerkkihintoja asunnon koon mukaan, ja lopullinen hinta riippuu tavaramäärästä ja matkasta.');
-      if (t.siivous) huomiot.push('Muuttosiivous tehdään vain siivouspaikkakuntien lähellä.');
-      if (t.siivous || t.kaluste) huomiot.push(linkki('ehdot', 'Kotitalousvähennys') + ' koskee muuttosiivousta ja uusien kalusteiden kokoonpanoa, kun se laskutetaan erikseen. Se ei koske muuttotyötä.');
-      if (m2 > DATA.tilaaHetiEnintaan) huomiot.push('<a href="' + DATA.linkit.tilaaHeti + '" target="_blank" rel="noopener noreferrer">Tilaamuutto.fi</a>-palvelussa voi tilata muuton, kun asunto on alle ' + (DATA.tilaaHetiEnintaan + 1) + NBSP + 'm². Suuremmista asunnoista pyydä tarjous.');
+      if (paketti.taysi) huomiot.push(T('Täyden palvelun muutto sisältää pakkauksen ja purkamisen. Hinnat ovat esimerkkihintoja asunnon koon mukaan, ja lopullinen hinta riippuu tavaramäärästä ja matkasta.'));
+      if (t.siivous) huomiot.push(T('Muuttosiivous tehdään vain siivouspaikkakuntien lähellä.'));
+      if (t.siivous || t.kaluste) huomiot.push(linkki('ehdot', T('Kotitalousvähennys')) + T(' koskee muuttosiivousta ja uusien kalusteiden kokoonpanoa, kun se laskutetaan erikseen. Se ei koske muuttotyötä.'));
+      if (m2 > DATA.tilaaHetiEnintaan) huomiot.push('<a href="' + DATA.linkit.tilaaHeti + '" target="_blank" rel="noopener noreferrer">Tilaamuutto.fi</a>' + T('-palvelussa voi tilata muuton, kun asunto on alle ') + (DATA.tilaaHetiEnintaan + 1) + NBSP + T('m². Suuremmista asunnoista pyydä tarjous.'));
 
       let lo = 0, hi = 0;
       mukana.forEach((r) => { lo += r.hinta[0]; hi += r.hinta[1]; });
@@ -249,7 +252,7 @@
       el.koko.value = v;
       el.liuku.value = v;
       el.liuku.style.setProperty('--mhi-fill', ((v - K.min) / (K.max - K.min) * 100) + '%');
-      el.liuku.setAttribute('aria-valuetext', v + ' neliömetriä');
+      el.liuku.setAttribute('aria-valuetext', v + T(' neliömetriä'));
       el.raja.hidden = v < K.max;                // the end of the slider: bigger homes get a quote
     }
 
@@ -268,11 +271,11 @@
     /** the line under the two city fields */
     function cityNote(S, r) {
       if (!S) { return ''; }
-      if (S.tila === 'tuntematon') { return 'Valitse kaupunki ehdotuksista.'; }
-      if (S.tila === 'puuttuu') { return 'Valitse sekä lähtö- että kohdekaupunki.'; }
-      if (S.tila === 'sama') { return 'Lähtö- ja kohdekaupunki ovat samat.'; }
-      if (r.siirto) { return 'Matka noin ' + S.km + NBSP + 'km, edestakaisin ' + Laskenta.eur(Laskenta.sent(r.siirto.kmYhteensa)) + NBSP + 'km, matkalisä ' + Laskenta.eur(Laskenta.sent(r.siirto.euroa)) + NBSP + '€.'; }
-      return 'Matka noin ' + S.km + NBSP + 'km. Matkalisä lasketaan vain yli ' + DATA.kaupunkimatka.rajaKm + NBSP + 'km matkoille.';
+      if (S.tila === 'tuntematon') { return T('Valitse kaupunki ehdotuksista.'); }
+      if (S.tila === 'puuttuu') { return T('Valitse sekä lähtö- että kohdekaupunki.'); }
+      if (S.tila === 'sama') { return T('Lähtö- ja kohdekaupunki ovat samat.'); }
+      if (r.siirto) { return T('Matka noin ') + S.km + NBSP + T('km, edestakaisin ') + Laskenta.eur(Laskenta.sent(r.siirto.kmYhteensa)) + NBSP + T('km, matkalisä ') + Laskenta.eur(Laskenta.sent(r.siirto.euroa)) + NBSP + '€.'; }
+      return T('Matka noin ') + S.km + NBSP + T('km. Matkalisä lasketaan vain yli ') + DATA.kaupunkimatka.rajaKm + NBSP + T('km matkoille.');
     }
     // City suggestions: "tam" lists Tampere. The beginning of a name matches first, then any part of it (from two letters
     // on), without caring about capitals, ä or ö; the bigger cities come first and an empty field offers them. Keys: arrows,
@@ -367,7 +370,7 @@
       var L = Laskenta;
       var h = '<div class="mhi-result__head">';
       h += '<p class="mhi-result__top">' + r.paketti.nimi + ', ' + r.m2 + NBSP + 'm²</p>';
-      h += '<p class="mhi-result__price"><span class="mhi-vh">Hinta-arvio </span><span class="mhi-nw">' + L.summa(r.yhteensa[0], r.yhteensa[1]) + '</span></p>';
+      h += '<p class="mhi-result__price"><span class="mhi-vh">' + T('Hinta-arvio ') + '</span><span class="mhi-nw">' + L.summa(r.yhteensa[0], r.yhteensa[1]) + '</span></p>';
 
       h += '</div>';
 
@@ -405,7 +408,7 @@
       var p = selectedPackage();
       el.vuokraRyhma.hidden = p.laatikot;        // separate box rental only for packages without boxes
       var boxes = Laskenta.suositusLaatikot(m2), days = DATA.laatikkovuokra.oletusPaivat;
-      el.vuokraTeksti.textContent = 'Arvio asunnon koon mukaan: ' + boxes + NBSP + 'laatikkoa ' + days + NBSP + 'päivän ajaksi.';
+      el.vuokraTeksti.textContent = T('Arvio asunnon koon mukaan: ') + boxes + NBSP + T('laatikkoa ') + days + NBSP + T('päivän ajaksi.');
 
       var state = readState();
       var r = Laskenta.laske(state);
@@ -416,7 +419,7 @@
       el.tilaa.hidden = !r.tilaaHeti;
       el.tarjous.setAttribute('href', quoteLink(r));
       if (el.palkki) {
-        el.palkkiTeksti.textContent = 'Hinta-arvio, ' + r.m2 + NBSP + 'm²';
+        el.palkkiTeksti.textContent = T('Hinta-arvio, ') + r.m2 + NBSP + 'm²';
         el.palkkiHinta.textContent = Laskenta.summa(r.yhteensa[0], r.yhteensa[1]);
         el.palkkiTarjous.setAttribute('href', quoteLink(r));
       }

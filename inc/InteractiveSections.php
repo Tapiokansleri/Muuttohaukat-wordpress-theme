@@ -297,6 +297,7 @@ add_shortcode('hintalaskuri', function ($atts) {
   ], $atts, 'hintalaskuri');
 
   $k = $data['koko'];
+  if (function_exists('pll_current_language') && pll_current_language() === 'en') { $data = interactive_english($data); }
   $packages = '';
   foreach ($data['paketit'] as $i => $p) {
     $packages .= interactive_choice('radio', 'mhi-paketti', 'mhi-paketti-' . $p['id'], $p['id'], $p['nimi'], $p['kuvaus'], $i === 0);
@@ -369,3 +370,74 @@ add_shortcode('hintalaskuri', function ($atts) {
 
   return $head . $body;
 });
+
+/**
+ * English version (Polylang, 16.11.2026): the texts of the calculator data and of the script in English when the page is in English.
+ * The script reads DATA.lang and DATA.t (Finnish fragment => English), see assets/js/interactive.js.
+ */
+function interactive_english(array $d) {
+  $d['lang'] = 'en';
+  $d['t'] = [
+    'laatikko' => 'box',
+    'laatikkoa' => 'boxes',
+    'päivä' => 'day',
+    'päivää' => 'days',
+    'yli' => 'over',
+    'Valittu paketti: ' => 'Selected package: ',
+    '. Kokoluokka ' => '. Size class ',
+    'Muutto toiseen kaupunkiin' => 'Move to another city',
+    ', edestakaisin noin ' => ', round trip about ',
+    'km. Matka on arvio.' => 'km. The distance is an estimate.',
+    'Matkalisä lasketaan vain yli ' => 'The travel surcharge applies only to distances over ',
+    'km matkoille.' => 'km.',
+    'Valitse lähtö- ja kohdekaupunki, niin matkalisä lasketaan arvioon.' => 'Choose the departure and destination cities to include the travel surcharge in the estimate.',
+    'Kotitalousvähennyksen jälkeen noin ' => 'After the household expenses tax credit about ',
+    ' (arvio).' => ' (estimate).',
+    'Pianon kuljetus' => 'Piano moving',
+    'Laatikoiden vuokraus' => 'Moving box rental',
+    'Toimitus ja nouto ' => 'Delivery and collection ',
+    ', alle 30' => ', within 30',
+    'km:n matkalla. Yli 30' => 'km. Over 30',
+    'km:n matkalta toimitus ja nouto laskutetaan tuntiveloituksella.' => 'km, delivery and collection are charged by the hour.',
+    'Laatikot toimitetaan ja noudetaan tiistaisin ja torstaisin. Laatikoiden määrä ja vuokra-aika on arvioitu asunnon koon mukaan.' => 'Boxes are delivered and collected on Tuesdays and Thursdays. The number of boxes and the rental time are estimated from the size of the home.',
+    'Täyden palvelun muutto sisältää pakkauksen ja purkamisen. Hinnat ovat esimerkkihintoja asunnon koon mukaan, ja lopullinen hinta riippuu tavaramäärästä ja matkasta.' => 'A full-service move includes packing and unpacking. Prices are examples based on the size of the home, and the final price depends on the amount of goods and the distance.',
+    'Muuttosiivous tehdään vain siivouspaikkakuntien lähellä.' => 'Move-out cleaning is only available near our cleaning locations.',
+    'Kotitalousvähennys' => 'The household expenses tax credit',
+    ' koskee muuttosiivousta ja uusien kalusteiden kokoonpanoa, kun se laskutetaan erikseen. Se ei koske muuttotyötä.' => ' applies to move-out cleaning and assembling new furniture when it is invoiced separately. It does not apply to the moving work itself.',
+    '-palvelussa voi tilata muuton, kun asunto on alle ' => ' lets you order a move instantly when the home is under ',
+    'm². Suuremmista asunnoista pyydä tarjous.' => 'm². For larger homes, request a quote.',
+    ' neliömetriä' => ' square metres',
+    'Valitse kaupunki ehdotuksista.' => 'Choose a city from the suggestions.',
+    'Valitse sekä lähtö- että kohdekaupunki.' => 'Choose both the departure and destination cities.',
+    'Lähtö- ja kohdekaupunki ovat samat.' => 'The departure and destination cities are the same.',
+    'Matka noin ' => 'Distance about ',
+    'km, edestakaisin ' => 'km, round trip ',
+    'km, matkalisä ' => 'km, travel surcharge ',
+    'km. Matkalisä lasketaan vain yli ' => 'km. The travel surcharge applies only to distances over ',
+    'Arvio asunnon koon mukaan: ' => 'Estimate based on the size of the home: ',
+    'laatikkoa ' => 'boxes for ',
+    'päivän ajaksi.' => 'days.',
+    'Hinta-arvio ' => 'Price estimate ',
+    'Hinta-arvio, ' => 'Price estimate, ',
+  ];
+  $names = [
+    ['Muuttopalvelu', 'Basic move without boxes'], ['Muutto ja laatikot', 'Basic move and moving boxes'],
+    ['Täyden palvelun muutto', 'Packing, transport and unpacking'], ['Täyden palvelun muutto ja laatikot', 'Packing, transport and unpacking, plus boxes'],
+  ];
+  $en_pack = ['perus' => ['Moving service', 'Basic move without boxes'], 'laatikot' => ['Move and boxes', 'Basic move and moving boxes'],
+    'taysi' => ['Full-service move', 'Packing, transport and unpacking'], 'taysi-laatikot' => ['Full-service move and boxes', 'Packing, transport and unpacking, plus boxes']];
+  foreach ($d['paketit'] as $i => $p) { if (isset($en_pack[$p['id']])) { $d['paketit'][$i]['nimi'] = $en_pack[$p['id']][0]; $d['paketit'][$i]['kuvaus'] = $en_pack[$p['id']][1]; } }
+  $d['siivous']['iso'] = "Over 150\u{00A0}m²: request a quote";
+  $d['siivous']['isoSelite'] = "Move-out cleaning costs about 130\u{00A0}€ for a studio under 40\u{00A0}m², about 370\u{00A0}€ for a 100\u{00A0}m² home and about 600\u{00A0}€ for a 150\u{00A0}m² home. Prices include VAT.";
+  $d['piano']['teksti'] = 'The price is always agreed separately';
+  $d['piano']['selite'] = "Piano moving typically costs 250–350\u{00A0}€. Moving a safe is agreed separately.";
+  $d['kaluste']['teksti'] = 'Agreed in the quote';
+  $d['varastointi']['teksti'] = 'Storage is available through our partner Pelican Self Storage; Pelican customers get up to 20% off a move';
+  $en_trip = ['alle-12-km' => 'under 12 km', 'yli-30-km' => 'over 30 km (hourly rate, request a quote)', 'nouto' => 'I will collect them from the office'];
+  foreach ($d['laatikkovuokra']['matkat'] as $i => $m) { if (isset($m['id'], $en_trip[$m['id']])) { $d['laatikkovuokra']['matkat'][$i]['nimi'] = $en_trip[$m['id']]; } }
+  // internal links of the notes point to the English pages
+  if (!empty($d['linkit']['sivut']) && is_array($d['linkit']['sivut']) && function_exists('pll_get_post')) {
+    foreach ($d['linkit']['sivut'] as $k => $u) { $id = url_to_postid($u); $en = $id ? pll_get_post($id, 'en') : 0; if ($en) { $d['linkit']['sivut'][$k] = wp_make_link_relative(get_permalink($en)); } }
+  }
+  return $d;
+}

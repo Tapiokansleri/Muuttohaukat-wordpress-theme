@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.59] - 2026-11-16
+
+### Added
+
+- English price calculator (full English version, Polylang): on English pages the calculator data, its result texts, the English number format (1,075 and 98.42) and the links of its notes are English. `assets/js/interactive.js` (`T()` and `ENG()`, driven by `DATA.t` and `DATA.lang`), `inc/InteractiveSections.php` (`interactive_english()`).
+
 ## [1.2.58] - 2026-11-16
 
 ### Added
