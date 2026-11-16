@@ -24,7 +24,7 @@
 			] ],
 			[ 'core/group', { className: 'mh-landing-why' }, [
 				ITEM( 'fa-solid fa-award', 'Yli 30 vuoden kokemus', 'Olemme tehneet kymmeniätuhansia muuttoja Paimiossa, Varsinais-Suomessa ja ympäri Suomen vuodesta 1992.' ),
-				ITEM( 'fa-solid fa-shield-halved', 'Omaisuutesi hyvissä käsissä', 'Suojaamme, kuljetamme varovasti ja vakuutamme kaikki muuttokuljetukset Paimion alueella.' ),
+				ITEM( 'fa-solid fa-shield-halved', 'Omaisuutesi hyvissä käsissä', 'Suojaamme ja kuljetamme varovasti. Meillä on tiekuljetus- ja vastuuvakuutus.' ),
 				ITEM( 'fa-solid fa-clock', 'Pidämme kiinni aikatauluista', 'Lupaamme vain sen, minkä pystymme pitämään — sovittu aika Paimion muuttopäivänä pitää.' ),
 				ITEM( 'fa-solid fa-receipt', 'Kaikki yhdellä tarjouksella', 'Auto, kantajat ja laatikot Paimion muuttoosi hoituvat kerralla — ei erillistä soittelua eri tahoille.' ),
 				ITEM( 'fa-solid fa-location-dot', 'Paikallinen tuntemus Paimiossa', 'Tunnemme Paimion kadut, kohteet ja aikataulut — osaamme ennakoida ongelmat ennen kuin ne syntyvät.' ),

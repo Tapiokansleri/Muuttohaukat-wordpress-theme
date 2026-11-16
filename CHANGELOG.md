@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.56] - 2026-11-16
+
+### Changed
+
+- No promise of an instant quote or a next-working-day answer in the theme texts (Totte 10.11.2026: the next working day does not hold in every case): the calendar section highlight (`inc/CalendarSection.php`), the article card text (`inc/Articles.php`), the new landing page default content and the service block (`template-parts/landing/default-content.html`, `blocks/landing-service/index.js`) and the city page pattern now say "Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m². Tarjouspyyntöön vastaamme mahdollisimman pian."
+- Insurance wording without "kaikki vakuutettu": the city page pattern (`patterns/kaupunkisivu.php`) says "ja meillä on tiekuljetus- ja vastuuvakuutus", and the landing page "Omaisuutesi hyvissä käsissä" text (`blocks/landing-why/index.js`, `template-parts/landing/default-content.html`) says "Suojaamme ja kuljetamme varovasti. Meillä on tiekuljetus- ja vastuuvakuutus."
+
 ## [1.2.55] - 2026-11-10
 
 ### Changed

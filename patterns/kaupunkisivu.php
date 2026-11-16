@@ -24,7 +24,7 @@ $theme_uri = esc_url(get_template_directory_uri());
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"className":"mh-landing-hero__lead"} -->
-<p class="mh-landing-hero__lead">Hoidamme koti- ja yritysmuutot Kaupungissa. Saat kantajat, muuttoauton ja muuttolaatikot samalta toimittajalta, ja muutto on vakuutettu. Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m².</p>
+<p class="mh-landing-hero__lead">Hoidamme koti- ja yritysmuutot Kaupungissa. Saat kantajat, muuttoauton ja muuttolaatikot samalta toimittajalta, ja meillä on tiekuljetus- ja vastuuvakuutus. Hinnan saat heti Tilaamuutto.fi-palvelusta, kun asunto on alle 80 m².</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:muuttohaukat/buttons {"button1Text":"Pyydä tarjous","button1Url":"/tarjouspyynto/kotimuutto/","button1Color":"yellow","button2Text":"Tilaa heti","button2Url":"https://tilaamuutto.fi","button2Target":"_blank","button2Color":"black"} -->
