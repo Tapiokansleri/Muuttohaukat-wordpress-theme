@@ -184,11 +184,14 @@ if (!function_exists('libreform')) {
  */
 add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
   try {
+    // 16.11.2026: the English copies of the forms (slug + "-en", same field names and values) are handled exactly like the Finnish ones
+    $is_en         = substr($form->slug, -3) === '-en';
+    $base_slug     = $is_en ? substr($form->slug, 0, -3) : $form->slug;
     $capturedForms = ['tarjouspyynto-kotimuutto', 'tarjouspyynto-yritysmuutto', 'tilaa-muuttotarvikkeet'];
     $deleteAfter   = ['whistleblow-lomake'];
     $email         = $submission->getField('Email');
 
-    if ($email && $form->slug !== 'tarjouspyynto-yritysmuutto') {
+    if ($email && $base_slug !== 'tarjouspyynto-yritysmuutto') {
       $mail_error = null;
       $on_fail    = static function ( $error ) use ( &$mail_error ) {
         $mail_error = $error;
@@ -197,8 +200,8 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
       add_action( 'wp_mail_failed', $on_fail );
       $sent = wp_mail(
         $email,
-        __('Vahvistus lomakelähetyksestä', 'muuttohaukat'),
-        __("Hei!\n\nKiitos yhteydenotostasi.\n\nYstävällisin terveisin, Muuttohaukat", 'muuttohaukat')
+        $is_en ? 'Confirmation of your submission' : __('Vahvistus lomakelähetyksestä', 'muuttohaukat'),
+        $is_en ? "Hello!\n\nThank you for contacting us. We will get back to you as soon as possible.\n\nBest regards, Muuttohaukat" : __("Hei!\n\nKiitos yhteydenotostasi.\n\nYstävällisin terveisin, Muuttohaukat", 'muuttohaukat')
       );
       remove_action( 'wp_mail_failed', $on_fail );
 
@@ -212,7 +215,7 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
       \libreform()->io->submission->delete($submission);
     }
 
-    if ( ! in_array( $form->slug, $capturedForms, true ) ) {
+    if ( ! in_array( $base_slug, $capturedForms, true ) ) {
       return;
     }
 
@@ -448,7 +451,7 @@ add_filter('wplfImportFormTemplate', function ($template, \WPLF\Form $form) {
  * rejects the lead) and moved into Lisätiedot after validation.
  */
 add_filter('wplfFieldsBeforeValidateSubmission', function ($entries, \WPLF\Form $form) {
-  if ($form->slug === 'tarjouspyynto-yritysmuutto' && is_array($entries)) {
+  if (preg_replace('/-en$/', '', $form->slug) === 'tarjouspyynto-yritysmuutto' && is_array($entries)) {
     unset($entries['Tyopisteet']);
   }
 
@@ -456,7 +459,7 @@ add_filter('wplfFieldsBeforeValidateSubmission', function ($entries, \WPLF\Form 
 }, 10, 2);
 
 add_filter('wplfFieldsAfterValidateSubmission', function ($entries, \WPLF\Form $form) {
-  if ($form->slug !== 'tarjouspyynto-yritysmuutto' || !is_array($entries) || !array_key_exists('Tyopisteet', $entries)) {
+  if (preg_replace('/-en$/', '', $form->slug) !== 'tarjouspyynto-yritysmuutto' || !is_array($entries) || !array_key_exists('Tyopisteet', $entries)) {
     return $entries;
   }
 

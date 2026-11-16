@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.58] - 2026-11-16
+
+### Added
+
+- English quote forms (full English version, Polylang): the forms with the slugs `tarjouspyynto-kotimuutto-en`, `tarjouspyynto-yritysmuutto-en` and `tilaa-muuttotarvikkeet-en` are copies of the Finnish ones with the same field names and values. They are forwarded to Dynamics exactly like the Finnish forms, the business form keeps the workstations rule, and the confirmation email is in English. `inc/forms.php`.
+
 ## [1.2.57] - 2026-11-16
 
 ### Changed
