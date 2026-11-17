@@ -63,7 +63,7 @@ function offices(): array {
       'street'  => 'Tietohallinnonkatu 17',
       'zip'     => '33840',
       'city'    => 'Tampere',
-      'phone'   => '010 400 4500',
+      'phone'   => '010 400 4508',
       'area'    => 'Pirkanmaa',
       'page'    => '/tampere-pirkanmaa/',
       'profile' => 'https://maps.google.com/?cid=16242424661017334574',

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.62] - 2026-11-17
+
+### Changed
+
+- The Tampere office's phone number is 010 400 4508 (office box, nearby towns box, contact page and the office's structured data). The switchboard 010 400 4500 stays in the header, the footer and the other offices.
+
 ## [1.2.61] - 2026-11-16
 
 ### Fixed
