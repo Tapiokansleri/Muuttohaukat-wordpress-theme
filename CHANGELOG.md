@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.63] - 2026-11-19
+
+### Changed
+
+- Price calculator, "Muutan toiseen kaupunkiin": the distance charge is 1.25 € per kilometre (was 0.80 €). The distance is still counted both ways and only for cities more than 50 km apart. Espoo to Tampere (348 km both ways) now gives 435 €, was 278 €.
+
 ## [1.2.62] - 2026-11-17
 
 ### Changed
