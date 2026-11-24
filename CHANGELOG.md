@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.77] - 2026-11-24
+
+### Added
+
+- Article template "Artikkeli: opas": cards with a photo. A card marked `mh-card--media` with a `<figure class="mh-card__media" data-attachment="ID" data-alt="..">` placeholder shows that media library photo on top (4:3 frame that reserves the space, the photo fills the width with a black line under it, srcset, width and height, lazy loading, the alt text from the content). Opt-in: cards without the placeholder look as before.
+
+### Changed
+
+- Article template "Artikkeli: opas": on yellow sections every bordered box is white with the black border (cards, comparison example boxes, the copyable message box, the "vs" card and tool boxes), where they were transparent. Boxes on white sections are unchanged. Chips and highlighted fill-in parts keep their black label with yellow text.
+
 ## [1.2.76] - 2026-11-24
 
 ### Added

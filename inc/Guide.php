@@ -24,6 +24,7 @@
  *   sec-panel   two columns: the heading and all text left, the block `<ul class="mh-panel">` right. Panel items are
  *               `<li data-icon="shield"><strong>Title</strong><span>Text</span></li>` (max 7, icon names in guide_icon())
  *   .mh-cards   card grid: `<div class="mh-cards"><article class="mh-card"><span class="mh-card__chip">..</span><h3>..</h3><p>..</p></article>..</div>`
+ *   .mh-card--media  a card with a photo on top: `<article class="mh-card mh-card--media"><figure class="mh-card__media" data-attachment="ID" data-alt=".."></figure>..</article>`
  *   .mh-steps   timeline: `<ol class="mh-steps"><li><span class="mh-steps__chip">..</span><h3>..</h3><p>..</p></li>..</ol>`
  *   .mh-example two cards that compare numbers: `<div class="mh-example"><div class="mh-example__card"><h3>..</h3><dl><div><dt>..</dt><dd>..</dd></div>..</dl></div>..</div>`
  *   .mh-template a copyable message (button [data-copy], text in [data-template], highlighted .mh-fill parts)
@@ -315,8 +316,19 @@ function guide_sections(\WP_Post $post): array {
   }, $sections);
 }
 
-/** Panel items get their icon: `<li data-icon="shield">..</li>` becomes an icon circle plus the text. */
+/**
+ * Panel items get their icon: `<li data-icon="shield">..</li>` becomes an icon circle plus the text. A card photo placeholder
+ * `<figure class="mh-card__media" data-attachment="ID" data-alt="..."></figure>` becomes the attachment's image (srcset, width and
+ * height, lazy loading), so a card can show one of the media library's photos without the content knowing any file name.
+ */
 function guide_decorate(string $html): string {
+  if (strpos($html, 'mh-card__media') !== false) {
+    $html = (string) preg_replace_callback('#<figure class="mh-card__media" data-attachment="(\d+)" data-alt="([^"]*)"></figure>#', function ($m) {
+      $image = guide_image((int) $m[1], html_entity_decode($m[2], ENT_QUOTES, 'UTF-8'), '(max-width: 640px) 92vw, (max-width: 1100px) 45vw, 380px');
+
+      return $image === '' ? '' : '<figure class="mh-card__media">' . $image . '</figure>';
+    }, $html);
+  }
   if (strpos($html, 'data-icon') === false) {
     return $html;
   }
