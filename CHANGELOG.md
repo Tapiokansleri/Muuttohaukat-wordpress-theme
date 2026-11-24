@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.76] - 2026-11-24
+
+### Added
+
+- Article template "Artikkeli: opas": a box estimator, shortcode `[laatikkoarvio]` (a Shortcode block inside a section). Four questions (size in m², more things than usual, rental days, delivery) and a result with the recommended number of boxes, the rental cost, delivery and pick-up, the price of one spare box and an order link. The numbers are the price calculator's own data (`interactive_calculator_data()`, key `laatikkovuokra`: the Tilaamuutto.fi recommendation table, 0.7 boxes per m² above it, the day price, 14 days, the delivery prices), so the article and the calculator always agree. The rule is printed under the card in an openly readable `<details>` with one worked example; the "more things than usual" step (+20 %, rounded up to five) is labelled as the site's own estimate. The script `assets/js/box-estimator.js` loads only on pages that use the shortcode and pushes `box_estimator_start`, `box_estimator_result` and `box_estimator_cta_click` to the dataLayer (no Tag Manager trigger exists yet).
+- Article template "Artikkeli: opas": the hero buttons and the closing box buttons can be set per article with the post meta `_mh_guide_actions` and the `buttons` key of `_mh_guide_cta` (label, href, style yellow, black or outline); without them the buttons are the calculator and quote buttons as before.
+
+### Fixed
+
+- Article template "Artikkeli: opas": a `no-wrap` span inside an icon panel item no longer breaks the line (the panel's text rule now applies to direct child spans only); long words in card headings wrap instead of overflowing the card.
+
 ## [1.2.75] - 2026-11-24
 
 ### Fixed

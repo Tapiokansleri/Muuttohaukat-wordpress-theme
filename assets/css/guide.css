@@ -580,7 +580,7 @@
 .mh-guide .mh-guide-sec ul.mh-panel > li.mh-panel__item { display: flex; align-items: flex-start; gap: 18px; margin: 0; padding: 0; font-size: 16px; line-height: 1.5; }
 .mh-guide .mh-guide-sec ul.mh-panel > li::before { display: none; }
 .mh-guide .mh-guide-sec .mh-panel__txt strong { display: block; font-size: 18px; line-height: 1.3; font-weight: 800; }
-.mh-guide .mh-guide-sec .mh-panel__txt span { display: block; margin-top: 3px; font-size: 16px; line-height: 1.5; }
+.mh-guide .mh-guide-sec .mh-panel__txt > span { display: block; margin-top: 3px; font-size: 16px; line-height: 1.5; }
 
 /* The table of contents: its own section, two columns */
 .mh-guide .mh-guide-sec ol.mh-toc { columns: 2; column-gap: 40px; margin: 0; padding: 0; list-style: none; max-width: none; }
@@ -596,7 +596,7 @@
 .mh-guide .mh-guide-sec--yellow .mh-card { background: transparent; }
 .mh-guide .mh-card__chip { align-self: flex-start; padding: 5px 12px; background: var(--g-yellow); color: var(--g-ink); font-size: 13px; line-height: 1.2; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
 .mh-guide .mh-guide-sec--yellow .mh-card__chip { background: var(--g-ink); color: var(--g-yellow); }
-.mh-guide .mh-guide-sec .mh-card h3 { margin: 4px 0 0; font-size: 21px; line-height: 1.3; }
+.mh-guide .mh-guide-sec .mh-card h3 { margin: 4px 0 0; font-size: 21px; line-height: 1.3; overflow-wrap: anywhere; hyphens: auto; }
 .mh-guide .mh-guide-sec .mh-card p { margin: 0; max-width: none; font-size: 16px; line-height: 1.6; }
 
 /* Steps timeline */
@@ -751,4 +751,70 @@
   .mh-guide .mh-template__head { padding: 14px 18px; }
   .mh-guide .mh-template__head .mh-painike { width: 100%; }
   .mh-guide .mh-template__body { padding: 18px; font-size: 16px; }
+}
+
+/* ---------- The box estimator ([laatikkoarvio], inc/Guide.php, assets/js/box-estimator.js) ----------
+   A white card with a black frame that works on a yellow or a white section: the questions left, the result on yellow right
+   (stacked on phones), and the rule printed under it. */
+.mh-guide .mh-guide-sec__body > .mh-est { margin: 0; }
+.mh-guide .mh-est { border: 2px solid var(--g-ink); border-radius: 4px; background: #fff; overflow: hidden; }
+.mh-guide .mh-guide-sec .mh-est p { margin: 0; max-width: none; }
+.mh-guide .mh-est__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.mh-guide .mh-est__form { display: flex; flex-direction: column; gap: 28px; margin: 0; padding: 36px; }
+.mh-guide .mh-est__field { display: flex; flex-direction: column; gap: 10px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.mh-guide .mh-est__field label,
+.mh-guide .mh-est__field legend { margin: 0; padding: 0; font-size: 16px; line-height: 1.3; font-weight: 800; }
+.mh-guide .mh-guide-sec .mh-est p.mh-est__note { font-size: 15px; line-height: 1.5; font-weight: 400; }
+.mh-guide .mh-est__size { display: flex; align-items: center; gap: 10px; }
+.mh-guide .mh-est__size input { width: 150px; min-height: 52px; padding: 0 14px; border: 2px solid var(--g-ink); border-radius: 4px; background: #fff; color: var(--g-ink); font: inherit; font-size: 20px; font-weight: 800; }
+.mh-guide .mh-est__size span { font-size: 20px; font-weight: 800; }
+.mh-guide .mh-est__range { width: 100%; height: 32px; margin: 0; accent-color: #000; cursor: pointer; }
+.mh-guide .mh-est select { width: 100%; min-height: 52px; padding: 0 14px; border: 2px solid var(--g-ink); border-radius: 4px; background-color: #fff; color: var(--g-ink); font: inherit; font-size: 17px; font-weight: 700; }
+.mh-guide .mh-est input:focus-visible,
+.mh-guide .mh-est select:focus-visible { outline: 3px solid var(--g-ink); outline-offset: 3px; }
+.mh-guide .mh-guide-sec .mh-est p.mh-est__hint { font-size: 15px; line-height: 1.45; font-weight: 800; }
+.mh-guide .mh-est__hint[hidden] { display: none; }
+.mh-guide .mh-est__opts { display: flex; gap: 8px; }
+.mh-guide .mh-est__opts input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
+.mh-guide .mh-est__opts label { flex: 1 1 0; display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 6px 8px; border: 2px solid var(--g-ink); border-radius: 4px; font-size: 17px; line-height: 1.2; font-weight: 800; cursor: pointer; user-select: none; }
+.mh-guide .mh-est__opts label:hover { background: rgba(0, 0, 0, 0.08); }
+.mh-guide .mh-est__opts input:checked + label { background: var(--g-ink); color: var(--g-yellow); }
+.mh-guide .mh-est__opts input:focus-visible + label { outline: 3px solid var(--g-ink); outline-offset: 3px; }
+
+.mh-guide .mh-est__result { display: flex; flex-direction: column; gap: 18px; padding: 36px; border-left: 2px solid var(--g-ink); background: var(--g-yellow); }
+.mh-guide .mh-guide-sec .mh-est p.mh-est__placeholder { font-size: 17px; line-height: 1.55; font-weight: 600; }
+.mh-guide .mh-guide-sec .mh-est p.mh-est__big { display: flex; align-items: baseline; gap: 14px; line-height: 1; }
+.mh-guide .mh-est__big strong { font-size: 76px; line-height: 1; font-weight: 800; letter-spacing: -0.02em; }
+.mh-guide .mh-est__big span { font-size: 26px; line-height: 1.1; font-weight: 800; }
+.mh-guide .mh-guide-sec .mh-est p.mh-est__sub { font-size: 16px; line-height: 1.55; }
+.mh-guide .mh-est__sum { margin: 0; padding: 0; border-top: 2px solid var(--g-ink); }
+.mh-guide .mh-est__sum > div { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); column-gap: 18px; align-items: baseline; margin: 0; padding: 12px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.3); }
+.mh-guide .mh-est__sum dt { margin: 0; font-size: 15px; line-height: 1.35; font-weight: 800; }
+.mh-guide .mh-est__sum dd { margin: 0; font-size: 16px; line-height: 1.4; }
+.mh-guide .mh-est__sum .is-total { border-bottom: 0; }
+.mh-guide .mh-est__sum .is-total dd { font-size: 24px; font-weight: 800; }
+.mh-guide .mh-guide-sec .mh-est p.mh-est__spare { font-size: 15px; line-height: 1.5; }
+.mh-guide .mh-est__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
+.mh-guide .mh-est__actions .mh-painike { padding: 16px 30px; }
+.mh-guide .mh-guide-sec .mh-est a.mh-est__link { font-size: 16px; font-weight: 700; }
+
+.mh-guide .mh-est__how { margin: 0; padding: 0 36px; border-top: 2px solid var(--g-ink); background: #fff; }
+.mh-guide .mh-est__how summary { padding: 18px 0; font-size: 16px; line-height: 1.4; font-weight: 800; cursor: pointer; }
+.mh-guide .mh-est__how[open] summary { padding-bottom: 8px; }
+.mh-guide .mh-guide-sec .mh-est__how p { margin: 0 0 14px; font-size: 16px; line-height: 1.6; }
+.mh-guide .mh-guide-sec .mh-est__how ul { margin: 0 0 14px; padding: 0 0 0 1.2em; }
+.mh-guide .mh-guide-sec .mh-est__how li { margin: 0 0 4px; font-size: 16px; line-height: 1.55; }
+.mh-guide .mh-est__how[open] { padding-bottom: 14px; }
+
+@media (max-width: 900px) {
+  .mh-guide .mh-est__grid { grid-template-columns: minmax(0, 1fr); }
+  .mh-guide .mh-est__result { border-left: 0; border-top: 2px solid var(--g-ink); }
+}
+
+@media (max-width: 640px) {
+  .mh-guide .mh-est__form, .mh-guide .mh-est__result { padding: 22px 18px; }
+  .mh-guide .mh-est__how { padding: 0 18px; }
+  .mh-guide .mh-est__big strong { font-size: 60px; }
+  .mh-guide .mh-est__sum > div { grid-template-columns: minmax(0, 1fr); row-gap: 2px; }
+  .mh-guide .mh-est__actions .mh-painike { width: 100%; text-align: center; }
 }

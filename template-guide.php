@@ -59,8 +59,7 @@ while (have_posts()) {
               </ul>
             <?php endif; ?>
             <div class="mh-guide-actions">
-              <a class="mh-painike mh-painike--yellow" href="<?php echo $price_url; ?>">Laske hinta-arvio</a>
-              <a class="mh-painike mh-painike--black" href="<?php echo $quote_url; ?>">Pyydä tarjous</a>
+              <?php echo guide_buttons_html(guide_meta_json($post->ID, '_mh_guide_actions'), [['label' => 'Laske hinta-arvio', 'href' => $price_url, 'style' => 'yellow'], ['label' => 'Pyydä tarjous', 'href' => $quote_url, 'style' => 'black']]); ?>
             </div>
           </div>
           <?php if ($hero_image !== '') : ?>
@@ -121,8 +120,7 @@ while (have_posts()) {
             <h2 id="mh-guide-cta-title"><?php echo esc_html((string) ($cta['title'] ?? 'Pyydä tarjous Muuttohaukoilta')); ?></h2>
             <p class="is-lead"><?php echo esc_html((string) ($cta['text'] ?? 'Kerro muuttosi tiedot, niin saat henkilökohtaisen tarjouksen. Alle 80 m² kodin muutolle hinnan saa heti Tilaamuutto.fi-palvelusta.')); ?></p>
             <div class="mh-guide-actions">
-              <a class="mh-painike mh-painike--black" href="<?php echo $quote_url; ?>">Pyydä tarjous</a>
-              <a class="mh-painike mh-painike--outline" href="<?php echo $price_url; ?>">Laske hinta-arvio</a>
+              <?php echo guide_buttons_html((array) ($cta['buttons'] ?? []), [['label' => 'Pyydä tarjous', 'href' => $quote_url, 'style' => 'black'], ['label' => 'Laske hinta-arvio', 'href' => $price_url, 'style' => 'outline']]); ?>
             </div>
           </div>
           <?php if ($cta_image !== '') : ?><figure class="mh-guide-cta__media"><?php echo $cta_image; ?></figure><?php endif; ?>

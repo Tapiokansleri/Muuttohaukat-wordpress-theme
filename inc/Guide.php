@@ -29,13 +29,16 @@
  *   .mh-template a copyable message (button [data-copy], text in [data-template], highlighted .mh-fill parts)
  *   .mh-vs      the "Muuttohaukat vs toinen tarjous" card (six rows, Kyllä / Ei / En tiedä)
  *   .mh-stack   on a table: one card per row on phones (cells need data-label)
+ *   [laatikkoarvio]  the box estimator (a Shortcode block inside a section): how many boxes, rental cost, order link; numbers from the
+ *               price calculator's data, see guide_estimator_data()
  *   - styles for small interactive blocks that come with the content (.mh-vs "Muuttohaukat vs toinen tarjous", .mh-tool, .mh-tabs)
  *
  * Post meta (all optional, set by the script that creates the article):
  *   _mh_guide_standfirst   the lead paragraph under the title
  *   _mh_guide_image        attachment ID of the hero photo, _mh_guide_image_alt its alt text
  *   _mh_guide_facts        JSON [{"value":"9 min","label":"lukuaika","icon":"clock"}, ...]; default: reading time, tools, updated
- *   _mh_guide_cta          JSON {"title":..., "text":..., "image":attachment ID, "alt":...}
+ *   _mh_guide_cta          JSON {"title":..., "text":..., "image":attachment ID, "alt":..., "buttons":[{"label","href","style"}]}
+ *   _mh_guide_actions      JSON [{"label":..,"href":..,"style":"yellow|black|outline"}] the hero buttons (default: price calculator and quote)
  *   _mh_guide_related      JSON [{"id":post ID,"title":optional,"text":optional,"image":attachment ID}, ...]
  *
  * @package Muuttohaukat
@@ -70,6 +73,161 @@ add_filter('body_class', function ($classes) {
 /** Does the article carry the live price calculator ([hintalaskuri])? */
 function guide_has_calculator(\WP_Post $post): bool {
   return has_shortcode($post->post_content, 'hintalaskuri');
+}
+
+/**
+ * The box estimator, shortcode [laatikkoarvio]: a card with four questions (size in m², more things than usual, rental days,
+ * delivery) and a result that shows how many boxes, what the rental costs and a link to order. The numbers are NOT its own: the
+ * recommendation table, the 0.7 boxes per m² above the table, the day price, the default 14 days and the delivery prices come from
+ * the price calculator's data (interactive_calculator_data(), key laatikkovuokra), so the article and the calculator always agree
+ * and a price change in the theme reaches both. The rule is printed openly under the card. Only the "more things than usual"
+ * step is the site's own estimate (GUIDE_ESTIMATE_MORE: +20 %, rounded up to five boxes) and is labelled as such. The script
+ * (assets/js/box-estimator.js) is loaded only on pages that use the shortcode; it pushes box_estimator_* events to the dataLayer.
+ */
+const GUIDE_ESTIMATE_MORE  = 1.2;
+const GUIDE_ESTIMATE_ROUND = 5;
+
+function guide_estimator_data(): array {
+  $data = function_exists(__NAMESPACE__ . '\\interactive_calculator_data') ? interactive_calculator_data() : [];
+  $box  = $data['laatikkovuokra'] ?? null;
+  if (!$box || empty($box['suositus'])) {
+    return [];
+  }
+  $trips = [];
+  foreach ($box['matkat'] ?? [] as $trip) {
+    $name = ucfirst((string) ($trip['nimi'] ?? ''));
+    if (!empty($trip['laskematon'])) {
+      $trips[] = ['id' => (string) $trip['id'], 'label' => 'Yli 30 km: tuntiveloitus, pyydä tarjous', 'cents' => null];
+    } elseif ((float) ($trip['suuntaEuroa'] ?? 0) > 0) {
+      $trips[] = ['id' => (string) $trip['id'], 'label' => $name . ': ' . number_format((float) $trip['suuntaEuroa'], 0, ',', '') . "\u{00A0}€ suunta", 'cents' => (int) round((float) $trip['suuntaEuroa'] * 100)];
+    } else {
+      $trips[] = ['id' => (string) $trip['id'], 'label' => 'Noudan itse toimipisteestä', 'cents' => 0];
+    }
+  }
+
+  return [
+    'rentCents'  => (int) round((float) ($box['paivaHintaEuroa'] ?? 0.19) * 100),
+    'days'       => (int) ($box['oletusPaivat'] ?? 14),
+    'directions' => (int) ($box['suuntia'] ?? 2),
+    'rows'       => array_map(fn($r) => ['maxM2' => (int) $r['maxM2'], 'boxes' => (int) $r['laatikoita']], $box['suositus']),
+    'factor'     => (float) ($box['suositusKerroin'] ?? 0.7),
+    'trips'      => $trips,
+    'min'        => (int) ($data['koko']['min'] ?? 20),
+    'max'        => (int) ($data['koko']['max'] ?? 150),
+    'start'      => (int) ($data['koko']['oletus'] ?? 50),
+    'more'       => GUIDE_ESTIMATE_MORE,
+    'round'      => GUIDE_ESTIMATE_ROUND,
+    'order'      => defined(__NAMESPACE__ . '\\BOX_ORDER_URL') ? BOX_ORDER_URL : 'https://tilaamuutto.fi/tilaus/laatikot',
+    'boxPage'    => home_url('/muuttolaatikot-ja-muuttotarvikkeet/'),
+  ];
+}
+
+/** Money as text: 106,40 € or 50 € (a non-breaking space before the euro sign). */
+function guide_estimator_money(int $cents): string {
+  return ($cents % 100 === 0 ? (string) ($cents / 100) : number_format($cents / 100, 2, ',', '')) . "\u{00A0}€";
+}
+
+/** The recommendation for a size, the same function as suositusLaatikot() in interactive.js. */
+function guide_estimator_boxes(array $d, int $m2): int {
+  foreach ($d['rows'] as $row) {
+    if ($m2 <= $row['maxM2']) {
+      return $row['boxes'];
+    }
+  }
+
+  return (int) round($m2 * $d['factor']);
+}
+
+/** The rule as text, printed under the card ("Näin luku lasketaan"), with one worked example. */
+function guide_estimator_rule_html(array $d): string {
+  $rows = '';
+  $prev = $d['min'];
+  foreach ($d['rows'] as $row) {
+    $rows .= '<li><strong>' . ($prev === $d['min'] ? 'Alle ' . ($row['maxM2'] + 1) : $prev . '–' . $row['maxM2']) . "\u{00A0}m²:</strong> " . $row['boxes'] . ' laatikkoa</li>';
+    $prev  = $row['maxM2'] + 1;
+  }
+  $last  = end($d['rows']);
+  $rows .= '<li><strong>Yli ' . $last['maxM2'] . "\u{00A0}m²:</strong> " . str_replace('.', ',', (string) $d['factor']) . ' laatikkoa neliötä kohden, pyöristettynä</li>';
+  $step  = '';
+  $over  = guide_estimator_boxes($d, $last['maxM2'] + 1);
+  if ($over < $last['boxes']) {
+    $step = 'Raja on porrasmainen: ' . ($last['maxM2'] + 1) . "\u{00A0}m² kodille suositus on " . $over . ' laatikkoa, kun ' . $last['maxM2'] . "\u{00A0}m² kodille se on " . $last['boxes'] . '.';
+  }
+  $start   = guide_estimator_boxes($d, $d['start']);
+  $rent    = $start * $d['days'] * $d['rentCents'];
+  $trip    = $d['trips'][0]['cents'] ?? null;
+  $example = '';
+  if ($trip) {
+    $example = '<p>Esimerkki: ' . $d['start'] . "\u{00A0}m², tavallinen tavaramäärä, " . $d['days'] . ' päivää ja toimitus alle 12' . "\u{00A0}km: " . $start . ' laatikkoa, vuokra ' . guide_estimator_money($rent)
+      . ', toimitus ja nouto ' . guide_estimator_money($trip * $d['directions']) . ', yhteensä ' . guide_estimator_money($rent + $trip * $d['directions']) . '.</p>';
+  }
+
+  return '<details class="mh-est__how"><summary>Näin luku lasketaan</summary>'
+    . '<p>Perusluku on Muuttohaukkojen verkkotilauspalvelun, Tilaamuutto.fi:n, tilauslomakkeen suositus asunnon koon mukaan. Sama suositus on Muuttohaukkojen hintalaskurissa.</p>'
+    . '<ul>' . $rows . '</ul>'
+    . ($step !== '' ? '<p>' . $step . '</p>' : '')
+    . '<p>Vuokra on laatikkomäärä × vuokrapäivät × päivähinta, ja toimitus ja nouto hinnoitellaan suunnittain. Valinta "tavallista enemmän tavaraa" lisää perusmäärään '
+    . (int) round(($d['more'] - 1) * 100) . "\u{00A0}% ja pyöristää ylöspäin " . (int) $d['round'] . ' laatikon tarkkuuteen. Tämä lisäys on Muuttohaukkojen oma arvio, ei mittaustulos.</p>'
+    . $example
+    . '</details>';
+}
+
+add_shortcode('laatikkoarvio', function () {
+  $d = guide_estimator_data();
+  if (!$d) {
+    return '';
+  }
+  $uri     = get_stylesheet_directory_uri();
+  $path    = get_stylesheet_directory() . '/assets/js/box-estimator.js';
+  wp_enqueue_script('muuttohaukat-box-estimator', $uri . '/assets/js/box-estimator.js', [], file_exists($path) ? (string) filemtime($path) : null, true);
+  $trip_options = '';
+  foreach ($d['trips'] as $i => $trip) {
+    $trip_options .= '<option value="' . esc_attr($trip['id']) . '"' . ($i === 0 ? ' selected' : '') . '>' . esc_html($trip['label']) . '</option>';
+  }
+  $day_options = '';
+  foreach ([7, 14, 21, 28] as $days) {
+    $day_options .= '<option value="' . $days . '"' . ($days === $d['days'] ? ' selected' : '') . '>' . $days . ' päivää</option>';
+  }
+  $json = esc_attr(wp_json_encode($d, JSON_UNESCAPED_UNICODE));
+
+  return '<div class="mh-est" id="laatikkolaskuri-kortti" data-est="' . $json . '">'
+    . '<div class="mh-est__grid">'
+    . '<form class="mh-est__form" onsubmit="return false">'
+    . '<div class="mh-est__field"><label for="mh-est-m2">Asunnon koko</label>'
+    . '<div class="mh-est__size"><input id="mh-est-m2" type="number" inputmode="numeric" min="' . (int) $d['min'] . '" max="' . (int) $d['max'] . '" step="1" value="' . (int) $d['start'] . '" data-est-control="size"><span aria-hidden="true">m²</span></div>'
+    . '<input class="mh-est__range" id="mh-est-range" type="range" min="' . (int) $d['min'] . '" max="' . (int) $d['max'] . '" step="1" value="' . (int) $d['start'] . '" aria-label="Asunnon koko liukusäätimellä" data-est-control="size">'
+    . '<p class="mh-est__hint" id="mh-est-hint" hidden></p></div>'
+    . '<fieldset class="mh-est__field mh-est__choice"><legend>Onko kodissa tavallista enemmän tavaraa?</legend>'
+    . '<p class="mh-est__note">Esimerkiksi täysi kirjahylly, paljon astioita, harrastusvälineitä tai varasto tai autotalli täynnä tavaraa.</p>'
+    . '<div class="mh-est__opts"><input type="radio" name="mh-est-more" id="mh-est-more-0" value="0" checked data-est-control="more"><label for="mh-est-more-0">Ei</label>'
+    . '<input type="radio" name="mh-est-more" id="mh-est-more-1" value="1" data-est-control="more"><label for="mh-est-more-1">Kyllä</label></div></fieldset>'
+    . '<div class="mh-est__field"><label for="mh-est-days">Vuokra-aika</label><select id="mh-est-days" data-est-control="days">' . $day_options . '</select></div>'
+    . '<div class="mh-est__field"><label for="mh-est-trip">Toimitus ja nouto</label><select id="mh-est-trip" data-est-control="trip">' . $trip_options . '</select></div>'
+    . '</form>'
+    . '<div class="mh-est__result" role="status" aria-live="polite"><p class="mh-est__placeholder">Valitse asunnon koko, niin näet suosituksen. Ilman JavaScriptiä suositukset näkyvät taulukossa yllä.</p></div>'
+    . '</div>'
+    . guide_estimator_rule_html($d)
+    . '</div>';
+});
+
+/**
+ * Buttons of the hero and of the closing box: [{"label":"..","href":"/path or #anchor or https://..","style":"yellow|black|outline"}, ...]
+ * from the post meta `_mh_guide_actions` and the meta `_mh_guide_cta` key `buttons`; the defaults when the meta has none.
+ */
+function guide_buttons_html(array $buttons, array $defaults): string {
+  $out = '';
+  foreach ($buttons ?: $defaults as $button) {
+    $label = trim((string) ($button['label'] ?? ''));
+    $href  = trim((string) ($button['href'] ?? ''));
+    if ($label === '' || $href === '') {
+      continue;
+    }
+    $style = in_array($button['style'] ?? '', ['yellow', 'black', 'outline'], true) ? $button['style'] : 'black';
+    $href  = $href[0] === '/' ? home_url($href) : $href;
+    $out  .= '<a class="mh-painike mh-painike--' . $style . '" href="' . esc_url($href) . '">' . esc_html($label) . '</a>';
+  }
+
+  return $out;
 }
 
 /** A JSON post meta value as an array. */
