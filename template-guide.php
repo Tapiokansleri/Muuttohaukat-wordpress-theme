@@ -68,6 +68,12 @@ while (have_posts()) {
           <?php endif; ?>
         </div>
       </header>
+      <?php $trust = guide_trust_html($post); ?>
+      <?php if ($trust !== '') : ?>
+        <div class="mh-guide-trust" aria-label="Luotettavuus">
+          <div class="mh-guide-wrap"><?php echo $trust; ?></div>
+        </div>
+      <?php endif; ?>
 
       <?php
       $prev = 'white'; // the hero
@@ -86,6 +92,9 @@ while (have_posts()) {
           continue;
         }
         $color   = $prev === 'yellow' ? 'white' : 'yellow';
+        if (($section['kind'] ?? 'text') === 'toc') {
+          $section['body'] = guide_toc_html($sections);
+        }
         $classes = array_map('sanitize_html_class', $section['classes']);
         $wide    = in_array('sec-wide', $classes, true);
         $id      = $section['id'] !== '' ? $section['id'] : sanitize_title($section['title']);
@@ -128,6 +137,7 @@ while (have_posts()) {
         </section>
       <?php endif; ?>
     </article>
+    <?php echo guide_article_schema($post); ?>
   </main>
   <?php
 }

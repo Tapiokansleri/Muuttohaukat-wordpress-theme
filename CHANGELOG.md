@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.73] - 2026-11-24
+
+### Added
+
+- Article template "Artikkeli: opas": opt-in building blocks for long guides, all picked by what the content contains, nothing changes on other pages:
+  - a trust bar under the hero (company facts as four short items with icons, from the post's `_mh_guide_trust` meta),
+  - "Lyhyesti" and other `sec-panel` sections: a short paragraph beside an icon summary panel (`mh-panel`, `<li data-icon>`, at most 7 items),
+  - a table of contents section (`sec-toc`) that lists the numbered chapters, with the calculator title when the page has one,
+  - card grids (`mh-cards`), a step timeline (`mh-steps`), a comparison example (`mh-example`) and a copyable message box (`mh-template`, with highlighted fill-in fields and a copy button),
+  - the real price calculator shortcode drawn as its own always-white section,
+  - Article structured data (publisher Muuttohaukat Oy, author as a Person when the post has `_mh_guide_author`); nothing is printed on password-protected pages,
+  - `.nw` for no-wrap numbers such as prices and kilometres.
+
+### Changed
+
+- Article template "Artikkeli: opas": sections alternate yellow and white with no two of the same colour in a row, large gaps and left-aligned text; the hero photo is shown plainly at 4:3; on phones panels, cards, steps and tables stack into single columns.
+
 ## [1.2.72] - 2026-11-24
 
 ### Changed

@@ -17,6 +17,18 @@
  *     because its result panel is yellow, and the hero's "Laske hinta-arvio" button jumps to it (#hintalaskuri)
  *   - a closing call to action and "Lue myös" cards, from the post meta
  *   - FAQPage structured data: inc/StructuredData.php prints it for any page whose content has an mh-faq block
+ *   - a trust bar under the hero (meta _mh_guide_trust)
+ *
+ * Section options (H2 class names) and opt-in components (html blocks in the content):
+ *   sec-toc     the section's body is a table of contents built from the other sections' headings
+ *   sec-panel   two columns: the heading and all text left, the block `<ul class="mh-panel">` right. Panel items are
+ *               `<li data-icon="shield"><strong>Title</strong><span>Text</span></li>` (max 7, icon names in guide_icon())
+ *   .mh-cards   card grid: `<div class="mh-cards"><article class="mh-card"><span class="mh-card__chip">..</span><h3>..</h3><p>..</p></article>..</div>`
+ *   .mh-steps   timeline: `<ol class="mh-steps"><li><span class="mh-steps__chip">..</span><h3>..</h3><p>..</p></li>..</ol>`
+ *   .mh-example two cards that compare numbers: `<div class="mh-example"><div class="mh-example__card"><h3>..</h3><dl><div><dt>..</dt><dd>..</dd></div>..</dl></div>..</div>`
+ *   .mh-template a copyable message (button [data-copy], text in [data-template], highlighted .mh-fill parts)
+ *   .mh-vs      the "Muuttohaukat vs toinen tarjous" card (six rows, Kyllä / Ei / En tiedä)
+ *   .mh-stack   on a table: one card per row on phones (cells need data-label)
  *   - styles for small interactive blocks that come with the content (.mh-vs "Muuttohaukat vs toinen tarjous", .mh-tool, .mh-tabs)
  *
  * Post meta (all optional, set by the script that creates the article):
@@ -86,7 +98,10 @@ function guide_sections(\WP_Post $post): array {
       if ($current !== null) {
         $sections[] = $current;
       }
-      $sections[] = array_merge($blank, ['kind' => 'calculator', 'id' => 'hintalaskuri', 'body' => trim((string) $block['innerHTML'])]);
+      $source     = trim((string) $block['innerHTML']);
+      $atts       = shortcode_parse_atts(trim((string) preg_replace('/^\[hintalaskuri|\]$/', '', $source)));
+      $title      = is_array($atts) && !empty($atts['otsikko']) ? (string) $atts['otsikko'] : 'Hintalaskuri';
+      $sections[] = array_merge($blank, ['kind' => 'calculator', 'id' => 'hintalaskuri', 'title' => $title, 'body' => $source]);
       $current    = null;
       continue;
     }
@@ -103,10 +118,22 @@ function guide_sections(\WP_Post $post): array {
         'lead'    => '',
         'body'    => '',
       ];
+      if (in_array('sec-toc', $current['classes'], true)) {
+        $current['kind'] = 'toc';
+      }
       continue;
     }
     $current ??= $blank;
     $html = render_block($block);
+    // A panel section: the panel list goes right, everything else stays left under the heading
+    if (in_array('sec-panel', $current['classes'], true)) {
+      if ($block['blockName'] === 'core/html' && strpos((string) $block['innerHTML'], 'mh-panel') !== false) {
+        $current['body'] .= $html;
+      } else {
+        $current['lead'] .= $html;
+      }
+      continue;
+    }
     $is_lead = $block['blockName'] === 'core/paragraph' && strpos((string) ($block['attrs']['className'] ?? ''), 'is-lead') !== false;
     if ($is_lead && $current['body'] === '') {
       $current['lead'] .= $html;
@@ -120,11 +147,42 @@ function guide_sections(\WP_Post $post): array {
 
   return array_map(function ($section) {
     foreach (['lead', 'body'] as $part) {
-      $section[$part] = wp_filter_content_tags(do_shortcode($section[$part]));
+      $section[$part] = guide_decorate(wp_filter_content_tags(do_shortcode($section[$part])));
+    }
+    if ($section['id'] === '' && $section['title'] !== '') {
+      $section['id'] = sanitize_title($section['title']);
     }
 
     return $section;
   }, $sections);
+}
+
+/** Panel items get their icon: `<li data-icon="shield">..</li>` becomes an icon circle plus the text. */
+function guide_decorate(string $html): string {
+  if (strpos($html, 'data-icon') === false) {
+    return $html;
+  }
+
+  return (string) preg_replace_callback('#<li data-icon="([a-z-]+)">(.*?)</li>#s', function ($m) {
+    return '<li class="mh-panel__item"><span class="mh-ic">' . guide_icon($m[1]) . '</span><div class="mh-panel__txt">' . $m[2] . '</div></li>';
+  }, $html);
+}
+
+/** The table of contents: every other section with a heading, the calculator included (its title from the shortcode). */
+function guide_toc_html(array $sections): string {
+  $items = '';
+  foreach ($sections as $section) {
+    if ($section['kind'] === 'toc' || in_array('sec-summary', $section['classes'], true) || in_array('sec-notoc', $section['classes'], true)) {
+      continue;
+    }
+    $title = $section['title'];
+    if ($title === '' || $section['id'] === '') {
+      continue;
+    }
+    $items .= '<li><a href="#' . esc_attr($section['id']) . '">' . esc_html(wptexturize($title)) . '</a></li>';
+  }
+
+  return $items === '' ? '' : '<ol class="mh-toc">' . $items . '</ol>';
 }
 
 /** Minutes to read the visible text (scripts and styles left out), 200 words a minute. */
@@ -141,6 +199,18 @@ function guide_icon(string $name): string {
     'tools'    => '<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/>',
     'calendar' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
     'check'    => '<path d="M5 12.5l4.5 4.5L19 7"/>',
+    'euro'     => '<path d="M17 6.5a6.5 6.5 0 1 0 0 11"/><path d="M5 10.5h8M5 13.5h8"/>',
+    'shield'   => '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+    'doc'      => '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M9.5 12h5M9.5 16h5"/>',
+    'alert'    => '<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',
+    'truck'    => '<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+    'box'      => '<path d="M4 8l8-4 8 4v9l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v9"/>',
+    'pin'      => '<path d="M12 21s-6-5.5-6-10a6 6 0 1 1 12 0c0 4.5-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/>',
+    'search'   => '<circle cx="11" cy="11" r="6"/><path d="M16 16l4.5 4.5"/>',
+    'scale'    => '<path d="M12 4v16M6 20h12M5 7h14"/><path d="M5 7l-2.5 6a2.8 2.8 0 0 0 5 0zM19 7l-2.5 6a2.8 2.8 0 0 0 5 0z"/>',
+    'percent'  => '<path d="M18 6L6 18"/><circle cx="7.5" cy="7.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/>',
+    'people'   => '<circle cx="9" cy="8" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 5.5a3 3 0 0 1 0 5.5M17.5 14c2 .5 3 2.2 3 5"/>',
+    'list'     => '<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
   ];
 
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . ($paths[$name] ?? $paths['check']) . '</svg>';
@@ -150,6 +220,14 @@ function guide_icon(string $name): string {
 function guide_facts(\WP_Post $post, string $rendered): array {
   $facts = guide_meta_json($post->ID, '_mh_guide_facts');
   if ($facts) {
+    // tokens in the values: {minutes} reading time, {modified} the update date
+    $minutes  = guide_reading_minutes($rendered);
+    $modified = get_the_modified_date('j.n.Y', $post);
+    foreach ($facts as &$fact) {
+      $fact['value'] = str_replace(['{minutes}', '{modified}'], [(string) $minutes, (string) $modified], (string) ($fact['value'] ?? ''));
+    }
+    unset($fact);
+
     return $facts;
   }
   $facts[] = ['value' => guide_reading_minutes($rendered) . ' min', 'label' => 'lukuaika', 'icon' => 'clock'];
@@ -175,6 +253,54 @@ function guide_image(int $id, string $alt, string $sizes, bool $first = false): 
   }
 
   return (string) wp_get_attachment_image($id, 'large', false, $attrs);
+}
+
+/**
+ * Article structured data: headline, description, dates, hero image, publisher (Muuttohaukat Oy) and the author. The author is the
+ * organisation until a person is named in the post meta `_mh_guide_author` ({"name":"..","jobTitle":"..","url":".."}); nothing about
+ * a person is invented here. Printed only for a page that is shown (never for the password form).
+ */
+function guide_article_schema(\WP_Post $post): string {
+  $home      = home_url('/');
+  $publisher = ['@type' => 'Organization', 'name' => 'Muuttohaukat Oy', 'url' => $home, 'taxID' => '0887272-7'];
+  $person    = guide_meta_json($post->ID, '_mh_guide_author');
+  $author    = !empty($person['name'])
+    ? array_filter(['@type' => 'Person', 'name' => (string) $person['name'], 'jobTitle' => (string) ($person['jobTitle'] ?? ''), 'url' => (string) ($person['url'] ?? ''), 'worksFor' => $publisher])
+    : $publisher;
+  $image     = (int) get_post_meta($post->ID, '_mh_guide_image', true);
+  $data      = [
+    '@context'         => 'https://schema.org',
+    '@type'            => 'Article',
+    '@id'              => get_permalink($post) . '#artikkeli',
+    'mainEntityOfPage' => get_permalink($post),
+    'headline'         => wp_strip_all_tags($post->post_title),
+    'description'      => (string) get_post_meta($post->ID, '_genesis_description', true),
+    'inLanguage'       => 'fi',
+    'datePublished'    => get_the_date('c', $post),
+    'dateModified'     => get_the_modified_date('c', $post),
+    'author'           => $author,
+    'publisher'        => $publisher,
+  ];
+  if ($image && ($url = wp_get_attachment_image_url($image, 'large'))) {
+    $data['image'] = $url;
+  }
+
+  return '<script type="application/ld+json">' . wp_json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . '</script>';
+}
+
+/** The trust bar under the hero: [{"icon":"shield","text":".."}, ...] from the meta _mh_guide_trust. */
+function guide_trust_html(\WP_Post $post): string {
+  $items = guide_meta_json($post->ID, '_mh_guide_trust');
+  $out   = '';
+  foreach ($items as $item) {
+    $text = trim((string) ($item['text'] ?? ''));
+    if ($text === '') {
+      continue;
+    }
+    $out .= '<li>' . guide_icon((string) ($item['icon'] ?? 'check')) . '<span>' . esc_html($text) . '</span></li>';
+  }
+
+  return $out === '' ? '' : '<ul class="mh-guide-trust__list">' . $out . '</ul>';
 }
 
 /** "Lue myös" cards. */
