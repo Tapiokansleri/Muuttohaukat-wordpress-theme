@@ -16,6 +16,8 @@
  *     the price page, inc/InteractiveSections.php, so prices stay in sync): it becomes a section of its own, always white
  *     because its result panel is yellow, and the hero's "Laske hinta-arvio" button jumps to it (#hintalaskuri)
  *   - a closing call to action and "Lue myös" cards, from the post meta
+ *   - FAQPage structured data: inc/StructuredData.php prints it for any page whose content has an mh-faq block
+ *   - styles for small interactive blocks that come with the content (.mh-vs "Muuttohaukat vs toinen tarjous", .mh-tool, .mh-tabs)
  *
  * Post meta (all optional, set by the script that creates the article):
  *   _mh_guide_standfirst   the lead paragraph under the title

@@ -212,6 +212,11 @@ add_action('wp_head', function () {
   if (!$post instanceof \WP_Post) {
     return;
   }
+  // A password-protected page shows nothing before the password, not even in its structured data (the FAQ markup would
+  // otherwise print the questions and answers of a private preview).
+  if (post_password_required($post)) {
+    return;
+  }
 
   $path = current_path();
   $pages = structured_data_pages();

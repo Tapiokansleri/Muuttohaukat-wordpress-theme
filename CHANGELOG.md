@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.69] - 2026-11-24
+
+### Added
+
+- Article template "Artikkeli: opas": styles for a small "Muuttohaukat vs toinen tarjous" card that comes with the content (`.mh-vs`): one row per fact, Muuttohaukat's fact with a link to the page that states it, and Kyllä / Ei / En tiedä buttons for the other offer; three columns on wide screens, stacked rows with 48 px tap targets on phones, outlined on yellow sections.
+
+### Fixed
+
+- Structured data: a password-protected page no longer prints its JSON-LD (the FAQ questions and answers of a protected preview were readable in the page source before the password).
+
 ## [1.2.68] - 2026-11-24
 
 ### Changed

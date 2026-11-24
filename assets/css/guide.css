@@ -250,6 +250,7 @@
 .mh-guide .mh-guide-sec__body > .mh-tool,
 .mh-guide .mh-guide-sec__body > .mh-tabs,
 .mh-guide .mh-guide-sec__body > .mh-faq,
+.mh-guide .mh-guide-sec__body > .mh-vs,
 .mh-guide .mh-guide-sec__body > figure.wp-block-table,
 .mh-guide .mh-guide-sec__body > details { margin-top: 36px; margin-bottom: 36px; }
 .mh-guide .mh-guide-sec__body > :first-child { margin-top: 0; }
@@ -367,6 +368,45 @@
   color: var(--g-ink);
   text-wrap: balance;
 }
+
+/* ---------- "Muuttohaukat vs toinen tarjous" (.mh-vs): one row per fact, the reader marks the other offer ----------
+   Three columns on wide screens (topic, Muuttohaukat's fact with its link, Kyllä / Ei / En tiedä), one column on phones with
+   labels in the row. Native radios behind big tap targets; on a yellow section the card is outlined, not a white box. */
+.mh-guide .mh-vs { margin: 0; padding: 32px 36px; border: 2px solid var(--g-ink); border-radius: 4px; background: #fff; }
+.mh-guide .mh-guide-sec--yellow .mh-vs { background: transparent; }
+.mh-guide .mh-guide-sec .mh-vs .mh-vs__title { margin: 0 0 8px; font-size: 24px; line-height: 1.25; }
+.mh-guide .mh-guide-sec .mh-vs .mh-vs__intro { margin: 0 0 22px; max-width: 62ch; font-size: 16px; line-height: 1.6; }
+.mh-guide .mh-vs__head,
+.mh-guide .mh-vs__row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.3fr); column-gap: 28px; align-items: center; }
+.mh-guide .mh-vs__head { padding: 0 0 10px; border-bottom: 2px solid var(--g-ink); font-size: 14px; line-height: 1.3; font-weight: 800; }
+.mh-guide .mh-vs__row { padding: 16px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.25); }
+.mh-guide .mh-guide-sec .mh-vs p.mh-vs__topic { margin: 0; font-size: 17px; line-height: 1.4; font-weight: 800; }
+.mh-guide .mh-guide-sec .mh-vs p.mh-vs__mh { margin: 0; font-size: 16px; line-height: 1.5; }
+.mh-guide .mh-vs__lbl { display: none; }
+.mh-guide .mh-vs__opts { display: flex; gap: 8px; }
+.mh-guide .mh-vs__opts input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
+.mh-guide .mh-vs__opts label {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 6px 8px;
+  border: 2px solid var(--g-ink);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--g-ink);
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+.mh-guide .mh-vs__opts label:hover { background: rgba(0, 0, 0, 0.08); }
+.mh-guide .mh-vs__opts input:checked + label { background: var(--g-ink); color: var(--g-yellow); }
+.mh-guide .mh-vs__opts input:focus-visible + label { outline: 3px solid var(--g-ink); outline-offset: 3px; }
+.mh-guide .mh-guide-sec .mh-vs p.mh-vs__result { margin: 20px 0 0; max-width: none; padding-top: 16px; border-top: 2px solid var(--g-ink); font-size: 17px; line-height: 1.55; font-weight: 600; }
+.mh-guide .mh-vs__result[hidden] { display: none; }
 
 /* ---------- Interactive tools (the markup comes with the article) ---------- */
 
@@ -550,6 +590,12 @@
   .mh-guide .mh-guide-sec ul.mh-guide-cards { grid-template-columns: minmax(0, 1fr); }
   .mh-guide .mh-tool { padding: 22px 18px; }
   .mh-guide .mh-tool__grid { grid-template-columns: minmax(0, 1fr); }
+  .mh-guide .mh-vs { padding: 22px 18px; }
+  .mh-guide .mh-vs__head { display: none; }
+  .mh-guide .mh-vs__row { grid-template-columns: minmax(0, 1fr); row-gap: 8px; padding: 18px 0; }
+  .mh-guide .mh-vs__lbl { display: inline; font-weight: 700; }
+  .mh-guide .mh-vs__opts { flex-wrap: wrap; margin-top: 4px; }
+  .mh-guide .mh-vs__opts .mh-vs__lbl { display: block; flex: 1 0 100%; font-size: 14px; }
   .mh-guide .mh-tool > .mh-fieldset .mh-fieldset__row { grid-template-columns: minmax(0, 1fr); }
   /* The comparison result: one card per quote instead of a table that scrolls sideways */
   .mh-guide .mh-table-out { overflow: visible; }
