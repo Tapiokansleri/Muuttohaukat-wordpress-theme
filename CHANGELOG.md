@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.72] - 2026-11-24
+
+### Changed
+
+- Article template "Artikkeli: opas": a table marked `mh-stack` (cells carry `data-label`) turns into one card per row on phones, with the column name above each value, instead of a table that scrolls sideways and cuts columns off.
+
 ## [1.2.71] - 2026-11-24
 
 ### Fixed

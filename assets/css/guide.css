@@ -590,6 +590,20 @@
   .mh-guide .mh-guide-sec ul.mh-guide-cards { grid-template-columns: minmax(0, 1fr); }
   .mh-guide .mh-tool { padding: 22px 18px; }
   .mh-guide .mh-tool__grid { grid-template-columns: minmax(0, 1fr); }
+  /* Article tables marked .mh-stack: one card per row, the column name above each value (no sideways scrolling) */
+  .mh-guide .mh-guide-sec figure.mh-stack { overflow: visible; }
+  .mh-guide .mh-guide-sec .mh-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .mh-guide .mh-guide-sec .mh-stack table,
+  .mh-guide .mh-guide-sec .mh-stack tbody,
+  .mh-guide .mh-guide-sec .mh-stack tr,
+  .mh-guide .mh-guide-sec .mh-stack td { display: block; width: 100%; }
+  .mh-guide .mh-guide-sec .mh-stack table { border-top: 0; }
+  .mh-guide .mh-guide-sec .mh-stack tr { padding: 16px 0 6px; border-top: 1px solid rgba(0, 0, 0, 0.25); }
+  .mh-guide .mh-guide-sec .mh-stack tr:first-child { border-top: 2px solid var(--g-ink); }
+  .mh-guide .mh-guide-sec .mh-stack td { padding: 0 0 10px; border: 0; font-size: 16px; }
+  .mh-guide .mh-guide-sec .mh-stack td::before { content: attr(data-label); display: block; margin-bottom: 2px; font-size: 13px; line-height: 1.4; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; opacity: 0.7; }
+  .mh-guide .mh-guide-sec .mh-stack td:first-child { font-size: 17px; font-weight: 800; }
+  .mh-guide .mh-guide-sec .mh-stack td:first-child::before { display: none; }
   .mh-guide .mh-vs { padding: 22px 18px; }
   .mh-guide .mh-vs__head { display: none; }
   .mh-guide .mh-vs__row { grid-template-columns: minmax(0, 1fr); row-gap: 8px; padding: 18px 0; }
