@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.65] - 2026-11-24
+
+### Added
+
+- Article template "Artikkeli: opas (hero ja osiot)" (`template-guide.php`, `inc/Guide.php`, `assets/css/guide.css`), opt-in per post or page in the template list; existing posts and pages are unchanged. It draws a landing-page style hero (two columns: title, standfirst, facts, buttons, photo), splits the content at its top-level H2 headings into sections that alternate brand yellow and white, and ends with a quote call to action and related articles. Section options come from the H2 class names (`sec-wide`, `sec-summary`); hero, call to action and related articles from the post meta `_mh_guide_*`. The stylesheet loads only on pages that use the template and includes the components for interactive blocks (tools, tabs, FAQ, tables).
+
 ## [1.2.63] - 2026-11-19
 
 ### Changed
