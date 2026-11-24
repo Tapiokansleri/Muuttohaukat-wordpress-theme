@@ -23,6 +23,12 @@ function gtm_enabled() {
         if ( ! $enabled ) {
             $enabled = (bool) get_field( 'gtmEnabled', 'options' );
         }
+        // The English and Swedish sites have no options page of their own (no en_ / sv_ fields), so they follow the
+        // Finnish setting: Tag Manager, with the Cookiebot banner and Analytics behind it, runs in every language
+        // (Tapio 24.11.2026).
+        if ( ! $enabled ) {
+            $enabled = (bool) \Muuttohaukat\app()->getOption( 'gtmEnabled', 'fi' );
+        }
     }
 
     return $enabled || is_user_logged_in();

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.70] - 2026-11-24
+
+### Fixed
+
+- Google Tag Manager (and so the Cookiebot banner and Analytics) loads on the English and Swedish pages too: the setting is read from the Finnish options when the language has no options of its own (`gtm_enabled()` in `inc/integrations.php`). Before, only the Finnish pages had it.
+
 ## [1.2.69] - 2026-11-24
 
 ### Added
