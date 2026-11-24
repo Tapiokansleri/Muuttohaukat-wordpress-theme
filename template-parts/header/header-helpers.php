@@ -179,13 +179,13 @@ endif;
 
 if ( ! function_exists( 'muuttohaukat_header_extras' ) ) :
 /**
- * Output the desktop extras area (CTA buttons and the language switcher next to them).
+ * Output the desktop extras area (the language switcher, then the CTA buttons to its right).
  */
 function muuttohaukat_header_extras() {
     ?>
     <div id="header-extras" class="header-extras">
-        <?php muuttohaukat_header_cta_buttons(); ?>
         <?php muuttohaukat_lang_switcher( 'desktop' ); ?>
+        <?php muuttohaukat_header_cta_buttons(); ?>
     </div>
     <?php
 }

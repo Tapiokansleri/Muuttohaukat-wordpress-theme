@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.74] - 2026-11-24
+
+### Changed
+
+- The language switcher (FI / EN / SE) sits to the left of the CTA buttons in the desktop header (`muuttohaukat_header_extras()`); the mobile menu is unchanged.
+
 ## [1.2.73] - 2026-11-24
 
 ### Added
