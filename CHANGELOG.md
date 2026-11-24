@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.71] - 2026-11-24
+
+### Fixed
+
+- Google Tag Manager on the English and Swedish pages (1.2.70 did not reach them: ACF returns null for the Finnish field on those pages): `gtm_enabled()` now reads the stored Finnish option `options_fi_gtmEnabled` directly when the language has no setting of its own.
+
 ## [1.2.70] - 2026-11-24
 
 ### Fixed
