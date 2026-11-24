@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.78] - 2026-11-24
+
+### Changed
+
+- Article template "Artikkeli: opas": the type scale follows the rest of the site (measured on the front page, the box page and the price page at 1280 and 390 px). Headings are weight 700 with normal letter-spacing (h1 48 px, h2 36 px, h3 22 px; phones 32, 28 and 20 px), the standfirst and leads are 18 px / 400 (17 px on phones) instead of 20 px / 500, body text 18 px / 400 with 16 px between paragraphs, labels, table headers, panel titles and `strong` are 700 (800 only for big numbers: step numbers, calculator results and totals), the small tags are 12 px / 700 uppercase with 0.12em letter-spacing, tables and FAQ questions are 18 px (header row and questions 700).
+- Box estimator ([laatikkoarvio]): the delivery question is the municipality instead of a distance. A visitor from search knows their town, not how far it is to an office. A type-ahead field with the home calculator's municipality data (`assets/data/kunnat.json`, an empty field lists every municipality with the big cities first, the Swedish names are found too) and a "Noudan itse toimipisteestä" checkbox replace the distance select. The script estimates the road distance from the municipality centre to the nearest office (the offices in `offices()`, road factor 1.15) and applies the box page's prices: under 12 km 2 × 25 €, 12-30 km 2 × 40 €, over 30 km hourly (shown, left out of the total). The result says which office was used and that it is an estimate. Before a municipality is chosen the result shows the rental sum, "Valitse kunta" and a total "ilman toimitusta". Tracking sends the tier (`est_trip`: near, mid, far, pickup, none), never the municipality.
+
+### Fixed
+
+- Article template "Artikkeli: opas": the estimator card no longer clips its suggestion list (the card is not `overflow: hidden` any more); `strong` inside a table cell is 700 instead of the browser's "bolder" 900.
+
 ## [1.2.77] - 2026-11-24
 
 ### Added

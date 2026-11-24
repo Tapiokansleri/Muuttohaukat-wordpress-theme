@@ -86,6 +86,9 @@ function guide_has_calculator(\WP_Post $post): bool {
  * (assets/js/box-estimator.js) is loaded only on pages that use the shortcode; it pushes box_estimator_* events to the dataLayer.
  */
 const GUIDE_ESTIMATE_MORE  = 1.2;
+// The tiers of the box page's delivery prices ("Alle 12 km", "12–30 km", "Yli 30 km"); keep them equal to the box_delivery() labels.
+const GUIDE_DELIVERY_NEAR_KM = 12;
+const GUIDE_DELIVERY_FAR_KM  = 30;
 const GUIDE_ESTIMATE_ROUND = 5;
 
 function guide_estimator_data(): array {
@@ -94,15 +97,21 @@ function guide_estimator_data(): array {
   if (!$box || empty($box['suositus'])) {
     return [];
   }
-  $trips = [];
+  // The delivery prices per direction of the box page (the same data as the calculator): under 12 km and 12-30 km; over 30 km is hourly.
+  $near = 2500;
+  $mid  = 4000;
   foreach ($box['matkat'] ?? [] as $trip) {
-    $name = ucfirst((string) ($trip['nimi'] ?? ''));
-    if (!empty($trip['laskematon'])) {
-      $trips[] = ['id' => (string) $trip['id'], 'label' => 'Yli 30 km: tuntiveloitus, pyydä tarjous', 'cents' => null];
-    } elseif ((float) ($trip['suuntaEuroa'] ?? 0) > 0) {
-      $trips[] = ['id' => (string) $trip['id'], 'label' => $name . ': ' . number_format((float) $trip['suuntaEuroa'], 0, ',', '') . "\u{00A0}€ suunta", 'cents' => (int) round((float) $trip['suuntaEuroa'] * 100)];
-    } else {
-      $trips[] = ['id' => (string) $trip['id'], 'label' => 'Noudan itse toimipisteestä', 'cents' => 0];
+    if (($trip['id'] ?? '') === 'alle-12-km' && !empty($trip['suuntaEuroa'])) {
+      $near = (int) round((float) $trip['suuntaEuroa'] * 100);
+    } elseif (($trip['id'] ?? '') === '12-30-km' && !empty($trip['suuntaEuroa'])) {
+      $mid = (int) round((float) $trip['suuntaEuroa'] * 100);
+    }
+  }
+  // The offices the boxes are delivered from and can be picked up at: ONE list, the theme's offices() (also used by the landing pages).
+  $offices = [];
+  foreach (function_exists(__NAMESPACE__ . '\\offices') ? offices() : [] as $office) {
+    if (!empty($office['city']) && !empty($office['geo']['lat']) && !empty($office['geo']['lng'])) {
+      $offices[] = ['name' => (string) $office['city'], 'lat' => (float) $office['geo']['lat'], 'lng' => (float) $office['geo']['lng']];
     }
   }
 
@@ -112,7 +121,8 @@ function guide_estimator_data(): array {
     'directions' => (int) ($box['suuntia'] ?? 2),
     'rows'       => array_map(fn($r) => ['maxM2' => (int) $r['maxM2'], 'boxes' => (int) $r['laatikoita']], $box['suositus']),
     'factor'     => (float) ($box['suositusKerroin'] ?? 0.7),
-    'trips'      => $trips,
+    'delivery'   => ['nearKm' => GUIDE_DELIVERY_NEAR_KM, 'farKm' => GUIDE_DELIVERY_FAR_KM, 'nearCents' => $near, 'midCents' => $mid, 'road' => defined(__NAMESPACE__ . '\\INTERACTIVE_ROAD_FACTOR') ? INTERACTIVE_ROAD_FACTOR : 1.15],
+    'offices'    => $offices,
     'min'        => (int) ($data['koko']['min'] ?? 20),
     'max'        => (int) ($data['koko']['max'] ?? 150),
     'start'      => (int) ($data['koko']['oletus'] ?? 50),
@@ -139,6 +149,30 @@ function guide_estimator_boxes(array $d, int $m2): int {
   return (int) round($m2 * $d['factor']);
 }
 
+/** [name, latitude, longitude, Finnish name] of every municipality and, as extra entries, the Swedish names ("Helsingfors"); the home calculator's data file. */
+function guide_estimator_cities(): array {
+  $rows = function_exists(__NAMESPACE__ . '\\interactive_municipalities') ? interactive_municipalities() : [];
+  $sv   = function_exists(__NAMESPACE__ . '\\interactive_swedish_city_names') ? interactive_swedish_city_names() : [];
+  $out  = [];
+  foreach ($rows as $row) {
+    $out[] = [$row[0], $row[1], $row[2]];
+  }
+  foreach ($rows as $row) {
+    if (isset($sv[$row[0]]) && $sv[$row[0]] !== $row[0]) {
+      $out[] = [$sv[$row[0]], $row[1], $row[2], $row[0]];
+    }
+  }
+
+  return $out;
+}
+
+/** The big cities first in the suggestions (and what an empty field lists first), as in the home calculator. */
+function guide_estimator_popular(): array {
+  $data = function_exists(__NAMESPACE__ . '\\interactive_calculator_data') ? interactive_calculator_data() : [];
+
+  return array_values((array) ($data['kaupunkimatka']['suositut'] ?? []));
+}
+
 /** The rule as text, printed under the card ("Näin luku lasketaan"), with one worked example. */
 function guide_estimator_rule_html(array $d): string {
   $rows = '';
@@ -156,19 +190,24 @@ function guide_estimator_rule_html(array $d): string {
   }
   $start   = guide_estimator_boxes($d, $d['start']);
   $rent    = $start * $d['days'] * $d['rentCents'];
-  $trip    = $d['trips'][0]['cents'] ?? null;
+  $trip    = $d['delivery']['nearCents'] ?? null;
   $example = '';
   if ($trip) {
-    $example = '<p>Esimerkki: ' . $d['start'] . "\u{00A0}m², tavallinen tavaramäärä, " . $d['days'] . ' päivää ja toimitus alle 12' . "\u{00A0}km: " . $start . ' laatikkoa, vuokra ' . guide_estimator_money($rent)
+    $example = '<p>Esimerkki: ' . $d['start'] . "\u{00A0}m², tavallinen tavaramäärä, " . $d['days'] . ' päivää ja toimitus alle ' . $d['delivery']['nearKm'] . "\u{00A0}km:n päähän toimipisteestä: " . $start . ' laatikkoa, vuokra ' . guide_estimator_money($rent)
       . ', toimitus ja nouto ' . guide_estimator_money($trip * $d['directions']) . ', yhteensä ' . guide_estimator_money($rent + $trip * $d['directions']) . '.</p>';
   }
+  $names    = implode(', ', array_map(fn($o) => $o['name'], $d['offices']));
+  $delivery = '<p>Toimitus ja nouto: laskuri arvioi matkan valitsemasi kunnan keskustasta lähimpään toimipisteeseen (' . esc_html($names) . '), tiekertoimella ' . str_replace('.', ',', (string) $d['delivery']['road'])
+    . '. Alle ' . $d['delivery']['nearKm'] . "\u{00A0}km:n matkalta se on 2\u{00A0}×\u{00A0}" . guide_estimator_money($d['delivery']['nearCents']) . ', ' . $d['delivery']['nearKm'] . '–' . $d['delivery']['farKm'] . "\u{00A0}km:n matkalta 2\u{00A0}×\u{00A0}"
+    . guide_estimator_money($d['delivery']['midCents']) . ' ja yli ' . $d['delivery']['farKm'] . "\u{00A0}km:n matkalta tuntiveloitus, jota ei lasketa mukaan. Tulos on arvio kunnan keskustasta, ei osoitteesta. Noudettaessa toimitusta ei ole.</p>";
 
   return '<details class="mh-est__how"><summary>Näin luku lasketaan</summary>'
     . '<p>Perusluku on Muuttohaukkojen verkkotilauspalvelun, Tilaamuutto.fi:n, tilauslomakkeen suositus asunnon koon mukaan. Sama suositus on Muuttohaukkojen hintalaskurissa.</p>'
     . '<ul>' . $rows . '</ul>'
     . ($step !== '' ? '<p>' . $step . '</p>' : '')
-    . '<p>Vuokra on laatikkomäärä × vuokrapäivät × päivähinta, ja toimitus ja nouto hinnoitellaan suunnittain. Valinta "tavallista enemmän tavaraa" lisää perusmäärään '
+    . '<p>Vuokra on laatikkomäärä × vuokrapäivät × päivähinta. Valinta "tavallista enemmän tavaraa" lisää perusmäärään '
     . (int) round(($d['more'] - 1) * 100) . "\u{00A0}% ja pyöristää ylöspäin " . (int) $d['round'] . ' laatikon tarkkuuteen. Tämä lisäys on Muuttohaukkojen oma arvio, ei mittaustulos.</p>'
+    . $delivery
     . $example
     . '</details>';
 }
@@ -181,10 +220,7 @@ add_shortcode('laatikkoarvio', function () {
   $uri     = get_stylesheet_directory_uri();
   $path    = get_stylesheet_directory() . '/assets/js/box-estimator.js';
   wp_enqueue_script('muuttohaukat-box-estimator', $uri . '/assets/js/box-estimator.js', [], file_exists($path) ? (string) filemtime($path) : null, true);
-  $trip_options = '';
-  foreach ($d['trips'] as $i => $trip) {
-    $trip_options .= '<option value="' . esc_attr($trip['id']) . '"' . ($i === 0 ? ' selected' : '') . '>' . esc_html($trip['label']) . '</option>';
-  }
+  $office_names = implode(', ', array_map(fn($o) => $o['name'], $d['offices']));
   $day_options = '';
   foreach ([7, 14, 21, 28] as $days) {
     $day_options .= '<option value="' . $days . '"' . ($days === $d['days'] ? ' selected' : '') . '>' . $days . ' päivää</option>';
@@ -203,11 +239,16 @@ add_shortcode('laatikkoarvio', function () {
     . '<div class="mh-est__opts"><input type="radio" name="mh-est-more" id="mh-est-more-0" value="0" checked data-est-control="more"><label for="mh-est-more-0">Ei</label>'
     . '<input type="radio" name="mh-est-more" id="mh-est-more-1" value="1" data-est-control="more"><label for="mh-est-more-1">Kyllä</label></div></fieldset>'
     . '<div class="mh-est__field"><label for="mh-est-days">Vuokra-aika</label><select id="mh-est-days" data-est-control="days">' . $day_options . '</select></div>'
-    . '<div class="mh-est__field"><label for="mh-est-trip">Toimitus ja nouto</label><select id="mh-est-trip" data-est-control="trip">' . $trip_options . '</select></div>'
+    . '<div class="mh-est__field mh-est__city"><label for="mh-est-city">Mihin kuntaan laatikot toimitetaan?</label>'
+    . '<div class="mh-est__combo"><input id="mh-est-city" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="mh-est-city-list" autocomplete="off" placeholder="Kirjoita kunta" data-est-control="city">'
+    . '<ul id="mh-est-city-list" class="mh-est__suggest" role="listbox" aria-label="Kuntaehdotukset" hidden></ul></div>'
+    . '<p class="mh-est__hint" id="mh-est-city-hint" hidden></p>'
+    . '<div class="mh-est__pick"><input type="checkbox" id="mh-est-pickup" data-est-control="pickup"><label for="mh-est-pickup">Noudan laatikot itse toimipisteestä (' . esc_html($office_names) . ')</label></div></div>'
     . '</form>'
     . '<div class="mh-est__result" role="status" aria-live="polite"><p class="mh-est__placeholder">Valitse asunnon koko, niin näet suosituksen. Ilman JavaScriptiä suositukset näkyvät taulukossa yllä.</p></div>'
     . '</div>'
     . guide_estimator_rule_html($d)
+    . '<script type="application/json" id="mh-est-cities">' . wp_json_encode(['cities' => guide_estimator_cities(), 'popular' => guide_estimator_popular()], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) . '</script>'
     . '</div>';
 });
 
