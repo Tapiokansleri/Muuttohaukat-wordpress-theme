@@ -14,6 +14,8 @@
   // English version (16.11.2026): DATA.lang === 'en' and DATA.t (Finnish text -> English text) are filled by inc/InteractiveSections.php
   function T(s) { return (DATA && DATA.t && DATA.t[s]) || s; }
   function ENG() { return !!(DATA && DATA.lang === 'en'); }
+  // Swedish version (24.11.2026): Finnish number format, Swedish texts from DATA.t; the Pelican name has no Finnish ending
+  function FOREIGN() { return !!(DATA && (DATA.lang === 'en' || DATA.lang === 'sv')); }
 
   // ---------------------------------------------------------------- calculation
   const Laskenta = (function () {
@@ -171,7 +173,7 @@
       }
       if (t.piano)  mukana.push({ id: 'piano', nimi: T('Pianon kuljetus'), linkki: 'piano', hinta: [sent(DATA.piano.hinta[0]), sent(DATA.piano.hinta[1])], selite: [DATA.piano.selite] });
       if (t.kaluste) eiMukana.push({ id: 'kaluste', nimi: T('Kalusteasennus'), linkki: 'kaluste', teksti: DATA.kaluste.teksti });
-      if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: T('Varastointi'), teksti: DATA.varastointi.teksti.replace(ENG() ? 'Pelican Self Storage' : 'Pelican Self Storagen', linkki('varastointi', ENG() ? 'Pelican Self Storage' : 'Pelican Self Storagen')) });
+      if (t.varastointi) eiMukana.push({ id: 'varastointi', nimi: T('Varastointi'), teksti: DATA.varastointi.teksti.replace(FOREIGN() ? 'Pelican Self Storage' : 'Pelican Self Storagen', linkki('varastointi', FOREIGN() ? 'Pelican Self Storage' : 'Pelican Self Storagen')) });
 
       // Laatikoiden vuokraus erikseen: vain paketeille ilman laatikoita
       if (t.vuokra && !paketti.laatikot) {

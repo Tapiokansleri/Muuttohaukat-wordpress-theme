@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.66] - 2026-11-24
+
+### Added
+
+- Swedish version (Polylang language `sv`, `/sv/`, Swedish as spoken in Finland): the price calculator reads Swedish texts (`interactive_swedish()` in `inc/InteractiveSections.php`, `DATA.lang === 'sv'`; Finnish number format), the city fields find the Swedish names of the municipalities as well as the Finnish ones, the Swedish copies of the quote forms (slug + `-sv`) are handled like the Finnish ones (D365 forwarding, templates, Swedish confirmation e-mail), and the quote buttons keep their colour on `/sv/offertforfragan`.
+
 ## [1.2.65] - 2026-11-24
 
 ### Added

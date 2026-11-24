@@ -297,7 +297,9 @@ add_shortcode('hintalaskuri', function ($atts) {
   ], $atts, 'hintalaskuri');
 
   $k = $data['koko'];
-  if (function_exists('pll_current_language') && pll_current_language() === 'en') { $data = interactive_english($data); }
+  $lang = function_exists('pll_current_language') ? pll_current_language() : '';
+  if ($lang === 'en') { $data = interactive_english($data); }
+  elseif ($lang === 'sv') { $data = interactive_swedish($data); }
   $packages = '';
   foreach ($data['paketit'] as $i => $p) {
     $packages .= interactive_choice('radio', 'mhi-paketti', 'mhi-paketti-' . $p['id'], $p['id'], $p['nimi'], $p['kuvaus'], $i === 0);
@@ -450,6 +452,115 @@ function interactive_english(array $d) {
   // internal links of the notes point to the English pages
   if (!empty($d['linkit']['sivut']) && is_array($d['linkit']['sivut']) && function_exists('pll_get_post')) {
     foreach ($d['linkit']['sivut'] as $k => $u) { $id = url_to_postid($u); $en = $id ? pll_get_post($id, 'en') : 0; if ($en) { $d['linkit']['sivut'][$k] = wp_make_link_relative(get_permalink($en)); } }
+  }
+  return $d;
+}
+
+/**
+ * Finnish municipality => Swedish name, for the city fields of the calculator on Swedish pages (24.11.2026). The Swedish name is added to the
+ * list next to the Finnish one, so both are found ("Helsingfors" and "Helsinki"); names that are the same in both languages are not listed.
+ */
+function interactive_swedish_city_names(): array {
+  return [
+    'Espoo' => 'Esbo', 'Eurajoki' => 'Euraåminne', 'Hamina' => 'Fredrikshamn', 'Hanko' => 'Hangö', 'Helsinki' => 'Helsingfors', 'Huittinen' => 'Vittis', 'Hyvinkää' => 'Hyvinge',
+    'Hämeenkyrö' => 'Tavastkyro', 'Hämeenlinna' => 'Tavastehus', 'Iisalmi' => 'Idensalmi', 'Iitti' => 'Itis', 'Ikaalinen' => 'Ikalis', 'Ilmajoki' => 'Ilmola', 'Inkoo' => 'Ingå',
+    'Isojoki' => 'Storå', 'Isokyrö' => 'Storkyro', 'Jokioinen' => 'Jockis', 'Joroinen' => 'Jorois', 'Järvenpää' => 'Träskända', 'Kaarina' => 'S:t Karins', 'Kajaani' => 'Kajana',
+    'Karijoki' => 'Bötom', 'Karkkila' => 'Högfors', 'Kaskinen' => 'Kaskö', 'Kauniainen' => 'Grankulla', 'Kemiönsaari' => 'Kimitoön', 'Kerava' => 'Kervo', 'Kirkkonummi' => 'Kyrkslätt',
+    'Kokemäki' => 'Kumo', 'Kokkola' => 'Karleby', 'Kristiinankaupunki' => 'Kristinestad', 'Kruunupyy' => 'Kronoby', 'Kuhmoinen' => 'Kuhmois', 'Kustavi' => 'Gustavs', 'Lahti' => 'Lahtis',
+    'Laihia' => 'Laihela', 'Laitila' => 'Letala', 'Lapinjärvi' => 'Lappträsk', 'Lappeenranta' => 'Villmanstrand', 'Lapua' => 'Lappo', 'Lieto' => 'Lundo', 'Lohja' => 'Lojo',
+    'Loviisa' => 'Lovisa', 'Luoto' => 'Larsmo', 'Maalahti' => 'Malax', 'Maarianhamina' => 'Mariehamn', 'Marttila' => 'S:t Mårtens', 'Masku' => 'Masko', 'Merikarvia' => 'Sastmola',
+    'Mikkeli' => 'S:t Michel', 'Mustasaari' => 'Korsholm', 'Mynämäki' => 'Virmo', 'Myrskylä' => 'Mörskom', 'Naantali' => 'Nådendal', 'Nousiainen' => 'Nousis', 'Närpiö' => 'Närpes',
+    'Oulu' => 'Uleåborg', 'Paimio' => 'Pemar', 'Parainen' => 'Pargas', 'Pedersören kunta' => 'Pedersöre', 'Pietarsaari' => 'Jakobstad', 'Pirkkala' => 'Birkala', 'Pori' => 'Björneborg',
+    'Pornainen' => 'Borgnäs', 'Porvoo' => 'Borgå', 'Pukkila' => 'Buckila', 'Pyhtää' => 'Pyttis', 'Raahe' => 'Brahestad', 'Raasepori' => 'Raseborg', 'Raisio' => 'Reso', 'Rauma' => 'Raumo',
+    'Sauvo' => 'Sagu', 'Savonlinna' => 'Nyslott', 'Sipoo' => 'Sibbo', 'Siuntio' => 'Sjundeå', 'Taivassalo' => 'Tövsala', 'Tampere' => 'Tammerfors', 'Teuva' => 'Östermark',
+    'Tornio' => 'Torneå', 'Turku' => 'Åbo', 'Tuusula' => 'Tusby', 'Uusikaarlepyy' => 'Nykarleby', 'Uusikaupunki' => 'Nystad', 'Vaasa' => 'Vasa', 'Vantaa' => 'Vanda', 'Vehmaa' => 'Vemo',
+    'Vihti' => 'Vichtis', 'Virolahti' => 'Vederlax', 'Virrat' => 'Virdois', 'Vöyri' => 'Vörå', 'Ähtäri' => 'Etseri',
+  ];
+}
+
+/**
+ * Swedish version (Polylang, 24.11.2026): the texts of the calculator data and of the script in Swedish when the page is in Swedish
+ * (Swedish as spoken in Finland, Finnish number format). The script reads DATA.lang and DATA.t (Finnish fragment => Swedish text), see assets/js/interactive.js.
+ */
+function interactive_swedish(array $d) {
+  $d['lang'] = 'sv';
+  // the quote link goes to the Swedish quote form page
+  if (function_exists('pll_get_post')) {
+    $fi_quote = url_to_postid(home_url('/tarjouspyynto/kotimuutto/'));
+    $sv_quote = $fi_quote ? pll_get_post($fi_quote, 'sv') : 0;
+    if ($sv_quote) { $d['linkit']['tarjous'] = get_permalink($sv_quote); }
+  }
+  $d['t'] = [
+    'laatikko' => 'låda',
+    'laatikkoa' => 'lådor',
+    'päivä' => 'dag',
+    'päivää' => 'dagar',
+    'yli' => 'över',
+    'Valittu paketti: ' => 'Valt paket: ',
+    '. Kokoluokka ' => '. Storleksklass ',
+    'Muutto toiseen kaupunkiin' => 'Flytt till en annan stad',
+    ', edestakaisin noin ' => ', tur och retur cirka ',
+    'km. Matka on arvio.' => 'km. Sträckan är en uppskattning.',
+    'Matkalisä lasketaan vain yli ' => 'Resetillägget räknas bara för sträckor över ',
+    'km matkoille.' => 'km.',
+    'Valitse lähtö- ja kohdekaupunki, niin matkalisä lasketaan arvioon.' => 'Välj avgångs- och destinationsstad, så räknas resetillägget in i uppskattningen.',
+    'Kotitalousvähennyksen jälkeen noin ' => 'Efter hushållsavdraget cirka ',
+    ' (arvio).' => ' (uppskattning).',
+    'Pianon kuljetus' => 'Pianotransport',
+    'Laatikoiden vuokraus' => 'Hyra av flyttlådor',
+    'Toimitus ja nouto ' => 'Leverans och hämtning ',
+    ', alle 30' => ', under 30',
+    'km:n matkalla. Yli 30' => 'km. Över 30',
+    'km:n matkalta toimitus ja nouto laskutetaan tuntiveloituksella.' => 'km debiteras leverans och hämtning per timme.',
+    'Laatikot toimitetaan ja noudetaan tiistaisin ja torstaisin. Laatikoiden määrä ja vuokra-aika on arvioitu asunnon koon mukaan.' => 'Lådorna levereras och hämtas på tisdagar och torsdagar. Antalet lådor och hyrestiden har uppskattats enligt bostadens storlek.',
+    'Täyden palvelun muutto sisältää pakkauksen ja purkamisen. Hinnat ovat esimerkkihintoja asunnon koon mukaan, ja lopullinen hinta riippuu tavaramäärästä ja matkasta.' => 'Flytt med full service omfattar packning och uppackning. Priserna är exempelpriser enligt bostadens storlek, och det slutliga priset beror på mängden saker och sträckan.',
+    'Muuttosiivous tehdään vain siivouspaikkakuntien lähellä.' => 'Flyttstädning görs bara nära våra städorter.',
+    'Kotitalousvähennys' => 'Hushållsavdraget',
+    ' koskee muuttosiivousta ja uusien kalusteiden kokoonpanoa, kun se laskutetaan erikseen. Se ei koske muuttotyötä.' => ' gäller flyttstädning och montering av nya möbler när det faktureras separat. Det gäller inte själva flyttarbetet.',
+    '-palvelussa voi tilata muuton, kun asunto on alle ' => ' låter dig beställa flytt direkt när bostaden är under ',
+    'm². Suuremmista asunnoista pyydä tarjous.' => 'm². För större bostäder, begär offert.',
+    ' neliömetriä' => ' kvadratmeter',
+    'Valitse kaupunki ehdotuksista.' => 'Välj en stad bland förslagen.',
+    'Valitse sekä lähtö- että kohdekaupunki.' => 'Välj både avgångs- och destinationsstad.',
+    'Lähtö- ja kohdekaupunki ovat samat.' => 'Avgångs- och destinationsstaden är desamma.',
+    'Matka noin ' => 'Sträcka cirka ',
+    'km, edestakaisin ' => 'km, tur och retur ',
+    'km, matkalisä ' => 'km, resetillägg ',
+    'km. Matkalisä lasketaan vain yli ' => 'km. Resetillägget räknas bara för sträckor över ',
+    'Arvio asunnon koon mukaan: ' => 'Uppskattning enligt bostadens storlek: ',
+    'laatikkoa ' => 'lådor i ',
+    'päivän ajaksi.' => 'dagar.',
+    'Hinta-arvio ' => 'Prisuppskattning ',
+    'Hinta-arvio, ' => 'Prisuppskattning, ',
+    'Muuttosiivous' => 'Flyttstädning',
+    'Kalusteasennus' => 'Möbelmontering',
+    'Varastointi' => 'Lagring',
+    'Valittu paketti' => 'Valt paket',
+    'Ei mukana summassa' => 'Ingår inte i summan',
+    'Huomioitavaa' => 'Att notera',
+  ];
+  $sv_pack = ['perus' => ['Flyttjänst', 'Grundflytt utan lådor'], 'laatikot' => ['Flytt och lådor', 'Grundflytt och flyttlådor'],
+    'taysi' => ['Flytt med full service', 'Packning, transport och uppackning'], 'taysi-laatikot' => ['Flytt med full service och lådor', 'Packning, transport och uppackning samt lådor']];
+  foreach ($d['paketit'] as $i => $p) { if (isset($sv_pack[$p['id']])) { $d['paketit'][$i]['nimi'] = $sv_pack[$p['id']][0]; $d['paketit'][$i]['kuvaus'] = $sv_pack[$p['id']][1]; } }
+  $d['siivous']['iso'] = "Över 150\u{00A0}m²: begär offert";
+  $d['siivous']['isoSelite'] = "Flyttstädning kostar cirka 130\u{00A0}€ för en etta under 40\u{00A0}m², cirka 370\u{00A0}€ för en bostad på 100\u{00A0}m² och cirka 600\u{00A0}€ för en bostad på 150\u{00A0}m². Priserna inkluderar moms.";
+  $d['piano']['teksti'] = 'Priset avtalas alltid separat';
+  $d['piano']['selite'] = "Pianotransport kostar typiskt 250–350\u{00A0}€. Flytt av kassaskåp avtalas separat.";
+  $d['kaluste']['teksti'] = 'Avtalas i offerten';
+  $d['varastointi']['teksti'] = 'Lagring finns via vår samarbetspartner Pelican Self Storage; Pelicans kunder får upp till 20 % rabatt på en flytt';
+  $sv_trip = ['alle-12-km' => 'under 12 km', 'yli-30-km' => 'över 30 km (timdebitering, begär offert)', 'nouto' => 'Jag hämtar dem själv på kontoret'];
+  foreach ($d['laatikkovuokra']['matkat'] as $i => $m) { if (isset($m['id'], $sv_trip[$m['id']])) { $d['laatikkovuokra']['matkat'][$i]['nimi'] = $sv_trip[$m['id']]; } }
+  // the city fields: the Swedish names are found as well as the Finnish ones, and the empty field offers the Swedish names of the big cities
+  $names = interactive_swedish_city_names();
+  if (!empty($d['kaupunkimatka']['kaupungit']) && is_array($d['kaupunkimatka']['kaupungit'])) {
+    $extra = [];
+    foreach ($d['kaupunkimatka']['kaupungit'] as $k) { if (isset($names[$k[0]])) { $extra[] = [$names[$k[0]], $k[1], $k[2]]; } }
+    $d['kaupunkimatka']['kaupungit'] = array_merge($d['kaupunkimatka']['kaupungit'], $extra);
+    if (!empty($d['kaupunkimatka']['suositut'])) { $d['kaupunkimatka']['suositut'] = array_map(fn($n) => $names[$n] ?? $n, $d['kaupunkimatka']['suositut']); }
+  }
+  // internal links of the notes point to the Swedish pages
+  if (!empty($d['linkit']['sivut']) && is_array($d['linkit']['sivut']) && function_exists('pll_get_post')) {
+    foreach ($d['linkit']['sivut'] as $k => $u) { $id = url_to_postid($u); $sv = $id ? pll_get_post($id, 'sv') : 0; if ($sv) { $d['linkit']['sivut'][$k] = wp_make_link_relative(get_permalink($sv)); } }
   }
   return $d;
 }

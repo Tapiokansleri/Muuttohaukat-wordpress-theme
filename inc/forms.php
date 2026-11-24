@@ -185,8 +185,10 @@ if (!function_exists('libreform')) {
 add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
   try {
     // 16.11.2026: the English copies of the forms (slug + "-en", same field names and values) are handled exactly like the Finnish ones
+    // 24.11.2026: the same for the Swedish copies (slug + "-sv")
     $is_en         = substr($form->slug, -3) === '-en';
-    $base_slug     = $is_en ? substr($form->slug, 0, -3) : $form->slug;
+    $is_sv         = substr($form->slug, -3) === '-sv';
+    $base_slug     = ($is_en || $is_sv) ? substr($form->slug, 0, -3) : $form->slug;
     $capturedForms = ['tarjouspyynto-kotimuutto', 'tarjouspyynto-yritysmuutto', 'tilaa-muuttotarvikkeet'];
     $deleteAfter   = ['whistleblow-lomake'];
     $email         = $submission->getField('Email');
@@ -200,8 +202,8 @@ add_action('wplfAfterSubmission', function ($submission, \WPLF\Form $form) {
       add_action( 'wp_mail_failed', $on_fail );
       $sent = wp_mail(
         $email,
-        $is_en ? 'Confirmation of your submission' : __('Vahvistus lomakelähetyksestä', 'muuttohaukat'),
-        $is_en ? "Hello!\n\nThank you for contacting us. We will get back to you as soon as possible.\n\nBest regards, Muuttohaukat" : __("Hei!\n\nKiitos yhteydenotostasi.\n\nYstävällisin terveisin, Muuttohaukat", 'muuttohaukat')
+        $is_en ? 'Confirmation of your submission' : ($is_sv ? 'Bekräftelse på din förfrågan' : __('Vahvistus lomakelähetyksestä', 'muuttohaukat')),
+        $is_en ? "Hello!\n\nThank you for contacting us. We will get back to you as soon as possible.\n\nBest regards, Muuttohaukat" : ($is_sv ? "Hej!\n\nTack för att du kontaktade oss. Vi hör av oss så snart som möjligt.\n\nVänliga hälsningar, Muuttohaukat" : __("Hei!\n\nKiitos yhteydenotostasi.\n\nYstävällisin terveisin, Muuttohaukat", 'muuttohaukat'))
       );
       remove_action( 'wp_mail_failed', $on_fail );
 
@@ -421,8 +423,8 @@ add_action( 'init', function () {
  * Map form slugs to template partials.
  */
 add_filter('wplfImportFormTemplate', function ($template, \WPLF\Form $form) {
-  // the English copies (slug + "-en") render the same templates; the mu-plugin kansleri-i18n-ui translates the texts
-  switch (preg_replace('/-en$/', '', (string) $form->slug)) {
+  // the English and Swedish copies (slug + "-en" / "-sv") render the same templates; the mu-plugin kansleri-i18n-ui translates the texts
+  switch (preg_replace('/-(en|sv)$/', '', (string) $form->slug)) {
     case 'tarjouspyynto-kotimuutto':
       return capture('\Muuttohaukat\Templates\FormHomeMove');
 
@@ -452,7 +454,7 @@ add_filter('wplfImportFormTemplate', function ($template, \WPLF\Form $form) {
  * rejects the lead) and moved into Lisätiedot after validation.
  */
 add_filter('wplfFieldsBeforeValidateSubmission', function ($entries, \WPLF\Form $form) {
-  if (preg_replace('/-en$/', '', $form->slug) === 'tarjouspyynto-yritysmuutto' && is_array($entries)) {
+  if (preg_replace('/-(en|sv)$/', '', $form->slug) === 'tarjouspyynto-yritysmuutto' && is_array($entries)) {
     unset($entries['Tyopisteet']);
   }
 
@@ -460,7 +462,7 @@ add_filter('wplfFieldsBeforeValidateSubmission', function ($entries, \WPLF\Form 
 }, 10, 2);
 
 add_filter('wplfFieldsAfterValidateSubmission', function ($entries, \WPLF\Form $form) {
-  if (preg_replace('/-en$/', '', $form->slug) !== 'tarjouspyynto-yritysmuutto' || !is_array($entries) || !array_key_exists('Tyopisteet', $entries)) {
+  if (preg_replace('/-(en|sv)$/', '', $form->slug) !== 'tarjouspyynto-yritysmuutto' || !is_array($entries) || !array_key_exists('Tyopisteet', $entries)) {
     return $entries;
   }
 
