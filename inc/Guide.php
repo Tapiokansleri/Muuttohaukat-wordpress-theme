@@ -12,6 +12,9 @@
  *     top-level H2 starts a section. Options go in the H2 block's "Additional CSS class(es)": `sec-wide` (heading above, the
  *     body over the full width, for tools and tables), `sec-summary` (the tick list). A paragraph with the class `is-lead`
  *     straight after the H2 stays beside the heading.
+ *   - the live price calculator where the content has a top-level Shortcode block `[hintalaskuri ...]` (the same shortcode as
+ *     the price page, inc/InteractiveSections.php, so prices stay in sync): it becomes a section of its own, always white
+ *     because its result panel is yellow, and the hero's "Laske hinta-arvio" button jumps to it (#hintalaskuri)
  *   - a closing call to action and "Lue myös" cards, from the post meta
  *
  * Post meta (all optional, set by the script that creates the article):
@@ -50,6 +53,11 @@ add_filter('body_class', function ($classes) {
   return guide_is_active() ? array_merge($classes, ['mh-guide-page']) : $classes;
 });
 
+/** Does the article carry the live price calculator ([hintalaskuri])? */
+function guide_has_calculator(\WP_Post $post): bool {
+  return has_shortcode($post->post_content, 'hintalaskuri');
+}
+
 /** A JSON post meta value as an array. */
 function guide_meta_json(int $post_id, string $key): array {
   $raw = get_post_meta($post_id, $key, true);
@@ -65,10 +73,19 @@ function guide_meta_json(int $post_id, string $key): array {
 function guide_sections(\WP_Post $post): array {
   $sections = [];
   $current  = null;
-  $blank    = ['title' => '', 'id' => '', 'classes' => [], 'lead' => '', 'body' => ''];
+  $blank    = ['kind' => 'text', 'title' => '', 'id' => '', 'classes' => [], 'lead' => '', 'body' => ''];
 
   foreach (parse_blocks($post->post_content) as $block) {
     if ($block['blockName'] === null && trim((string) $block['innerHTML']) === '') {
+      continue;
+    }
+    // The price calculator: a section of its own (the shortcode prints its own heading and both columns)
+    if ($block['blockName'] === 'core/shortcode' && has_shortcode((string) $block['innerHTML'], 'hintalaskuri')) {
+      if ($current !== null) {
+        $sections[] = $current;
+      }
+      $sections[] = array_merge($blank, ['kind' => 'calculator', 'id' => 'hintalaskuri', 'body' => trim((string) $block['innerHTML'])]);
+      $current    = null;
       continue;
     }
     $is_h2 = $block['blockName'] === 'core/heading' && (int) ($block['attrs']['level'] ?? 2) === 2;
@@ -77,6 +94,7 @@ function guide_sections(\WP_Post $post): array {
         $sections[] = $current;
       }
       $current = [
+        'kind'    => 'text',
         'title'   => trim(wp_strip_all_tags((string) $block['innerHTML'])),
         'id'      => (string) ($block['attrs']['anchor'] ?? ''),
         'classes' => array_values(array_filter(preg_split('/\s+/', (string) ($block['attrs']['className'] ?? '')))),
@@ -133,6 +151,9 @@ function guide_facts(\WP_Post $post, string $rendered): array {
     return $facts;
   }
   $facts[] = ['value' => guide_reading_minutes($rendered) . ' min', 'label' => 'lukuaika', 'icon' => 'clock'];
+  if (guide_has_calculator($post)) {
+    $facts[] = ['value' => 'Hintalaskuri', 'label' => 'arvio heti tällä sivulla', 'icon' => 'tools'];
+  }
   $tools = preg_match_all('/class="[^"]*\bmh-tool\b/', $rendered);
   if ($tools) {
     $facts[] = ['value' => (string) $tools, 'label' => $tools === 1 ? 'käytännön työkalu' : 'käytännön työkalua', 'icon' => 'tools'];

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.67] - 2026-11-24
+
+### Changed
+
+- Article template "Artikkeli: opas": the hero photo sits like on the landing pages (two equal columns, a plain 4:3 photo, no yellow box behind it, no frame on the closing call to action's photo). The guide's button padding applies only to its own buttons.
+
+### Added
+
+- Article template "Artikkeli: opas": a top-level Shortcode block `[hintalaskuri ...]` in the content becomes a section of its own with the live price calculator (the same shortcode as the price page, so prices and tracking stay the same). The section is always white because the result panel is yellow, the colours of the other sections keep alternating around it, and the hero and closing "Laske hinta-arvio" buttons jump to it. The hero facts name the calculator.
+
+### Fixed
+
+- Article template "Artikkeli: opas": a table block kept no space below it (a later rule reset its margin).
+
 ## [1.2.66] - 2026-11-24
 
 ### Added
