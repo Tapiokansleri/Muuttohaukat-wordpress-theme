@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.68] - 2026-11-24
+
+### Changed
+
+- The language switcher sits next to the header's CTA buttons (and under them in the mobile menu) instead of in the menu: a small button with the code of the current language (FI / EN / SE) opens the other languages; links go to the page's translation, the full language names are in aria-label (`muuttohaukat_lang_switcher()` in `template-parts/header/header-helpers.php`). The Polylang menu items are removed from the menus.
+- Price calculator: the city fields list every municipality. An empty field lists them all (the bigger cities first, then A-Ö) and typing lists every match, in a list that scrolls; before, only seven were offered and cities looked missing.
+
 ## [1.2.67] - 2026-11-24
 
 ### Changed

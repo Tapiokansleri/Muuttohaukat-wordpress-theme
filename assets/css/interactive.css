@@ -328,6 +328,11 @@
     border: 2px solid var(--color-black);
     border-radius: 4px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    /* every municipality can be listed: the list scrolls */
+    max-height: 18rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .mhi-city__field > .mhi-suggest[hidden] {

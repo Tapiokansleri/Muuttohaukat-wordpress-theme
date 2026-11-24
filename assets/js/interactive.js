@@ -280,8 +280,10 @@
       return T('Matka noin ') + S.km + NBSP + T('km. Matkalisä lasketaan vain yli ') + DATA.kaupunkimatka.rajaKm + NBSP + T('km matkoille.');
     }
     // City suggestions: "tam" lists Tampere. The beginning of a name matches first, then any part of it (from two letters
-    // on), without caring about capitals, ä or ö; the bigger cities come first and an empty field offers them. Keys: arrows,
-    // Enter and Esc; a click or a tap chooses. The field stays a plain text field if this does not run.
+    // on), without caring about capitals, ä or ö. An empty field lists every municipality: the bigger cities first, then
+    // the rest A-Ö, in a list that scrolls; typing lists every match (Tapio 24.11.2026: with only seven offered, cities
+    // looked missing). Keys: arrows, Enter and Esc; a click or a tap chooses. The field stays a plain text field if this
+    // does not run.
     function suggestions(text) {
       var key = Laskenta.avain(text);
       var popular = DATA.kaupunkimatka.suositut || [];
@@ -289,7 +291,7 @@
       DATA.kaupunkimatka.kaupungit.forEach(function (k) {
         var rank = popular.indexOf(k[0]);
         if (key === '') {
-          if (rank !== -1) { hits.push({ name: k[0], at: -1, group: 0, rank: rank }); }
+          hits.push({ name: k[0], at: -1, group: rank === -1 ? 1 : 0, rank: rank === -1 ? 999 : rank });
           return;
         }
         var at = Laskenta.avain(k[0]).indexOf(key);
@@ -297,7 +299,7 @@
         hits.push({ name: k[0], at: at, group: at === 0 ? 0 : 1, rank: rank === -1 ? 999 : rank });
       });
       hits.sort(function (a, b) { return a.group - b.group || a.rank - b.rank || a.name.localeCompare(b.name, 'fi'); });
-      return hits.slice(0, 7);
+      return hits;
     }
     function attachSuggest(field) {
       var box = document.getElementById(field.id + '-lista');
@@ -309,7 +311,10 @@
           li.classList.toggle('is-active', i === n);
           li.setAttribute('aria-selected', i === n ? 'true' : 'false');
         });
-        if (n >= 0) { field.setAttribute('aria-activedescendant', box.children[n].id); } else { field.removeAttribute('aria-activedescendant'); }
+        if (n >= 0) {
+          field.setAttribute('aria-activedescendant', box.children[n].id);
+          if (box.children[n].scrollIntoView) { box.children[n].scrollIntoView({ block: 'nearest' }); }
+        } else { field.removeAttribute('aria-activedescendant'); }
       }
       function close() {
         box.hidden = true;

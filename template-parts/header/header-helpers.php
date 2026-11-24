@@ -92,14 +92,100 @@ function muuttohaukat_header_cta_buttons( $class = 'header-cta' ) {
 }
 endif;
 
+if ( ! function_exists( 'muuttohaukat_lang_switcher' ) ) :
+/**
+ * The language switcher next to the CTA buttons (Tapio 24.11.2026: "kielivalikko CTA buttonien viereen, ei valikkoon"):
+ * a small button with the current language's code (FI / EN / SE) that opens a list of the other languages. The links go to
+ * the translation of the page (Polylang), or to the language's front page when there is none. The full name of each language
+ * is in aria-label. Nothing is printed without Polylang or with one language.
+ *
+ * @param string $context 'desktop' or 'mobile' (an extra class).
+ */
+function muuttohaukat_lang_switcher( $context = 'desktop' ) {
+    if ( ! function_exists( 'pll_the_languages' ) ) {
+        return;
+    }
+    $languages = pll_the_languages( array( 'raw' => 1, 'hide_if_no_translation' => 0, 'hide_current' => 0 ) );
+    if ( ! is_array( $languages ) || count( $languages ) < 2 ) {
+        return;
+    }
+    $labels  = array( 'fi' => 'FI', 'en' => 'EN', 'sv' => 'SE' );
+    $names   = array( 'fi' => 'Suomeksi', 'en' => 'In English', 'sv' => 'På svenska' );
+    $current = null;
+    $others  = array();
+    foreach ( $languages as $language ) {
+        if ( ! empty( $language['current_lang'] ) ) {
+            $current = $language;
+        } else {
+            $others[] = $language;
+        }
+    }
+    if ( null === $current ) {
+        $current = array_shift( $others );
+    }
+    $code = static function ( $language ) use ( $labels ) {
+        return $labels[ $language['slug'] ] ?? strtoupper( $language['slug'] );
+    };
+    $name = static function ( $language ) use ( $names ) {
+        return $names[ $language['slug'] ] ?? $language['name'];
+    };
+    $id = 'lang-switch-' . $context;
+    ?>
+    <div class="lang-switch lang-switch--<?php echo esc_attr( $context ); ?>">
+        <button type="button" class="lang-switch__toggle" aria-expanded="false" aria-controls="<?php echo esc_attr( $id ); ?>" aria-label="<?php echo esc_attr( $name( $current ) . ': ' . implode( ', ', array_map( $name, $others ) ) ); ?>">
+            <span class="lang-switch__code" lang="<?php echo esc_attr( $current['slug'] ); ?>"><?php echo esc_html( $code( $current ) ); ?></span>
+            <svg class="lang-switch__chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul id="<?php echo esc_attr( $id ); ?>" class="lang-switch__list">
+            <?php foreach ( $others as $language ) : ?>
+                <li><a class="lang-switch__link" href="<?php echo esc_url( $language['url'] ); ?>" hreflang="<?php echo esc_attr( $language['slug'] ); ?>" lang="<?php echo esc_attr( $language['slug'] ); ?>" aria-label="<?php echo esc_attr( $name( $language ) ); ?>"><?php echo esc_html( $code( $language ) ); ?></a></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php
+    static $script = false;
+    if ( ! $script ) {
+        $script = true;
+        add_action( 'wp_footer', 'muuttohaukat_lang_switcher_script', 99 );
+    }
+}
+endif;
+
+if ( ! function_exists( 'muuttohaukat_lang_switcher_script' ) ) :
+/** Opens and closes the language list: a click or a tap on the button, Esc and a click elsewhere close it. */
+function muuttohaukat_lang_switcher_script() {
+    ?>
+<script id="muuttohaukat-lang-switch">
+(function () {
+  function close(box) { box.classList.remove('is-open'); box.querySelector('.lang-switch__toggle').setAttribute('aria-expanded', 'false'); }
+  document.querySelectorAll('.lang-switch').forEach(function (box) {
+    var button = box.querySelector('.lang-switch__toggle');
+    button.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = !box.classList.contains('is-open');
+      document.querySelectorAll('.lang-switch.is-open').forEach(close);
+      if (open) { box.classList.add('is-open'); button.setAttribute('aria-expanded', 'true'); }
+    });
+    box.addEventListener('keydown', function (e) { if (e.key === 'Escape') { close(box); button.focus(); } });
+  });
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.lang-switch.is-open').forEach(function (box) { if (!box.contains(e.target)) { close(box); } });
+  });
+})();
+</script>
+    <?php
+}
+endif;
+
 if ( ! function_exists( 'muuttohaukat_header_extras' ) ) :
 /**
- * Output the desktop extras area (CTA buttons).
+ * Output the desktop extras area (CTA buttons and the language switcher next to them).
  */
 function muuttohaukat_header_extras() {
     ?>
     <div id="header-extras" class="header-extras">
         <?php muuttohaukat_header_cta_buttons(); ?>
+        <?php muuttohaukat_lang_switcher( 'desktop' ); ?>
     </div>
     <?php
 }
@@ -145,6 +231,7 @@ function muuttohaukat_header_nav() {
         <?php if ( $show_mobile_cta ) : ?>
         <div class="mobile-header-extras">
             <?php muuttohaukat_header_cta_buttons( 'mobile-header-cta' ); ?>
+            <?php muuttohaukat_lang_switcher( 'mobile' ); ?>
         </div>
         <?php endif; ?>
     </nav>
