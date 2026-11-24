@@ -306,6 +306,17 @@ body.header-full-width .header-inner {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
 }
 
+/* The list sits a few pixels below the button. This invisible strip fills that gap, so the pointer is still
+   "inside" the switcher while it travels from the button to the list and the hover-opened list does not close. */
+.lang-switch__list::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -0.75rem;
+    height: 0.75rem;
+}
+
 .lang-switch.is-open .lang-switch__list {
     display: block;
 }

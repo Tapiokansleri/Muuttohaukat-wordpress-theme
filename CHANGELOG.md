@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.75] - 2026-11-24
+
+### Fixed
+
+- The language list of the desktop header closed when the mouse moved from the FI / EN / SE button towards it (a 4 px gap between the button and the list ended the hover). An invisible strip now bridges the gap (`.lang-switch__list::before` in `assets/css/header.css`).
+
 ## [1.2.74] - 2026-11-24
 
 ### Changed
