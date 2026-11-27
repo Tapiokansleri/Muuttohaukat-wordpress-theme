@@ -692,6 +692,19 @@
     color: var(--color-accent) !important;
 }
 
+/* the offer's line with the link to the cleaning price list */
+.mh-landing-cleaning__lead {
+    font-size: var(--text-xl, 1.375rem);
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.mh-landing-cleaning__lead a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
 /* the offer on a yellow section (rebuilt big city pages): the price is black, not yellow on yellow */
 .mh-landing-section--bg-yellow .mh-landing-cleaning__price {
     color: var(--color-black) !important;

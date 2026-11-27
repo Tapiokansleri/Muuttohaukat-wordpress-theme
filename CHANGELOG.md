@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.79] - 2026-11-27
+
+### Changed
+
+- Muuttosiivous offer on the moving city pages (`inc/CleaningCrossSell.php`): the old price examples (about 130 €, 370 € and 600 €) are gone; the box links to the price list on /muuttosiivous/#hinta, so prices are kept in one place (Totte 27.11.2026).
+
+### Added
+
+- Style for the move-out cleaning price list (a core table block with the class `mh-clean-prices`): a white card with a black border, prices right aligned.
+
 ## [1.2.78] - 2026-11-24
 
 ### Changed
