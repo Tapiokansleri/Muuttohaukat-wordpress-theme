@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.81] - 2026-11-27
+
+### Changed
+
+- Home price calculator, move-out cleaning only (asked by Tapio 27.11.2026): the price now follows the new price list (under 40 m² 169 €, 40–59 251 €, 60–79 335 €, 80–99 419 €, 100–119 525 €, 120–149 579 €); at 150 m² the cleaning shows 65 €/h and is left out of the total. Replaces the estimate drawn between the old 130/370/600 € points, in Finnish, English and Swedish. Move prices, boxes and the other rows are unchanged.
+
 ## [1.2.80] - 2026-11-27
 
 ### Removed

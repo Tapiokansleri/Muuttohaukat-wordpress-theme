@@ -216,18 +216,16 @@ function interactive_calculator_data(): array {
       ['id' => 'taysi', 'nimi' => 'Täyden palvelun muutto', 'kuvaus' => 'Pakkaus, kuljetus ja purku', 'laatikot' => false, 'taysi' => true],
       ['id' => 'taysi-laatikot', 'nimi' => 'Täyden palvelun muutto ja laatikot', 'kuvaus' => 'Pakkaus, kuljetus ja purku sekä laatikot', 'laatikot' => true, 'taysi' => true],
     ],
-    // Cleaning prices from Totte (10.11.2026): about 130 € under 40 m², 370 € for 100 m², 600 € for 150 m², VAT included;
-    // between the points a straight line (16.11.2026: "60-80m2 siivous on jotain puolesta välistä. Arvioi itse.").
+    // Move-out cleaning price list from Totte (27.11.2026), consumer prices, VAT 25.5 % included: [largest m² of the
+    // row, €]. From 150 m² the cleaning is billed by the hour (65 €/h), so it is not part of the sum there.
     // Kotitalousvähennys 2026–27: 40 %, deductible 150 €, at most 2 100 € per person.
     'siivous' => [
-      'hintaAlle' => 150,
-      'pisteet' => [[40, 130], [100, 370], [150, 600]],
-      'hinta' => [130, 600],
+      'hinnasto' => [[39, 169], [59, 251], [79, 335], [99, 419], [119, 525], [149, 579]],
       'vahennysProsentti' => 40,
       'omavastuu' => 150,
       'vahennysKatto' => 2100,
-      'iso' => "Yli 150\u{00A0}m²: pyydä tarjous",
-      'isoSelite' => "Muuttosiivous maksaa noin 130\u{00A0}€ alle 40\u{00A0}m² yksiössä, noin 370\u{00A0}€ 100\u{00A0}m² asunnossa ja noin 600\u{00A0}€ 150\u{00A0}m² asunnossa. Hinnat sisältävät arvonlisäveron.",
+      'iso' => "65\u{00A0}€/h",
+      'isoSelite' => "150\u{00A0}m² ja sitä suuremmissa asunnoissa muuttosiivous maksaa 65\u{00A0}€ tunnilta, joten se ei ole mukana summassa. Hinnat sisältävät arvonlisäveron 25,5\u{00A0}%.",
     ],
     // Totte 16.11.2026: "Pianon kuljetus tyypillisesti on 250-350€. Laitetaan laskuri tänne."
     'piano' => ['hinta' => [250, 350], 'selite' => "Pianon kuljetus maksaa tyypillisesti 250–350\u{00A0}€. Kassakaapin siirrosta sovitaan erikseen.", 'teksti' => 'Hinta sovitaan aina erikseen'],
@@ -441,8 +439,8 @@ function interactive_english(array $d) {
   $en_pack = ['perus' => ['Moving service', 'Basic move without boxes'], 'laatikot' => ['Move and boxes', 'Basic move and moving boxes'],
     'taysi' => ['Full-service move', 'Packing, transport and unpacking'], 'taysi-laatikot' => ['Full-service move and boxes', 'Packing, transport and unpacking, plus boxes']];
   foreach ($d['paketit'] as $i => $p) { if (isset($en_pack[$p['id']])) { $d['paketit'][$i]['nimi'] = $en_pack[$p['id']][0]; $d['paketit'][$i]['kuvaus'] = $en_pack[$p['id']][1]; } }
-  $d['siivous']['iso'] = "Over 150\u{00A0}m²: request a quote";
-  $d['siivous']['isoSelite'] = "Move-out cleaning costs about 130\u{00A0}€ for a studio under 40\u{00A0}m², about 370\u{00A0}€ for a 100\u{00A0}m² home and about 600\u{00A0}€ for a 150\u{00A0}m² home. Prices include VAT.";
+  $d['siivous']['iso'] = "€65/h";
+  $d['siivous']['isoSelite'] = "For homes of 150\u{00A0}m² and larger, move-out cleaning costs €65 per hour, so it is not included in the total. Prices include 25.5% VAT.";
   $d['piano']['teksti'] = 'The price is always agreed separately';
   $d['piano']['selite'] = "Piano moving typically costs 250–350\u{00A0}€. Moving a safe is agreed separately.";
   $d['kaluste']['teksti'] = 'Agreed in the quote';
@@ -542,8 +540,8 @@ function interactive_swedish(array $d) {
   $sv_pack = ['perus' => ['Flyttjänst', 'Grundflytt utan lådor'], 'laatikot' => ['Flytt och lådor', 'Grundflytt och flyttlådor'],
     'taysi' => ['Flytt med full service', 'Packning, transport och uppackning'], 'taysi-laatikot' => ['Flytt med full service och lådor', 'Packning, transport och uppackning samt lådor']];
   foreach ($d['paketit'] as $i => $p) { if (isset($sv_pack[$p['id']])) { $d['paketit'][$i]['nimi'] = $sv_pack[$p['id']][0]; $d['paketit'][$i]['kuvaus'] = $sv_pack[$p['id']][1]; } }
-  $d['siivous']['iso'] = "Över 150\u{00A0}m²: begär offert";
-  $d['siivous']['isoSelite'] = "Flyttstädning kostar cirka 130\u{00A0}€ för en etta under 40\u{00A0}m², cirka 370\u{00A0}€ för en bostad på 100\u{00A0}m² och cirka 600\u{00A0}€ för en bostad på 150\u{00A0}m². Priserna inkluderar moms.";
+  $d['siivous']['iso'] = "65\u{00A0}€/h";
+  $d['siivous']['isoSelite'] = "För bostäder på 150\u{00A0}m² eller mer kostar flyttstädningen 65\u{00A0}€/h, så den ingår inte i summan. Priserna inkluderar moms 25,5\u{00A0}%.";
   $d['piano']['teksti'] = 'Priset avtalas alltid separat';
   $d['piano']['selite'] = "Pianotransport kostar typiskt 250–350\u{00A0}€. Flytt av kassaskåp avtalas separat.";
   $d['kaluste']['teksti'] = 'Avtalas i offerten';

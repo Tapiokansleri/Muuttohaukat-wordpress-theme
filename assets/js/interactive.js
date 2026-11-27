@@ -87,16 +87,10 @@
       const lahde = paketti.laatikot ? luokka.laatikot : luokka.perus;
       return paketti.taysi ? lahde.map(taysi) : lahde.slice();
     }
-    /** cleaning price for a size: Totte's points (m², €), straight line between them, rounded to 10 € ("noin") */
-    function siivousHinta(m2, p) {
-      if (m2 <= p[0][0]) { return p[0][1]; }
-      for (let i = 1; i < p.length; i++) {
-        if (m2 <= p[i][0]) {
-          const a = p[i - 1], b = p[i];
-          return Math.round((a[1] + (b[1] - a[1]) * (m2 - a[0]) / (b[0] - a[0])) / 10) * 10;
-        }
-      }
-      return p[p.length - 1][1];
+    /** cleaning price for a size from the price list, rows [largest m² of the row, €]; null above the last row (billed by the hour) */
+    function siivousHinta(m2, rivit) {
+      const rivi = rivit.find((r) => m2 <= r[0]);
+      return rivi ? rivi[1] : null;
     }
     function kotitalousvahennys(euroa) {
       const s = DATA.siivous;
@@ -156,8 +150,9 @@
 
       if (t.siivous) {
         const S = DATA.siivous;
-        if (m2 <= S.hintaAlle) {
-          const lo = siivousHinta(m2, S.pisteet), hi = lo;
+        const listahinta = siivousHinta(m2, S.hinnasto);
+        if (listahinta !== null) {
+          const lo = listahinta, hi = lo;
           const v = [kotitalousvahennys(lo), kotitalousvahennys(hi)];
           const jalkeen = [lo - v[0], hi - v[1]];
           siivousTiedot = { hinta: [sent(lo), sent(hi)], vahennys: v.map(sent), jalkeen: jalkeen.map(sent) };
