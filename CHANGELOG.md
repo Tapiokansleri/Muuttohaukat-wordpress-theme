@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.80] - 2026-11-27
+
+### Removed
+
+- Muuttosiivous offer on the moving city pages: the checklist that promised cleaning of every surface from floor to ceiling and waste disposal. The updated customer instructions promise neither; what the cleaning includes is on /muuttosiivous/ (27.11.2026).
+
 ## [1.2.79] - 2026-11-27
 
 ### Changed

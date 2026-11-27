@@ -138,11 +138,6 @@ function cleaning_cross_sell_html(string $city, string $iness, string $bg = 'bla
         <p class="mh-landing-kicker">Muuttosiivous</p>
         <h2 id="mh-landing-cleaning-title"><?php echo esc_html($heading); ?></h2>
         <p>Kun tavarat ovat lähteneet, siivoamme vanhan kodin, ja luovutat sen puhtaana. Tilaa muuttosiivous samaan tarjoukseen muuton kanssa, niin muuttoauto, kantajat ja siivous tulevat samalta toimittajalta.</p>
-        <ul class="mh-hero-checklist">
-          <li>Kaikki asunnon pinnat lattiasta kattoon</li>
-          <li>Nurkat ja kolot huolellisesti</li>
-          <li>Jätteet hävitetään ja kierrätetään asianmukaisesti</li>
-        </ul>
       </div>
       <div class="mh-landing-cleaning__offer">
         <p class="mh-landing-kicker">Hinta</p>
